@@ -1,10 +1,11 @@
 package com.loccitane.user.controller;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,6 @@ public class UserController {
 		return nextView;
 	}
 	
-	@SuppressWarnings("null")
 	@GetMapping("/user/check/{lc_user_id}") // 최초 고객 URL 랜딩페이지에서 ID값 체크
 	public ModelAndView checkUser(@PathVariable("lc_user_id") String userid){
 		User user = service.userCheck(userid); // 서비스에서 요청에 해당하는 처리를 한다.
@@ -62,7 +62,7 @@ public class UserController {
 	
 	//로그인 시도
 	@PostMapping("/manager/login") 
-	public ModelAndView loginManager(User user, HttpServletResponse response) throws Exception { 
+	public ModelAndView loginManager(User user, HttpServletResponse response, HttpServletRequest request) throws Exception { 
 		ModelAndView nextView = null;
 		User userData = service.managerLogin(user);// 매니저 로그인 DB체크
 		
@@ -77,21 +77,44 @@ public class UserController {
 		}else if(user.getGrade().equals("super")) { // 슈퍼관리자일 경우
 			nextView = new ModelAndView("jsp/superManagerMain");
 		}
-		nextView.addObject("userData", userData); //사용자데이터
+		
+		// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
+		if(userData != null) {
+			HttpSession httpSession = request.getSession(true);
+			httpSession.setAttribute("loginUser", userData);
+			httpSession.setAttribute("menu", "menuli1");
+		}
+		return nextView;
+	}
+	//메뉴 클릭
+	@GetMapping("/manager/{menu}") 
+	public ModelAndView goMenu(@PathVariable("menu") String menu, HttpServletRequest request) throws Exception { 
+		ModelAndView nextView = null;
+		HttpSession httpSession = request.getSession(true);
+		User loginUser = (User) httpSession.getAttribute("loginUser");
+		
+		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
+			nextView = new ModelAndView("jsp/logout");
+		} else if(menu.equals("menu1")) {
+			nextView = new ModelAndView("jsp/storeManagerCouponUse");
+			httpSession.setAttribute("menu", "menuli1");
+		} else {
+			
+		}
 		
 		return nextView;
 	}
 	
 	//최초 로그인 페이지
 	@GetMapping("/") 
-	public ModelAndView main() throws Exception { 
+	public ModelAndView main(){ 
 		ModelAndView nextView = new ModelAndView("jsp/login");
 		return nextView;
 	}
 	
 	//매장 매니저 - 사용자 뒷번호로 검색
 	@PostMapping("/manager/userSearch") 
-	public ModelAndView getUserList(User user, HttpServletResponse response) throws Exception {
+	public ModelAndView getUserList(User user){
 		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserList");
 		List<User> userData = service.getUserList(user);
 		nextView.addObject("userData", userData); //사용자데이터
@@ -99,16 +122,4 @@ public class UserController {
 		return nextView;
 	}
 	
-	@GetMapping("/manager/couponlist/{lc_user_id}") // 고객에 대한 쿠폰조회
-	public ModelAndView getUserCoupon(@PathVariable("lc_user_id") String userid){
-		User userData = service.userCheck(userid); // 서비스에서 요청에 해당하는 처리를 한다.
-		ModelAndView nextView = new ModelAndView("jsp/storeManagerCouponList");
-		
-		List<Coupon> couponList = cpservice.getUserCoupon(userData); // 해당 사용자의 쿠폰리스트 조회
-		nextView.addObject("userData", userData); //사용자데이터
-		nextView.addObject("couponList", couponList); //쿠폰리스트
-		nextView.addObject("searchPhone", userData.getPhone().substring(userData.getPhone().length()-4, userData.getPhone().length())); //사용자데이터
-		
-		return nextView;
-	}
 }

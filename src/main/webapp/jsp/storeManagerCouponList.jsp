@@ -8,12 +8,19 @@
 <head>
 <meta charset="EUC-KR">
 <title></title>
-<link href="../../css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
+<link href="http://localhost:8081/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript">
+function useCoupon(seq, userid){
+	var result = confirm("해당 쿠폰을 사용처리 하시겠습니까?");
+	if(result){
+		location.href = "/manager/couponuse/"+userid+"/"+seq;
+	}
+	
+}
+</script>
 </head>
 <body>
-<jsp:include page="storeManagerHeader.jsp">
-	<jsp:param name="menu" value="menu1"/>
-</jsp:include>
+<jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <jsp:useBean id="today" class="java.util.Date" />
 <div class="wrapper">
 	<form id="searchForm" action="/manager/userSearch" method="post">
@@ -88,7 +95,7 @@
 				</td>
 				<td>
 					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today}">
-						<input type="button" class="button-yellow-small" value="사용처리" >
+						<input type="button" class="button-yellow-small" value="사용처리" onclick="useCoupon('${coupon.seq}','${coupon.userid}')" >
 					</c:if>
 					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today}">
 						<input type="button" class="button-gray-small" value="사용불가" disabled="disabled" >

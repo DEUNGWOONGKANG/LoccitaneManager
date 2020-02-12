@@ -20,9 +20,7 @@ function check(){
 </script>
 </head>
 <body>
-<jsp:include page="storeManagerHeader.jsp">
-	<jsp:param name="menu" value="menu1"/>
-</jsp:include>
+<jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <div class="wrapper">
 	<form id="searchForm" action="/manager/userSearch" method="post" onsubmit="check()">
 	<table style="width:100%; margin-top:20px;">

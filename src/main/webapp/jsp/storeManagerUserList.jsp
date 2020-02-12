@@ -7,7 +7,7 @@
 <head>
 <meta charset="EUC-KR">
 <title></title>
-<link href="../../css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
+<link href="http://localhost:8081/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function userSelect(userid, username){
 	var result = confirm(username+"고객이 맞습니까?");
@@ -19,9 +19,7 @@ function userSelect(userid, username){
 </script>
 </head>
 <body>
-<jsp:include page="storeManagerHeader.jsp">
-	<jsp:param name="menu" value="menu1"/>
-</jsp:include>
+<jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <div class="wrapper">
 	<form id="searchForm" action="/manager/userSearch" method="post">
 	<table style="width:100%; margin-top:20px;">
