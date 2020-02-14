@@ -47,4 +47,18 @@ public class UserService {
 		List<User> userData = userRepo.findAllByPhoneEndingWith(user.getPhone());
 		return userData;
 	}
+	
+	public List<User> searchUserList(String searchKey, String searchKeyword){
+		List<User> userData = null;
+		if(searchKey.equals("username")) {
+			userData = userRepo.findAllByUsername(searchKeyword);
+		}else if(searchKey.equals("phone")) {
+			userData = userRepo.findAllByPhone(searchKeyword);
+		}else{
+			userData = userRepo.findAllByUserid(searchKeyword);
+		}
+		
+		return userData;
+		
+	}
 }

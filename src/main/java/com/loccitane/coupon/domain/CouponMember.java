@@ -1,6 +1,9 @@
 package com.loccitane.coupon.domain;
 
 
+
+
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,103 +20,114 @@ public class CouponMember {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "lc_cptm_seq") //대응하는 컬럼명 지정
-	private int seq;
+	private int cptmseq;
 	
 	@Column(name = "lc_user_id") //대응하는 컬럼명 지정
-	private String userid;
+	private String cptmuserid;
 
 	@Column(name = "lc_cp_is_cd")
-	private String cpcode;
+	private String cptmcpcode;
 	
 	@Column(name = "lc_cp_is_dt")
-	private Date issueday;
-
+	private Date cptmissueday;
+	
+	@Column(name = "lc_cp_is_ps")
+	private String cptmgiveuser;
+	
 	@Column(name = "lc_cp_us_yn")
-	private String usedyn;
+	private String cptmusedyn;
 	
 	@Column(name = "lc_cp_is_sd")
-	private Date startdate;
+	private Date cptmstartdate;
 	
 	@Column(name = "lc_cp_is_ed")
-	private Date enddate;
+	private Date cptmenddate;
 	
-	@Column(name = "lc_cp_us_nm")
-	private String useuserid;
+	@Column(name = "lc_cp_us_ps")
+	private String cptmuseuserid;
 	
 	@Column(name = "lc_cp_us_dt")
-	private Date usedate;
+	private Date cptmusedate;
 
-	public int getSeq() {
-		return seq;
+	public int getCptmseq() {
+		return cptmseq;
 	}
 
-	public void setSeq(int seq) {
-		this.seq = seq;
+	public void setCptmseq(int cptmseq) {
+		this.cptmseq = cptmseq;
 	}
 
-	public String getUserid() {
-		return userid;
+	public String getCptmuserid() {
+		return cptmuserid;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setCptmuserid(String cptmuserid) {
+		this.cptmuserid = cptmuserid;
 	}
 
-	public String getCpcode() {
-		return cpcode;
+	public String getCptmcpcode() {
+		return cptmcpcode;
 	}
 
-	public void setCpcode(String cpcode) {
-		this.cpcode = cpcode;
+	public void setCptmcpcode(String cptmcpcode) {
+		this.cptmcpcode = cptmcpcode;
 	}
 
-	public Date getIssueday() {
-		return issueday;
+	public Date getCptmissueday() {
+		return cptmissueday;
 	}
 
-	public void setIssueday(Date issueday) {
-		this.issueday = issueday;
+	public void setCptmissueday(Date cptmissueday) {
+		this.cptmissueday = cptmissueday;
 	}
 
-	public String getUsedyn() {
-		return usedyn;
+	public String getCptmgiveuser() {
+		return cptmgiveuser;
 	}
 
-	public void setUsedyn(String usedyn) {
-		this.usedyn = usedyn;
+	public void setCptmgiveuser(String cptmgiveuser) {
+		this.cptmgiveuser = cptmgiveuser;
 	}
 
-	public Date getStartdate() {
-		return startdate;
+	public String getCptmusedyn() {
+		return cptmusedyn;
 	}
 
-	public void setStartdate(Date startdate) {
-		this.startdate = startdate;
+	public void setCptmusedyn(String cptmusedyn) {
+		this.cptmusedyn = cptmusedyn;
 	}
 
-	public Date getEnddate() {
-		return enddate;
+	public Date getCptmstartdate() {
+		return cptmstartdate;
 	}
 
-	public void setEnddate(Date enddate) {
-		this.enddate = enddate;
+	public void setCptmstartdate(Date cptmstartdate) {
+		this.cptmstartdate = cptmstartdate;
 	}
 
-	public Date getUsedate() {
-		return usedate;
+	public Date getCptmenddate() {
+		return cptmenddate;
 	}
 
-	public void setUsedate(Date usedate) {
-		this.usedate = usedate;
+	public void setCptmenddate(Date cptmenddate) {
+		this.cptmenddate = cptmenddate;
 	}
 
-	public String getUseuserid() {
-		return useuserid;
+	public String getCptmuseuserid() {
+		return cptmuseuserid;
 	}
 
-	public void setUseuserid(String useuserid) {
-		this.useuserid = useuserid;
+	public void setCptmuseuserid(String cptmuseuserid) {
+		this.cptmuseuserid = cptmuseuserid;
 	}
-	
+
+	public Date getCptmusedate() {
+		return cptmusedate;
+	}
+
+	public void setCptmusedate(Date cptmusedate) {
+		this.cptmusedate = cptmusedate;
+	}
+
 	
 }

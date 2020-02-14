@@ -1,24 +1,22 @@
 package com.loccitane.user.domain;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.loccitane.coupon.domain.Coupon;
 
 @Entity // domain클래스인것을 나타내는 어노테이션
 @Table(name = "lc_member_core") //대응하는 테이블 설정
 public class User {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "lc_user_seq") //대응하는 컬럼명 지정
+	private int seq;
+	
 	@Column(name = "lc_user_id") //대응하는 컬럼명 지정
 	private String userid;
 
@@ -117,4 +115,13 @@ public class User {
 	public void setUpate(Date upate) {
 		this.upate = upate;
 	}
+
+	public int getSeq() {
+		return seq;
+	}
+
+	public void setSeq(int seq) {
+		this.seq = seq;
+	}
+	
 }

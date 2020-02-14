@@ -1,6 +1,8 @@
 package com.loccitane.coupon.controller;
 
-import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,12 +10,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
+import com.loccitane.coupon.domain.CouponCore;
+import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
@@ -24,6 +32,13 @@ public class CouponController {
 	UserService service;
 	@Autowired
 	CouponService cpservice;
+	
+	@InitBinder
+    protected void initBinder(WebDataBinder binder){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
+    }
+
 	
 	@GetMapping("/manager/couponlist/{lc_user_id}") // 고객에 대한 쿠폰조회
 	public ModelAndView getUserCoupon(@PathVariable("lc_user_id") String userid){
@@ -47,11 +62,30 @@ public class CouponController {
 		ModelAndView nextView = null;
 		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
 			nextView = new ModelAndView("jsp/logout");
-		}else {
+		}else{
 			cpservice.useCoupon(userid, seq, loginUser);
 			
 			nextView = getUserCoupon(userid);
 			nextView.addObject("update", "Y"); //업데이트 여부
+		}
+		return nextView;
+	}
+	
+	//쿠폰 부여
+	@PostMapping("/manager/coupongive") 
+	public ModelAndView couponGive(User user, CouponMember coupon, HttpServletRequest request, HttpServletResponse response){
+		ModelAndView nextView = null;
+		HttpSession httpSession = request.getSession(true);
+		User loginUser = (User) httpSession.getAttribute("loginUser");
+		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
+			nextView = new ModelAndView("jsp/logout");
+		}else{
+			nextView = new ModelAndView("jsp/storeManagerCouponGive");
+			cpservice.giveCoupon(user, coupon, loginUser);
+			
+			List<CouponCore> couponList = cpservice.getCouponList();
+			nextView.addObject("couponList", couponList);
+			nextView.addObject("giveyn", "Y");
 		}
 		return nextView;
 	}

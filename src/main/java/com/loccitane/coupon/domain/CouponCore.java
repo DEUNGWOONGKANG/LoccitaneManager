@@ -14,17 +14,14 @@ import javax.persistence.Table;
 
 @org.hibernate.annotations.DynamicUpdate
 @Entity // domain클래스인것을 나타내는 어노테이션
-@Table(name = "v_lc_coupon_to_member") //대응하는 테이블 설정
-public class Coupon {
+@Table(name = "lc_coupon_core") //대응하는 테이블 설정
+public class CouponCore {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	@Column(name = "lc_cptm_seq") //대응하는 컬럼명 지정
+	@Column(name = "lc_cp_seq") //대응하는 컬럼명 지정
 	private int seq;
-	
-	@Column(name = "lc_user_id") //대응하는 컬럼명 지정
-	private String userid;
 
-	@Column(name = "lc_cp_is_cd")
+	@Column(name = "lc_cp_cd")
 	private String cpcode;
 	
 	@Column(name = "lc_cp_nm")
@@ -35,21 +32,21 @@ public class Coupon {
 	
 	@Column(name = "lc_cp_dc_cnt")
 	private int dccnt;
-	
-	@Column(name = "lc_cp_is_dt")
-	private Date issueday;
 
+	@Column(name = "lc_cp_trg_lm")
+	private String target;
+	
 	@Column(name = "lc_cp_us_yn")
-	private String usedyn;
-	
-	@Column(name = "lc_cp_is_sd")
-	private Date startdate;
-	
-	@Column(name = "lc_cp_is_ed")
-	private Date enddate;
+	private String useyn;
 	
 	@Column(name = "lc_cp_mm")
 	private String memo;
+	
+	@Column(name = "lc_cp_cr_if")
+	private String createuser;
+
+	@Column(name = "lc_cp_cr_dt")
+	private Date createdate;
 
 	public int getSeq() {
 		return seq;
@@ -57,14 +54,6 @@ public class Coupon {
 
 	public void setSeq(int seq) {
 		this.seq = seq;
-	}
-
-	public String getUserid() {
-		return userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
 	}
 
 	public String getCpcode() {
@@ -99,20 +88,20 @@ public class Coupon {
 		this.dccnt = dccnt;
 	}
 
-	public Date getIssueday() {
-		return issueday;
+	public String getTarget() {
+		return target;
 	}
 
-	public void setIssueday(Date issueday) {
-		this.issueday = issueday;
+	public void setTarget(String target) {
+		this.target = target;
 	}
 
-	public String getUsedyn() {
-		return usedyn;
+	public String getUseyn() {
+		return useyn;
 	}
 
-	public void setUsedyn(String usedyn) {
-		this.usedyn = usedyn;
+	public void setUseyn(String useyn) {
+		this.useyn = useyn;
 	}
 
 	public String getMemo() {
@@ -123,21 +112,20 @@ public class Coupon {
 		this.memo = memo;
 	}
 
-	public Date getStartdate() {
-		return startdate;
+	public String getCreateuser() {
+		return createuser;
 	}
 
-	public void setStartdate(Date startdate) {
-		this.startdate = startdate;
+	public void setCreateuser(String createuser) {
+		this.createuser = createuser;
 	}
 
-	public Date getEnddate() {
-		return enddate;
+	public Date getCreatedate() {
+		return createdate;
 	}
 
-	public void setEnddate(Date enddate) {
-		this.enddate = enddate;
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
 	}
-	
 	
 }

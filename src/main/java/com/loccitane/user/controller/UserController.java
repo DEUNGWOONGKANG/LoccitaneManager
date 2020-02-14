@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
+import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
@@ -86,6 +87,15 @@ public class UserController {
 		}
 		return nextView;
 	}
+	
+	//로그아웃
+	@GetMapping("/manager/logout") 
+	public ModelAndView logoutManager(){ 
+		ModelAndView nextView = new ModelAndView("jsp/logout");
+		
+		return nextView;
+	}
+	
 	//메뉴 클릭
 	@GetMapping("/manager/{menu}") 
 	public ModelAndView goMenu(@PathVariable("menu") String menu, HttpServletRequest request) throws Exception { 
@@ -95,9 +105,16 @@ public class UserController {
 		
 		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
 			nextView = new ModelAndView("jsp/logout");
-		} else if(menu.equals("menu1")) {
+		} else if(loginUser != null && menu.equals("menu1")) {
 			nextView = new ModelAndView("jsp/storeManagerCouponUse");
 			httpSession.setAttribute("menu", "menuli1");
+		} else if(loginUser != null && menu.equals("menu2")){
+			nextView = new ModelAndView("jsp/storeManagerCouponGive");
+			List<CouponCore> couponList = cpservice.getCouponList();
+			httpSession.setAttribute("menu", "menuli2");
+			nextView.addObject("couponList", couponList);
+			nextView.addObject("giveyn", "N");
+
 		} else {
 			
 		}
@@ -119,6 +136,16 @@ public class UserController {
 		List<User> userData = service.getUserList(user);
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("searchPhone", user.getPhone()); //사용자데이터
+		return nextView;
+	}
+	
+	//매장 매니저 - 쿠폰부여시 사용자 검색
+	@GetMapping("/manager/userSearch/{searchKey}/{searchKeyword}") 
+	public ModelAndView searchUser(@PathVariable("searchKey") String searchKey
+			,@PathVariable("searchKeyword") String searchKeyword ){
+		List<User> userData = service.searchUserList(searchKey, searchKeyword);
+		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserListPop");
+		nextView.addObject("userData", userData); //사용자데이터
 		return nextView;
 	}
 	
