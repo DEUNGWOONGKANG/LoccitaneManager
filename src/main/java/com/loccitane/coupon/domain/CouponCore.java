@@ -14,38 +14,41 @@ import javax.persistence.Table;
 
 @org.hibernate.annotations.DynamicUpdate
 @Entity // domain클래스인것을 나타내는 어노테이션
-@Table(name = "lc_coupon_core") //대응하는 테이블 설정
+@Table(name = "coupon") //대응하는 테이블 설정
 public class CouponCore {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	@Column(name = "lc_cp_seq") //대응하는 컬럼명 지정
+	@Column(name = "couponseq") //대응하는 컬럼명 지정
 	private int seq;
 
-	@Column(name = "lc_cp_cd")
+	@Column(name = "couponcode")
 	private String cpcode;
 	
-	@Column(name = "lc_cp_nm")
+	@Column(name = "couponname")
 	private String cpname;
 	
-	@Column(name = "lc_cp_dck")
+	@Column(name = "discountkind")
 	private String dck;
 	
-	@Column(name = "lc_cp_dc_cnt")
+	@Column(name = "discountvalue")
 	private int dccnt;
-
-	@Column(name = "lc_cp_trg_lm")
-	private String target;
 	
-	@Column(name = "lc_cp_us_yn")
+	@Column(name = "useminimum")
+	private int minimum;
+	
+	@Column(name = "discountmax")
+	private int dcmax;
+
+	@Column(name = "useyn")
 	private String useyn;
 	
-	@Column(name = "lc_cp_mm")
+	@Column(name = "couponinfo")
 	private String memo;
 	
-	@Column(name = "lc_cp_cr_if")
+	@Column(name = "createuser")
 	private String createuser;
 
-	@Column(name = "lc_cp_cr_dt")
+	@Column(name = "createdate")
 	private Date createdate;
 
 	public int getSeq() {
@@ -88,12 +91,20 @@ public class CouponCore {
 		this.dccnt = dccnt;
 	}
 
-	public String getTarget() {
-		return target;
+	public int getMinimum() {
+		return minimum;
 	}
 
-	public void setTarget(String target) {
-		this.target = target;
+	public void setMinimum(int minimum) {
+		this.minimum = minimum;
+	}
+
+	public int getDcmax() {
+		return dcmax;
+	}
+
+	public void setDcmax(int dcmax) {
+		this.dcmax = dcmax;
 	}
 
 	public String getUseyn() {

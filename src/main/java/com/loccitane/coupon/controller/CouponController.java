@@ -40,8 +40,8 @@ public class CouponController {
     }
 
 	
-	@GetMapping("/manager/couponlist/{lc_user_id}") // 고객에 대한 쿠폰조회
-	public ModelAndView getUserCoupon(@PathVariable("lc_user_id") String userid){
+	@GetMapping("/manager/couponlist/{userid}") // 고객에 대한 쿠폰조회
+	public ModelAndView getUserCoupon(@PathVariable("userid") String userid){
 		User userData = service.userCheck(userid); // 서비스에서 요청에 해당하는 처리를 한다.
 		ModelAndView nextView = new ModelAndView("jsp/storeManagerCouponList");
 		
@@ -53,9 +53,9 @@ public class CouponController {
 		return nextView;
 	}
 	
-	@GetMapping("/manager/couponuse/{lc_user_id}/{lc_cptm_seq}") // 쿠폰사용처리
-	public ModelAndView couponUse(@PathVariable("lc_user_id") String userid
-			, @PathVariable("lc_cptm_seq") int seq, HttpServletRequest request, HttpServletResponse response) throws Exception{
+	@GetMapping("/manager/couponuse/{userid}/{cptmseq}") // 쿠폰사용처리
+	public ModelAndView couponUse(@PathVariable("userid") String userid
+			, @PathVariable("cptmseq") int seq, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		//세션에서 관리자 정보 가져오기
 		HttpSession httpSession = request.getSession(true);
 		User loginUser = (User) httpSession.getAttribute("loginUser");

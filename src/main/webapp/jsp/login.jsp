@@ -13,10 +13,12 @@ function check(){
 	var pw = document.getElementById("userpw");
 	var grade = document.getElementsByName("grade");
 	var gradeCheckYn = false;
+	var gradeVal = "";
 	//관리자 유형이 체크되어 있는지 확인
   	for(var i=0; i<grade.length; i++){
 		if(grade[i].checked == true){
 			gradeCheckYn = true;
+			gradeVal = grade[i].value;
 		}
 	} 
 	if(id.value == ""){
@@ -31,7 +33,12 @@ function check(){
 		alert("관리자 유형을 선택하세요.");
 		return false;
 	}else{
-		document.loginForm.submit();
+		if(gradeVal == "store"){
+			document.getElementById("loginForm").submit();
+		}else if(gradeVal == "super"){
+			document.getElementById("loginForm").action = "/super/login";
+			document.getElementById("loginForm").submit();
+		}
 	}
 	
 }
@@ -41,7 +48,7 @@ function check(){
 
   <div class="grid">
 
-    <form id="loginForm" action="/manager/login" method="post" class="form login" onsubmit="return check()">
+    <form id="loginForm" action="/store/login" method="post" class="form login" onsubmit="return check()">
       <header class="login__header">
         <h3 class="login__title"><img src="/img/logo.png" style="width:150px"></h3>
       </header>

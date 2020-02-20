@@ -1,15 +1,15 @@
 package com.loccitane.user.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 
@@ -43,19 +43,40 @@ public class UserService {
 	}
 	
 	// 사용자 리스트 전화번호로 조회
-	public List<User> getUserList(User user) {
-		List<User> userData = userRepo.findAllByPhoneEndingWith(user.getPhone());
+	@SuppressWarnings("null")
+	public List<User> getUserListByPhone(User user) {
+		ArrayList<String> grade = new ArrayList<String>();
+		grade.add("store");
+		grade.add("super");
+		List<User> userData = userRepo.findAllByGradeNotInAndPhoneEndingWithOrderByStatusAsc(grade,user.getPhone());
+		return userData;
+	}
+	
+	// 고객리스트 조회
+	public Page<User> getCustomerList(Pageable pageable) {
+		ArrayList<String> grade = new ArrayList<String>();
+		grade.add("store");
+		grade.add("super");
+		
+		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
+        pageable = PageRequest.of(page, 10);
+        
+		Page<User> userData = userRepo.findAllByGradeNotIn(grade,pageable);
 		return userData;
 	}
 	
 	public List<User> searchUserList(String searchKey, String searchKeyword){
 		List<User> userData = null;
+		ArrayList<String> grade = new ArrayList<String>();
+		grade.add("store");
+		grade.add("super");
+		
 		if(searchKey.equals("username")) {
-			userData = userRepo.findAllByUsername(searchKeyword);
+			userData = userRepo.findAllByUsernameAndGradeNotIn(searchKeyword, grade);
 		}else if(searchKey.equals("phone")) {
-			userData = userRepo.findAllByPhone(searchKeyword);
+			userData = userRepo.findAllByPhoneAndGradeNotIn(searchKeyword, grade);
 		}else{
-			userData = userRepo.findAllByUserid(searchKeyword);
+			userData = userRepo.findAllByUseridAndGradeNotIn(searchKeyword, grade);
 		}
 		
 		return userData;

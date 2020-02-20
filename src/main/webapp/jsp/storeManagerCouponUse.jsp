@@ -1,6 +1,7 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +14,7 @@ function check(){
 		alert("휴대폰 뒷 번호 4자리를 입력하세요");
 		return false;
 	}else{
-		document.searchForm.submit();
+		document.getElementById("searchForm").submit();
 	}
 }
 </script>

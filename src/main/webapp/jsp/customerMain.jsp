@@ -25,7 +25,7 @@ function check(){
 		alert("휴대폰 뒷 번호 4자리를 입력하세요");
 		return false;
 	}else{
-		document.loginForm.submit();
+		document.getElementById("loginForm").submit();
 	}
 	
 }

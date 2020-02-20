@@ -3,12 +3,14 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
 <title></title>
-<link href="http://localhost:8081/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
+<link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function useCoupon(seq, userid){
 	var result = confirm("해당 쿠폰을 사용처리 하시겠습니까?");
@@ -65,7 +67,13 @@ function useCoupon(seq, userid){
 			<td width="10%">
 			</td>
 			<td style="text-align:center;border-bottom:2px solid #ffcb00; height:50px;">
-			<h1>${userData.username} / ${userData.phone} / ${userData.grade}</h1> 
+			<c:set var = "plength" value = "${fn:length(userData.phone)}"/>
+			<c:set var = "length" value = "${fn:length(userData.username)}"/>
+			<h1>
+			${fn:substring(userData.username, 0, 1)}*${fn:substring(userData.username, 2, length)} 
+			/ ${fn:substring(userData.phone, 0, 4)}****${fn:substring(userData.phone, 8, plength)} 
+			/ ${userData.grade}
+			</h1> 
 			</td>
 			<td width="10%">
 			</td>

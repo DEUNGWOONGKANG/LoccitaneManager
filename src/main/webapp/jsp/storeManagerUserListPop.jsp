@@ -2,12 +2,13 @@
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
 <title></title>
-<link href="http://localhost:8081/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
+<link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function userSelect(userid, username, phone, grade, seq){
 	var result = confirm(username+"고객이 맞습니까?");

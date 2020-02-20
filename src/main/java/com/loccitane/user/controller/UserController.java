@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,8 +49,8 @@ public class UserController {
 		return nextView;
 	}
 	
-	@GetMapping("/user/check/{lc_user_id}") // 최초 고객 URL 랜딩페이지에서 ID값 체크
-	public ModelAndView checkUser(@PathVariable("lc_user_id") String userid){
+	@GetMapping("/user/check/{userid}") // 최초 고객 URL 랜딩페이지에서 ID값 체크
+	public ModelAndView checkUser(@PathVariable("userid") String userid){
 		User user = service.userCheck(userid); // 서비스에서 요청에 해당하는 처리를 한다.
 		ModelAndView nextView = new ModelAndView("jsp/customerMain");
 		if(user == null) {
@@ -61,10 +64,10 @@ public class UserController {
 		return nextView;
 	}
 	
-	//로그인 시도
-	@PostMapping("/manager/login") 
-	public ModelAndView loginManager(User user, HttpServletResponse response, HttpServletRequest request) throws Exception { 
-		ModelAndView nextView = null;
+	//매장관리자 로그인 시도
+	@PostMapping("/store/login") 
+	public ModelAndView storeLogin(User user, HttpServletResponse response, HttpServletRequest request) throws Exception { 
+		ModelAndView nextView = new ModelAndView("jsp/storeManagerCouponUse");
 		User userData = service.managerLogin(user);// 매니저 로그인 DB체크
 		
 		if(userData == null) { //사용자가 존재하지 않을경우
@@ -72,19 +75,34 @@ public class UserController {
             PrintWriter out = response.getWriter();
             out.println("<script>alert('등록된 사용자 정보가 없습니다.'); history.go(-1);</script>");
             out.flush();
-		}
-		if(user.getGrade().equals("store")) { //매장관리자일 경우
-			nextView = new ModelAndView("jsp/storeManagerCouponUse");
-		}else if(user.getGrade().equals("super")) { // 슈퍼관리자일 경우
-			nextView = new ModelAndView("jsp/superManagerMain");
-		}
-		
-		// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
-		if(userData != null) {
+		}else{
 			HttpSession httpSession = request.getSession(true);
 			httpSession.setAttribute("loginUser", userData);
 			httpSession.setAttribute("menu", "menuli1");
 		}
+		return nextView;
+	}
+	
+	//슈퍼관리자 로그인 시도
+	@PostMapping("/super/login") 
+	public ModelAndView superLogin(User user, HttpServletResponse response, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerUserList");
+		User userData = service.managerLogin(user);// 매니저 로그인 DB체크
+		
+		if(userData == null) { //사용자가 존재하지 않을경우
+			response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("<script>alert('등록된 사용자 정보가 없습니다.'); history.go(-1);</script>");
+            out.flush();
+		}else {
+			// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
+			HttpSession httpSession = request.getSession(true);
+			httpSession.setAttribute("loginUser", userData);
+			Page<User> userList = service.getCustomerList(pageable);
+			nextView.addObject("userList", userList);
+		}
+		
+		
 		return nextView;
 	}
 	
@@ -133,7 +151,7 @@ public class UserController {
 	@PostMapping("/manager/userSearch") 
 	public ModelAndView getUserList(User user){
 		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserList");
-		List<User> userData = service.getUserList(user);
+		List<User> userData = service.getUserListByPhone(user);
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("searchPhone", user.getPhone()); //사용자데이터
 		return nextView;

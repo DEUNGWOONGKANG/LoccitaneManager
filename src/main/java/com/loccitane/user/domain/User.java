@@ -10,39 +10,61 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity // domain클래스인것을 나타내는 어노테이션
-@Table(name = "lc_member_core") //대응하는 테이블 설정
+@Table(name = "userdata") //대응하는 테이블 설정
 public class User {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "lc_user_seq") //대응하는 컬럼명 지정
+	@Column(name = "userseq") 
 	private int seq;
 	
-	@Column(name = "lc_user_id") //대응하는 컬럼명 지정
+	@Column(name = "vipcode") 
+	private String vipcode;
+	
+	@Column(name = "userid") 
 	private String userid;
 
-	@Column(name = "lc_user_pw")
+	@Column(name = "userpw")
 	private String userpw;
 
-	@Column(name = "lc_user_grade")
+	@Column(name = "grade")
 	private String grade;
 	
-	@Column(name = "lc_user_name")
+	@Column(name = "username")
 	private String username;
 	
-	@Column(name = "lc_user_store")
+	@Column(name = "store")
 	private String store;
 	
-	@Column(name = "lc_user_position")
+	@Column(name = "position")
 	private String position;
 	
-	@Column(name = "lc_user_status")
+	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "lc_user_phone")
+	@Column(name = "phone")
 	private String phone;
 	
-	@Column(name = "lc_user_upd")
-	private Date upate;
+	@Column(name = "lastpurchase")
+	private Date lastpurchase;
+	
+	@Column(name = "lastupdate")
+	private Date update;
+
+	public int getSeq() {
+		return seq;
+	}
+
+	public void setSeq(int seq) {
+		this.seq = seq;
+	}
+
+	public String getVipcode() {
+		return vipcode;
+	}
+
+	public void setVipcode(String vipcode) {
+		this.vipcode = vipcode;
+	}
 
 	public String getUserid() {
 		return userid;
@@ -108,20 +130,20 @@ public class User {
 		this.phone = phone;
 	}
 
-	public Date getUpate() {
-		return upate;
+	public Date getLastpurchase() {
+		return lastpurchase;
 	}
 
-	public void setUpate(Date upate) {
-		this.upate = upate;
+	public void setLastpurchase(Date lastpurchase) {
+		this.lastpurchase = lastpurchase;
 	}
 
-	public int getSeq() {
-		return seq;
+	public Date getUpdate() {
+		return update;
 	}
 
-	public void setSeq(int seq) {
-		this.seq = seq;
+	public void setUpdate(Date update) {
+		this.update = update;
 	}
 	
 }

@@ -1,14 +1,14 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@include file="common.jsp" %>
 <!DOCTYPE html>
 <head>
 <meta charset="EUC-KR">
 <title></title>
-<link href="http://localhost:8081/css/lc_default.css" rel="stylesheet" type="text/css" media="all" />
+<link href="<%=url %>/css/lc_default.css" rel="stylesheet" type="text/css" media="all" />
 <%
 	String menuName = (String)session.getAttribute("menu");
-	User user = (User)session.getAttribute("loginUser");
 %>
 </head>
 <body>
@@ -19,7 +19,7 @@
 		</div>
 	<div id="header" class="container">
 		<div id="logo">
-        	<span><a href="/manager/menu1"><img src="/img/logo.png" style="width:200px"></a></span>
+        	<span><a href="/manager/menu1"><img src="<%=url %>/img/logo.png" style="width:200px"></a></span>
 		</div>
 		<div id="menu">
 			<ul>

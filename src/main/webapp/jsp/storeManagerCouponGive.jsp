@@ -2,16 +2,14 @@
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-<%
-	String url = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-%>
 <meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
-<link rel="stylesheet" href="<%=url %>/js/jquery-ui.css">
+<link rel="stylesheet" href="<%=url %>/css/jquery-ui.css">
 <script src="<%=url %>/js/jquery-3.4.1.min.js"></script>
 <script src="<%=url %>/js/jquery-ui.js"></script>
 <script type="text/javascript">
@@ -24,8 +22,8 @@ $(function(){
 });
 $.datepicker.setDefaults({
     dateFormat: 'yy-mm-dd',
-    prevText: '이전 달',
-    nextText: '다음 달',
+    prevText: '<',
+    nextText: '>',
     monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
     monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
     dayNames: ['일', '월', '화', '수', '목', '금', '토'],
@@ -76,7 +74,7 @@ function check(){
 	var result = confirm(username.value+" 고객님에게 쿠폰을 발행하시겠습니까?");
 	
 	if(result){
-		document.searchForm.submit();
+		document.getElementById("searchForm").submit();
 	}else{
 		return false;
 	}
@@ -107,45 +105,47 @@ function check(){
 		</tr>
 	</table>
 	<table id="userList">
-		<tr height="100px">
-			<td width="25%">쿠폰선택</td>
-			<td>
-				<select class="selectBox" id="couponKind" name="cptmcpcode">
-						<option value=""></option>
-   					<c:forEach var="coupon" items="${couponList}">
-   						<option value="${coupon.cpcode}">[${coupon.cpcode}] ${coupon.cpname }</option>
-   					</c:forEach>
-		    	</select>
-			</td>
-		</tr>
-		<tr height="100px">
-			<td width="25%">쿠폰사용가능일</td>
-			<td>
-				시작일: <input type="text" class="inputDate" id="cptmstartdate" name="cptmstartdate" readonly>  
-				종료일: <input type="text" class="inputDate" id="cptmenddate" name="cptmenddate" readonly>
-				<input type="hidden" id="useyn" name="cptmusedyn" value="N">
-			</td>
-		</tr>
-		<tr height="100px">
-			<td width="25%" rowspan=2>발행대상고객</td>
-			<td>
-				<select id="searchKey" class="selectBox2">
-					<option value="username">이름</option>
-					<option value="phone">전화번호</option>
-					<option value="userid">회원번호</option>
-				</select>
-				<input type="text" id="searchKeyword" class="inputText">  
-				<input id="searchbtn" type="button" class="button-yellow-small" value="검색" onclick="userSearch()">
-			</td>
-		</tr>
-		<tr height="150px">
-			<td>
-				<input type="hidden" id="userid" name="userid">
-				<input type="hidden" id="grade" name="grade" readonly>
-				이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" class="viewText" id="username" readonly><br>
-				전화번호: <input type="text" class="viewText" id="phone" name="phone" readonly><br>
-			</td>
-		</tr>
+		<tbody>
+			<tr height="100px">
+				<td width="25%">쿠폰선택</td>
+				<td>
+					<select class="selectBox" id="couponKind" name="cptmcpcode">
+							<option value=""></option>
+	   					<c:forEach var="coupon" items="${couponList}">
+	   						<option value="${coupon.cpcode}">[${coupon.cpcode}] ${coupon.cpname }</option>
+	   					</c:forEach>
+			    	</select>
+				</td>
+			</tr>
+			<tr height="100px">
+				<td width="25%">쿠폰사용가능일</td>
+				<td>
+					시작일: <input type="text" class="inputDate" id="cptmstartdate" name="cptmstartdate" readonly>  
+					종료일: <input type="text" class="inputDate" id="cptmenddate" name="cptmenddate" readonly>
+					<input type="hidden" id="useyn" name="cptmusedyn" value="N">
+				</td>
+			</tr>
+			<tr height="100px">
+				<td width="25%" rowspan=2>발행대상고객</td>
+				<td>
+					<select id="searchKey" class="selectBox2">
+						<option value="username">이름</option>
+						<option value="phone">전화번호</option>
+						<option value="userid">회원번호</option>
+					</select>
+					<input type="text" id="searchKeyword" class="inputText">  
+					<input id="searchbtn" type="button" class="button-yellow-small" value="검색" onclick="userSearch()">
+				</td>
+			</tr>
+			<tr height="150px">
+				<td style="border-left:1px solid #e0e0e0;">
+					<input type="hidden" id="userid" name="userid">
+					<input type="hidden" id="grade" name="grade" readonly>
+					이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" class="viewText" id="username" readonly><br>
+					전화번호: <input type="text" class="viewText" id="phone" name="phone" readonly><br>
+				</td>
+			</tr>
+		</tbody>
 	</table>
 	<div style="text-align:center;margin-top:30px;">
 		<input id="submitbtn" type="submit" class="button-yellow" value="쿠폰발행">

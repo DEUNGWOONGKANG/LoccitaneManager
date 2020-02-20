@@ -580,6 +580,11 @@ pre code {
   margin-right: auto;
   margin-left: auto;
 }
+.search{
+	margin-top:30px;
+	margin-bottom:30px;
+}
+
 
 @media (min-width: 576px) {
   .container, .container-sm {
@@ -2031,8 +2036,6 @@ pre code {
 }
 
 .form-control {
-  display: block;
-  width: 100%;
   height: calc(1.5em + 0.75rem + 2px);
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
@@ -2705,7 +2708,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-warning {
-  color: #212529;
+  color: #000000;
   background-color: #ffc107;
   border-color: #ffc107;
 }

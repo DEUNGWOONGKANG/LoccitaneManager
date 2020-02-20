@@ -1,6 +1,10 @@
 package com.loccitane.user.repository;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +17,10 @@ public interface UserRepository extends JpaRepository<User, String>{
 	User findByUserid(String userid);
 	User findByUseridAndPhoneEndingWith(String userid, String phone);
 	User findByUseridAndUserpwAndGrade(String userid, String userpw, String grade);
-	List<User> findAllByPhoneEndingWith(String phone);
-	List<User> findAllByUsername(String username);
-	List<User> findAllByPhone(String phone);
-	List<User> findAllByUserid(String userid);
+	List<User> findAllByGradeNotInAndPhoneEndingWithOrderByStatusAsc(ArrayList<String> grade,String phone);
+	List<User> findAllByUsernameAndGradeNotIn(String username, ArrayList<String> grade);
+	List<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade);
+	List<User> findAllByUseridAndGradeNotIn(String userid, ArrayList<String> grade);
+	List<User> findAllByGradeNotInOrderByStatusAsc(ArrayList<String> grade);
+	Page<User> findAllByGradeNotIn(ArrayList<String> grade, Pageable pageable);
 }
