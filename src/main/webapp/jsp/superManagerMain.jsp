@@ -4,7 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<%    request.setCharacterEncoding("UTF-8"); %>
 <html>
   <head>
     <title>Loccitane Admin Page</title>
@@ -20,20 +19,9 @@
     <link rel="stylesheet" href="<%=url %>/css/style.default.css" id="theme-stylesheet">
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
-<script type="text/javascript">
-function check(){
-	var searchKeyword = document.getElementById("searchKeyword");
-	if(searchKeyword.value == "" || searchKeyword.value == null){
-		alert("검색어를 입력해주세요.");
-		return false;
-	}else{
-		document.getElementById("searchForm").submit();
-	}
-}
-function userInfo(userid){
-	location.href="/super/userinfo/"+userid;
-}
-</script>
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
   </head>
   <body>
     <!-- navbar-->
@@ -52,11 +40,11 @@ function userInfo(userid){
       <div id="sidebar" class="sidebar py-3">
         <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">ADMIN PAGE</div>
         <ul class="sidebar-menu list-unstyled">
-          <li class="sidebar-list-item"><a href="/super/home" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span><b>Home</b></span></a></li>
+          <li class="sidebar-list-item"><a href="/super/home" class="sidebar-link text-muted active"><i class="o-home-1 mr-3 text-gray"></i><span><b>Home</b></span></a></li>
           <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#pages" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span><b>계정관리</b></span></a>
-            <div id="pages" class="collapse show">
+            <div id="pages" class="collapse">
               <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
-                <li class="sidebar-list-item"><a href="/super/userlist" class="sidebar-link text-muted pl-lg-5 active"><b>회원정보</b></a></li>
+                <li class="sidebar-list-item"><a href="/super/userlist" class="sidebar-link text-muted pl-lg-5"><b>회원정보</b></a></li>
                 <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5"><b>엑셀업로드</b></a></li>
               </ul>
             </div>
@@ -82,82 +70,6 @@ function userInfo(userid){
               <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span><b>등급관리</b></span></a></li>
               <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span><b>카카오톡 발송관리</b></span></a></li>
         </ul>
-      </div>
-      <div class="w-100 d-flex flex-wrap">
-      	<div class="container-fluid px-xl-5">
-      		<div class="search">	
-		    	<form id="searchForm" action="/super/userlist" method="post" onsubmit="return check()">
-		    		<select class="form-control" id="searchKey" name="searchKey">
-						<option value="username">이름</option>
-						<option value="phone">전화번호</option>
-						<option value="userid">회원번호</option>
-					</select>
-			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
-			  		<input type="submit" class="btn btn-warning" value="검색">
-				</form>
-			</div>
-      	</div>
-      	<c:if test="${!empty userList.content}">
-	      	<table class="table table-hover" style="margin-left:10px;">
-			  <thead>
-			    <tr>
-			      <th scope="col">NO</th>
-			      <th scope="col">고객번호</th>
-			      <th scope="col">전화번호</th>
-			      <th scope="col">이름</th>
-			      <th scope="col">등급</th>
-			      <th scope="col">마지막구매일</th>
-			    </tr>
-			  </thead>
-			  <tbody>
-			  	<c:forEach var="user" items="${userList.content}" varStatus="status">
-				    <tr style="cursor:pointer;" onclick="userInfo('${user.userid}')">
-				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${user.vipcode}</td>
-				      <td>
-				      	<c:set var = "plength" value = "${fn:length(user.phone)}"/>
-						${fn:substring(user.phone, 0, 4)}****${fn:substring(user.phone, 8, plength)}
-					  </td>
-				      <td>
-				      	<c:set var = "length" value = "${fn:length(user.username)}"/>
-						${fn:substring(user.username, 0, 1)}*${fn:substring(user.username, 2, length)}
-				      </td>
-				      <td>${user.grade}</td>
-				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
-				    </tr>
-				</c:forEach>
-			  </tbody>
-			</table>
-		</c:if>
-		<c:if test="${empty userList.content}">
-			<div style="text-align:center;width:100%">
-				<h2>사용자가 존재하지 않습니다.</h2>
-			</div>
-		</c:if>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<ul class="pagination">
-						<c:if test="${paging.curRange > 1}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum-10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><</a></li>
-						</c:if>
-						<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
-							<c:choose>
-								<c:when test="${pageNum eq  paging.curPage}">
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
-								</c:when>
-								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
-						<c:if test="${paging.curRange < paging.rangeCnt}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum+10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
-						</c:if>
-					</ul>
-				</div>
-			</div>
-		</div>
       </div>
     </div>
     <!-- JavaScript files-->

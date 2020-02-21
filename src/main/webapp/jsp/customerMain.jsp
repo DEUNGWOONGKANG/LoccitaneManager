@@ -1,16 +1,15 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link rel="stylesheet" href="../../css/lc_common.css">
 <script type="text/javascript">
 function loadScript(){
 	if("${check}" == "N"){
-		alert("Á¸ÀçÇÏÁö ¾Ê´Â »ç¿ëÀÚIDÀÔ´Ï´Ù.");
+		alert("ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ì‚¬ìš©ìIDì…ë‹ˆë‹¤.");
 		var phone = document.getElementById("phone");
 		var submitbtn = document.getElementById("submitbtn");
 		
@@ -22,7 +21,7 @@ function loadScript(){
 function check(){
 	var phone = document.getElementById("phone");
 	if(phone.value == "" || phone.value.length != 4){
-		alert("ÈŞ´ëÆù µŞ ¹øÈ£ 4ÀÚ¸®¸¦ ÀÔ·ÂÇÏ¼¼¿ä");
+		alert("íœ´ëŒ€í° ë’· ë²ˆí˜¸ 4ìë¦¬ë¥¼ ì…ë ¥í•˜ì„¸ìš”");
 		return false;
 	}else{
 		document.getElementById("loginForm").submit();
@@ -45,7 +44,7 @@ function check(){
 		<td width="5%">
 		</td>
 		<td>
-			<div class="infoTitle">ÈŞ´ëÆù µŞ ¹øÈ£ 4ÀÚ¸®¸¦ ÀÔ·ÂÇÏ¼¼¿ä.</div>
+			<div class="infoTitle">íœ´ëŒ€í° ë’· ë²ˆí˜¸ 4ìë¦¬ë¥¼ ì…ë ¥í•˜ì„¸ìš”.</div>
 		</td>
 		<td width="5%">
 		</td>
@@ -58,8 +57,8 @@ function check(){
 		<td width="5%">
 		</td>
 		<td>
-			<div id="infoText">°í°´ È®ÀÎÀ» À§ÇØ º»ÀÎÀÇ ÈŞ´ëÆù µŞ ¹øÈ£ 4ÀÚ¸®¸¦ ÀÔ·ÂÇÏ¼¼¿ä.
-			<br>ÀÔ·Â ÈÄ ÄíÆù È®ÀÎ ÆäÀÌÁö·Î ÀÌµ¿ÇÕ´Ï´Ù.</div>
+			<div id="infoText">ê³ ê° í™•ì¸ì„ ìœ„í•´ ë³¸ì¸ì˜ íœ´ëŒ€í° ë’· ë²ˆí˜¸ 4ìë¦¬ë¥¼ ì…ë ¥í•˜ì„¸ìš”.
+			<br>ì…ë ¥ í›„ ì¿ í° í™•ì¸ í˜ì´ì§€ë¡œ ì´ë™í•©ë‹ˆë‹¤.</div>
 		</td>
 		<td width="5%">
 		</td>
@@ -86,7 +85,7 @@ function check(){
 		<td width="5%">
 		</td>
 		<td width="90%" style="text-align:center;">
-			<input id="submitbtn" type="submit" class="button-yellow" value="È®ÀÎ">
+			<input id="submitbtn" type="submit" class="button-yellow" value="í™•ì¸">
 		</td>
 		<td width="5%">
 		</td>

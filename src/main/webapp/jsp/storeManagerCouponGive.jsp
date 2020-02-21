@@ -1,12 +1,11 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <link rel="stylesheet" href="<%=url %>/css/jquery-ui.css">
@@ -14,7 +13,7 @@
 <script src="<%=url %>/js/jquery-ui.js"></script>
 <script type="text/javascript">
 if("${giveyn}" == "Y"){
-	alert("ÄíÆùÀÌ ¹ßÇàµÇ¾ú½À´Ï´Ù.");
+	alert("ì¿ í°ì´ ë°œí–‰ë˜ì—ˆìŠµë‹ˆë‹¤.");
 }
 $(function(){
     $("#cptmstartdate").datepicker();
@@ -24,13 +23,13 @@ $.datepicker.setDefaults({
     dateFormat: 'yy-mm-dd',
     prevText: '<',
     nextText: '>',
-    monthNames: ['1¿ù', '2¿ù', '3¿ù', '4¿ù', '5¿ù', '6¿ù', '7¿ù', '8¿ù', '9¿ù', '10¿ù', '11¿ù', '12¿ù'],
-    monthNamesShort: ['1¿ù', '2¿ù', '3¿ù', '4¿ù', '5¿ù', '6¿ù', '7¿ù', '8¿ù', '9¿ù', '10¿ù', '11¿ù', '12¿ù'],
-    dayNames: ['ÀÏ', '¿ù', 'È­', '¼ö', '¸ñ', '±İ', 'Åä'],
-    dayNamesShort: ['ÀÏ', '¿ù', 'È­', '¼ö', '¸ñ', '±İ', 'Åä'],
-    dayNamesMin: ['ÀÏ', '¿ù', 'È­', '¼ö', '¸ñ', '±İ', 'Åä'],
+    monthNames: ['1ì›”', '2ì›”', '3ì›”', '4ì›”', '5ì›”', '6ì›”', '7ì›”', '8ì›”', '9ì›”', '10ì›”', '11ì›”', '12ì›”'],
+    monthNamesShort: ['1ì›”', '2ì›”', '3ì›”', '4ì›”', '5ì›”', '6ì›”', '7ì›”', '8ì›”', '9ì›”', '10ì›”', '11ì›”', '12ì›”'],
+    dayNames: ['ì¼', 'ì›”', 'í™”', 'ìˆ˜', 'ëª©', 'ê¸ˆ', 'í† '],
+    dayNamesShort: ['ì¼', 'ì›”', 'í™”', 'ìˆ˜', 'ëª©', 'ê¸ˆ', 'í† '],
+    dayNamesMin: ['ì¼', 'ì›”', 'í™”', 'ìˆ˜', 'ëª©', 'ê¸ˆ', 'í† '],
     showMonthAfterYear: true,
-    yearSuffix: '³â'
+    yearSuffix: 'ë…„'
 });
 
 function userSearch(){
@@ -38,7 +37,7 @@ function userSearch(){
 	var searchKeyword = document.getElementById("searchKeyword").value;
 	searchKeyword = searchKeyword.replace(/ /g,"");
 	if(searchKeyword == "" || searchKeyword == null){
-		alert("°Ë»ö¾î¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+		alert("ê²€ìƒ‰ì–´ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.");
 		return false;
 	}
 	
@@ -54,24 +53,24 @@ function check(){
 	startDate.value = $("#cptmstartdate").val();
 	endDate.value = $("#cptmenddate").val();
 	if(couponKind.options[couponKind.selectedIndex].value == ""){
-		alert("ÄíÆù Á¾·ù¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä.");
+		alert("ì¿ í° ì¢…ë¥˜ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.");
 		return false;
 	}
 	if(startDate.value == "" || startDate.value == null){
-		alert("ÄíÆù»ç¿ë½ÃÀÛÀÏÀ» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+		alert("ì¿ í°ì‚¬ìš©ì‹œì‘ì¼ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
 		return false;
 	}
 	if(endDate.value == "" || endDate.value == null){
-		alert("ÄíÆù»ç¿ëÁ¾·áÀÏÀ» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+		alert("ì¿ í°ì‚¬ìš©ì¢…ë£Œì¼ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
 		return false;
 	}
 	
 	if(username.value == "" || username.value == null){
-		alert("¹ßÇà´ë»ó°í°´À» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+		alert("ë°œí–‰ëŒ€ìƒê³ ê°ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
 		return false;
 	}
 	
-	var result = confirm(username.value+" °í°´´Ô¿¡°Ô ÄíÆùÀ» ¹ßÇàÇÏ½Ã°Ú½À´Ï±î?");
+	var result = confirm(username.value+" ê³ ê°ë‹˜ì—ê²Œ ì¿ í°ì„ ë°œí–‰í•˜ì‹œê² ìŠµë‹ˆê¹Œ?");
 	
 	if(result){
 		document.getElementById("searchForm").submit();
@@ -90,7 +89,7 @@ function check(){
 			<td width="10%">
 			</td>
 			<td>
-				<h1>ÄíÆù ¿äÃ»</h1>
+				<h1>ì¿ í° ìš”ì²­</h1>
 			</td>
 			<td width="10%">
 			</td>
@@ -107,7 +106,7 @@ function check(){
 	<table id="userList">
 		<tbody>
 			<tr height="100px">
-				<td width="25%">ÄíÆù¼±ÅÃ</td>
+				<td width="25%">ì¿ í°ì„ íƒ</td>
 				<td>
 					<select class="selectBox" id="couponKind" name="cptmcpcode">
 							<option value=""></option>
@@ -118,37 +117,37 @@ function check(){
 				</td>
 			</tr>
 			<tr height="100px">
-				<td width="25%">ÄíÆù»ç¿ë°¡´ÉÀÏ</td>
+				<td width="25%">ì¿ í°ì‚¬ìš©ê°€ëŠ¥ì¼</td>
 				<td>
-					½ÃÀÛÀÏ: <input type="text" class="inputDate" id="cptmstartdate" name="cptmstartdate" readonly>  
-					Á¾·áÀÏ: <input type="text" class="inputDate" id="cptmenddate" name="cptmenddate" readonly>
+					ì‹œì‘ì¼: <input type="text" class="inputDate" id="cptmstartdate" name="cptmstartdate" readonly>  
+					ì¢…ë£Œì¼: <input type="text" class="inputDate" id="cptmenddate" name="cptmenddate" readonly>
 					<input type="hidden" id="useyn" name="cptmusedyn" value="N">
 				</td>
 			</tr>
 			<tr height="100px">
-				<td width="25%" rowspan=2>¹ßÇà´ë»ó°í°´</td>
+				<td width="25%" rowspan=2>ë°œí–‰ëŒ€ìƒê³ ê°</td>
 				<td>
 					<select id="searchKey" class="selectBox2">
-						<option value="username">ÀÌ¸§</option>
-						<option value="phone">ÀüÈ­¹øÈ£</option>
-						<option value="userid">È¸¿ø¹øÈ£</option>
+						<option value="username">ì´ë¦„</option>
+						<option value="phone">ì „í™”ë²ˆí˜¸</option>
+						<option value="userid">íšŒì›ë²ˆí˜¸</option>
 					</select>
 					<input type="text" id="searchKeyword" class="inputText">  
-					<input id="searchbtn" type="button" class="button-yellow-small" value="°Ë»ö" onclick="userSearch()">
+					<input id="searchbtn" type="button" class="button-yellow-small" value="ê²€ìƒ‰" onclick="userSearch()">
 				</td>
 			</tr>
 			<tr height="150px">
 				<td style="border-left:1px solid #e0e0e0;">
 					<input type="hidden" id="userid" name="userid">
 					<input type="hidden" id="grade" name="grade" readonly>
-					ÀÌ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;¸§: <input type="text" class="viewText" id="username" readonly><br>
-					ÀüÈ­¹øÈ£: <input type="text" class="viewText" id="phone" name="phone" readonly><br>
+					ì´&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ë¦„: <input type="text" class="viewText" id="username" readonly><br>
+					ì „í™”ë²ˆí˜¸: <input type="text" class="viewText" id="phone" name="phone" readonly><br>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	<div style="text-align:center;margin-top:30px;">
-		<input id="submitbtn" type="submit" class="button-yellow" value="ÄíÆù¹ßÇà">
+		<input id="submitbtn" type="submit" class="button-yellow" value="ì¿ í°ë°œí–‰">
 	</div>
 </form>
 </div>

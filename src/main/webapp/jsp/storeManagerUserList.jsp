@@ -1,6 +1,6 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -8,12 +8,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function userSelect(userid, username){
-	var result = confirm(username+"°í°´ÀÌ ¸Â½À´Ï±î?");
+	var result = confirm(username+"ê³ ê°ì´ ë§ìŠµë‹ˆê¹Œ?");
 	if(result){
 		location.href = '/manager/couponlist/'+userid;
 	}
@@ -33,7 +32,7 @@ function dormant(){
 			<td width="10%">
 			</td>
 			<td>
-				<h1>ÄíÆù»ç¿ëÃ³¸®</h1>
+				<h1>ì¿ í°ì‚¬ìš©ì²˜ë¦¬</h1>
 			</td>
 			<td width="10%">
 			</td>
@@ -50,7 +49,7 @@ function dormant(){
 			<td width="10%">
 			</td>
 			<td style="text-align:center;">
-				<h1>ÇÚµåÆù ¹øÈ£ µŞÀÚ¸® 4ÀÚ¸®</h1><br>
+				<h1>í•¸ë“œí° ë²ˆí˜¸ ë’·ìë¦¬ 4ìë¦¬</h1><br>
 			</td>
 			<td width="10%">
 			</td>
@@ -60,7 +59,7 @@ function dormant(){
 			</td>
 			<td style="text-align:center;">
 				<input type="text" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
-				<input id="submitbtn" type="submit" class="button-yellow" value="°Ë»ö">
+				<input id="submitbtn" type="submit" class="button-yellow" value="ê²€ìƒ‰">
 			</td>
 			<td width="10%">
 			</td>
@@ -71,10 +70,10 @@ function dormant(){
 	<table id="userList">
 		<thead>
 		<tr>
-			<th>ÀÌ¸§</th>
-			<th>¿¬¶ôÃ³</th>
-			<th>µî±Ş</th>
-			<th>¸¶Áö¸·±¸¸ÅÀÏ</th>
+			<th>ì´ë¦„</th>
+			<th>ì—°ë½ì²˜</th>
+			<th>ë“±ê¸‰</th>
+			<th>ë§ˆì§€ë§‰êµ¬ë§¤ì¼</th>
 			<th></th>
 		</tr>
 		</thead><!-- #userList Header -->
@@ -92,8 +91,8 @@ function dormant(){
 				</td>
 				<td>${user.grade }</td>
 				<td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
-				<td><input type="button" class="button-yellow-small" value="¼±ÅÃ" onclick="userSelect('${user.userid}', '${user.username}')"></td>
-			</tr><!-- Á¤»ó»ç¿ëÀÚ -->
+				<td><input type="button" class="button-yellow-small" value="ì„ íƒ" onclick="userSelect('${user.userid}', '${user.username}')"></td>
+			</tr><!-- ì •ìƒì‚¬ìš©ì -->
 			</c:if>
 			<c:if test="${user.status == '9'}">
 			<tr class="usen">
@@ -110,8 +109,8 @@ function dormant(){
 				<fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/>
 				<fmt:formatDate value="${today}" pattern="YYYY-MM-dd"/>
 				</td>
-				<td><input type="button" class="button-gray-small" value="ÈŞ¸é" onclick="dormant()"></td>
-			</tr><!-- ÈŞ¸é -->
+				<td><input type="button" class="button-gray-small" value="íœ´ë©´" onclick="dormant()"></td>
+			</tr><!-- íœ´ë©´ -->
 			</c:if>
 		</c:forEach>
 		</tbody>
@@ -119,7 +118,7 @@ function dormant(){
 	</c:if>
 	<c:if test="${empty userData}">
 	<div class="nodata">
-		»ç¿ëÀÚ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.
+		ì‚¬ìš©ìê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	</div>
 	</c:if>
 </div>

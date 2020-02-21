@@ -47,6 +47,9 @@ public class User {
 	@Column(name = "lastpurchase")
 	private Date lastpurchase;
 	
+	@Column(name = "totalbuy")
+	private int totalbuy;
+	
 	@Column(name = "lastupdate")
 	private Date update;
 
@@ -145,5 +148,15 @@ public class User {
 	public void setUpdate(Date update) {
 		this.update = update;
 	}
+
+	public int getTotalbuy() {
+		return totalbuy;
+	}
+
+	public void setTotalbuy(int totalbuy) {
+		this.totalbuy = totalbuy;
+	}
+	
+	
 	
 }

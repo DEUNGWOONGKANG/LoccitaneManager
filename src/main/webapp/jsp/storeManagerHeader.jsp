@@ -1,10 +1,9 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="common.jsp" %>
 <!DOCTYPE html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_default.css" rel="stylesheet" type="text/css" media="all" />
 <%
@@ -14,8 +13,8 @@
 <body>
 <div id="header-wrapper">
 		<div id="loginInfo">
-			<%=user.getUsername() %> ´Ô
-			<input id="logoutbtn" type="button" class="button-gray-small" value="·Î±×¾Æ¿ô" onclick="logout()">
+			<%=user.getUsername() %> ë‹˜
+			<input id="logoutbtn" type="button" class="button-gray-small" value="ë¡œê·¸ì•„ì›ƒ" onclick="logout()">
 		</div>
 	<div id="header" class="container">
 		<div id="logo">
@@ -23,11 +22,11 @@
 		</div>
 		<div id="menu">
 			<ul>
-				<li id="menuli1"><a href="/manager/menu1" id="menu1">ÄíÆù»ç¿ëÃ³¸®</a></li>
-				<li id="menuli2"><a href="/manager/menu2" id="menu2">ÄíÆù ¿äÃ»</a></li>
-				<li id="menuli3"><a href="#" id="menu3">½Ã°£º°»ç¿ë·®</a></li>
-				<li id="menuli4"><a href="#" id="menu4">ÀÏÀÚº°»ç¿ë·®</a></li>
-				<li id="menuli5"><a href="#" id="menu5">ÄíÆùº°»ç¿ë·®</a></li>
+				<li id="menuli1"><a href="/manager/menu1" id="menu1">ì¿ í°ì‚¬ìš©ì²˜ë¦¬</a></li>
+				<li id="menuli2"><a href="/manager/menu2" id="menu2">ì¿ í° ìš”ì²­</a></li>
+				<li id="menuli3"><a href="#" id="menu3">ì‹œê°„ë³„ì‚¬ìš©ëŸ‰</a></li>
+				<li id="menuli4"><a href="#" id="menu4">ì¼ìë³„ì‚¬ìš©ëŸ‰</a></li>
+				<li id="menuli5"><a href="#" id="menu5">ì¿ í°ë³„ì‚¬ìš©ëŸ‰</a></li>
 			</ul>
 		</div>
 	</div>
@@ -48,7 +47,7 @@ function active(num){
 	} 
 }
 function logout(){
-	var result = confirm("·Î±×¾Æ¿ô ÇÏ½Ã°Ú½À´Ï±î?");
+	var result = confirm("ë¡œê·¸ì•„ì›ƒ í•˜ì‹œê² ìŠµë‹ˆê¹Œ?");
 	if(result){
 		location.href = "/manager/logout";
 	}

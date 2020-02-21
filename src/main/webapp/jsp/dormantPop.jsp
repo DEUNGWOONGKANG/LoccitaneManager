@@ -1,17 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>ÈÞ¸é°í°´</title>
+<title>íœ´ë©´ê³ ê°</title>
 </head>
 <body>
 <div style="text-align:center;">
-ÇØ´ç °í°´Àº ÃÖ±Ù 12°³¿ù µ¿¾È ±¸¸Å°¡ ¾ø¾ú´ø ÈÞ¸é °í°´À¸·Î,<br>
-¸â¹ö½Ê µî·ÏÀ» À§ÇØ <span style="font-weight:bold; color:red;">ÀÌ¸§, ÀüÈ­¹øÈ£, ¸¶ÄÉÆÃ Á¤º¸ È°¿ë µ¿ÀÇ</span>¸¸<br>
-´Ù½Ã ¼öÁýÇØÁÖ¼Å¾ß ÇÕ´Ï´Ù.<br><br>
-<input type="button" class="button-gray-small" value="È®ÀÎ" onclick="javascript:window.close()">
+í•´ë‹¹ ê³ ê°ì€ ìµœê·¼ 12ê°œì›” ë™ì•ˆ êµ¬ë§¤ê°€ ì—†ì—ˆë˜ íœ´ë©´ ê³ ê°ìœ¼ë¡œ,<br>
+ë©¤ë²„ì‹­ ë“±ë¡ì„ ìœ„í•´ <span style="font-weight:bold; color:red;">ì´ë¦„, ì „í™”ë²ˆí˜¸, ë§ˆì¼€íŒ… ì •ë³´ í™œìš© ë™ì˜</span>ë§Œ<br>
+ë‹¤ì‹œ ìˆ˜ì§‘í•´ì£¼ì…”ì•¼ í•©ë‹ˆë‹¤.<br><br>
+<input type="button" class="button-gray-small" value="í™•ì¸" onclick="javascript:window.close()">
 </div>
 
 </body>

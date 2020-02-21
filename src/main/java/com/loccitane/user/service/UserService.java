@@ -24,7 +24,7 @@ public class UserService {
 		return list;
 	}
 	
-	// 최초 사용자ID 조회
+	// 사용자 userid값으로 조회
 	public User userCheck(String userid) {
 		User userData  = userRepo.findByUserid(userid);
 		return userData;
@@ -65,6 +65,31 @@ public class UserService {
 		return userData;
 	}
 	
+	// 고객리스트 조회
+	public Page<User> getCustomerList(Pageable pageable,String searchKey, String searchKeyword) {
+		ArrayList<String> grade = new ArrayList<String>();
+		grade.add("store");
+		grade.add("super");
+		
+		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
+        pageable = PageRequest.of(page, 10);
+        
+		Page<User> userData = null;
+		
+		if(searchKey.equals("username")) {
+			userData = userRepo.findAllByUsernameAndGradeNotIn(searchKeyword, grade, pageable);
+		}else if(searchKey.equals("phone")) {
+			userData = userRepo.findAllByPhoneAndGradeNotIn(searchKeyword, grade, pageable);
+		}else if(searchKey.equals("userid")) {
+			userData = userRepo.findAllByUseridAndGradeNotIn(searchKeyword, grade, pageable);
+		}else{
+			userData = userRepo.findAllByGradeNotIn(grade,pageable);
+		}
+		
+		return userData;
+	}
+	
+	//고객 검색
 	public List<User> searchUserList(String searchKey, String searchKeyword){
 		List<User> userData = null;
 		ArrayList<String> grade = new ArrayList<String>();

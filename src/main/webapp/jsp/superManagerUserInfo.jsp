@@ -20,20 +20,6 @@
     <link rel="stylesheet" href="<%=url %>/css/style.default.css" id="theme-stylesheet">
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
-<script type="text/javascript">
-function check(){
-	var searchKeyword = document.getElementById("searchKeyword");
-	if(searchKeyword.value == "" || searchKeyword.value == null){
-		alert("검색어를 입력해주세요.");
-		return false;
-	}else{
-		document.getElementById("searchForm").submit();
-	}
-}
-function userInfo(userid){
-	location.href="/super/userinfo/"+userid;
-}
-</script>
   </head>
   <body>
     <!-- navbar-->
@@ -84,80 +70,55 @@ function userInfo(userid){
         </ul>
       </div>
       <div class="w-100 d-flex flex-wrap">
-      	<div class="container-fluid px-xl-5">
-      		<div class="search">	
-		    	<form id="searchForm" action="/super/userlist" method="post" onsubmit="return check()">
-		    		<select class="form-control" id="searchKey" name="searchKey">
-						<option value="username">이름</option>
-						<option value="phone">전화번호</option>
-						<option value="userid">회원번호</option>
-					</select>
-			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
-			  		<input type="submit" class="btn btn-warning" value="검색">
-				</form>
+      	<table class="userInfo">
+		  <tbody>
+		    <tr>
+		      <th>회원번호</th>
+			  <td>${userData.userid}</td>
+		    </tr>
+		    <tr>
+		      <th>이름</th>
+			  <td>${userData.username}</td>
+		    </tr>
+		    <tr>
+		      <th>연락처</th>
+			  <td>${userData.phone}</td>
+		    </tr>
+		    <tr>
+		      <th>회원등급</th>
+			  <td>
+			  	<select class="selectB" id="grade" name="grade">
+			  		<c:forEach var="grade" items="${gradeList}">
+			  			<c:choose>
+						<c:when test="${grade.name eq userData.grade }">
+							<option value="${grade.name}" selected>${grade.name}</option>
+						</c:when>
+						<c:otherwise>
+							<option value="${grade.name}" >${grade.name}</option>
+						</c:otherwise>
+						</c:choose>
+			  		</c:forEach>
+				</select>
+			  </td>
+		    </tr>
+		    <tr>
+		      <th scope="row">알람수신여부</th>
+			  <td>
+			  	<input type="radio" name="alarmyn" value="1">수신허용 <input type="radio" name="alarmyn" value="2">수신거부
+			  </td>
+		    </tr>
+		    <tr>
+		      <th scope="row">마지막수정일</th>
+			  <td><fmt:formatDate value="${user.lastupdate}" pattern="YYYY-MM-dd"/></td>
+		    </tr>
+		  </tbody>
+		</table>
+			<div>
+				<button type="button" class="btn btn-secondary">Secondary</button>
+					<button type="button" class="btn btn-success">Success</button>
+					<button type="button" class="btn btn-danger">Danger</button>
+					<button type="button" class="btn btn-warning">Warning</button>
 			</div>
-      	</div>
-      	<c:if test="${!empty userList.content}">
-	      	<table class="table table-hover" style="margin-left:10px;">
-			  <thead>
-			    <tr>
-			      <th scope="col">NO</th>
-			      <th scope="col">고객번호</th>
-			      <th scope="col">전화번호</th>
-			      <th scope="col">이름</th>
-			      <th scope="col">등급</th>
-			      <th scope="col">마지막구매일</th>
-			    </tr>
-			  </thead>
-			  <tbody>
-			  	<c:forEach var="user" items="${userList.content}" varStatus="status">
-				    <tr style="cursor:pointer;" onclick="userInfo('${user.userid}')">
-				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${user.vipcode}</td>
-				      <td>
-				      	<c:set var = "plength" value = "${fn:length(user.phone)}"/>
-						${fn:substring(user.phone, 0, 4)}****${fn:substring(user.phone, 8, plength)}
-					  </td>
-				      <td>
-				      	<c:set var = "length" value = "${fn:length(user.username)}"/>
-						${fn:substring(user.username, 0, 1)}*${fn:substring(user.username, 2, length)}
-				      </td>
-				      <td>${user.grade}</td>
-				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
-				    </tr>
-				</c:forEach>
-			  </tbody>
-			</table>
-		</c:if>
-		<c:if test="${empty userList.content}">
-			<div style="text-align:center;width:100%">
-				<h2>사용자가 존재하지 않습니다.</h2>
-			</div>
-		</c:if>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<ul class="pagination">
-						<c:if test="${paging.curRange > 1}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum-10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><</a></li>
-						</c:if>
-						<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
-							<c:choose>
-								<c:when test="${pageNum eq  paging.curPage}">
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
-								</c:when>
-								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
-						<c:if test="${paging.curRange < paging.rangeCnt}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum+10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
-						</c:if>
-					</ul>
-				</div>
-			</div>
-		</div>
       </div>
     </div>
     <!-- JavaScript files-->

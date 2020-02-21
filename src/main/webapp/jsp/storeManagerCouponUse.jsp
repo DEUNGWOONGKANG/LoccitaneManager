@@ -1,17 +1,16 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <script type="text/javascript">
 function check(){
 	var phone = document.getElementById("phone");
 	if(phone.value == "" || phone.value.length != 4){
-		alert("ÈŞ´ëÆù µŞ ¹øÈ£ 4ÀÚ¸®¸¦ ÀÔ·ÂÇÏ¼¼¿ä");
+		alert("íœ´ëŒ€í° ë’· ë²ˆí˜¸ 4ìë¦¬ë¥¼ ì…ë ¥í•˜ì„¸ìš”");
 		return false;
 	}else{
 		document.getElementById("searchForm").submit();
@@ -28,7 +27,7 @@ function check(){
 			<td width="10%">
 			</td>
 			<td>
-				<h1>ÄíÆù»ç¿ëÃ³¸®</h1>
+				<h1>ì¿ í°ì‚¬ìš©ì²˜ë¦¬</h1>
 			</td>
 			<td width="10%">
 			</td>
@@ -45,10 +44,10 @@ function check(){
 			<td width="10%">
 			</td>
 			<td style="text-align:center; border:2px solid #ffcb00;height:400px;">
-				<h1>ÇÚµåÆù ¹øÈ£ µŞÀÚ¸® 4ÀÚ¸®</h1><br>
+				<h1>í•¸ë“œí° ë²ˆí˜¸ ë’·ìë¦¬ 4ìë¦¬</h1><br>
 				<input type="text" class="endNumInput" id="phone" name="phone">
 				<br><br>
-				<input id="submitbtn" type="submit" class="button-yellow" value="°Ë»ö">
+				<input id="submitbtn" type="submit" class="button-yellow" value="ê²€ìƒ‰">
 			</td>
 			<td width="10%">
 			</td>

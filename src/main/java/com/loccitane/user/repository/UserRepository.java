@@ -21,6 +21,9 @@ public interface UserRepository extends JpaRepository<User, String>{
 	List<User> findAllByUsernameAndGradeNotIn(String username, ArrayList<String> grade);
 	List<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade);
 	List<User> findAllByUseridAndGradeNotIn(String userid, ArrayList<String> grade);
+	Page<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade, Pageable pageable);
+	Page<User> findAllByUseridAndGradeNotIn(String userid, ArrayList<String> grade, Pageable pageable);
+	Page<User> findAllByUsernameAndGradeNotIn(String username, ArrayList<String> grade, Pageable pageable);
 	List<User> findAllByGradeNotInOrderByStatusAsc(ArrayList<String> grade);
 	Page<User> findAllByGradeNotIn(ArrayList<String> grade, Pageable pageable);
 }

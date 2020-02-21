@@ -1,17 +1,16 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="common.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function userSelect(userid, username, phone, grade, seq){
-	var result = confirm(username+"°í°´ÀÌ ¸Â½À´Ï±î?");
+	var result = confirm(username+"ê³ ê°ì´ ë§ìŠµë‹ˆê¹Œ?");
 	if(result){
 		window.opener.document.getElementById("username").value = username;
 		window.opener.document.getElementById("userid").value = userid;
@@ -30,9 +29,9 @@ function userSelect(userid, username, phone, grade, seq){
 	<table id="userList">
 		<thead>
 		<tr>
-			<th>ÀÌ¸§</th>
-			<th>¿¬¶ôÃ³</th>
-			<th>µî±Ş</th>
+			<th>ì´ë¦„</th>
+			<th>ì—°ë½ì²˜</th>
+			<th>ë“±ê¸‰</th>
 			<th></th>
 		</tr>
 		</thead><!-- #userList Header -->
@@ -43,7 +42,7 @@ function userSelect(userid, username, phone, grade, seq){
 				<td>${user.phone }</td>
 				<td>${user.grade }</td>
 				<td>
-				<input type="button" class="button-yellow-small" value="¼±ÅÃ" onclick="userSelect('${user.userid}', '${user.username}','${user.phone}', '${user.grade}', '${user.seq}')">
+				<input type="button" class="button-yellow-small" value="ì„ íƒ" onclick="userSelect('${user.userid}', '${user.username}','${user.phone}', '${user.grade}', '${user.seq}')">
 				</td>
 			</tr><!-- #userList Row -->
 		</c:forEach>
@@ -52,7 +51,7 @@ function userSelect(userid, username, phone, grade, seq){
 	</c:if>
 	<c:if test="${empty userData}">
 	<div class="nodata">
-		»ç¿ëÀÚ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.
+		ì‚¬ìš©ìê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	</div>
 	</c:if>
 </div>

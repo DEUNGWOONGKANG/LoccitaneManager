@@ -1,10 +1,9 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link rel="stylesheet" href="/css/lc_login.css">
 <script type="text/javascript">
@@ -14,7 +13,7 @@ function check(){
 	var grade = document.getElementsByName("grade");
 	var gradeCheckYn = false;
 	var gradeVal = "";
-	//°ü¸®ÀÚ À¯ÇüÀÌ Ã¼Å©µÇ¾î ÀÖ´ÂÁö È®ÀÎ
+	//ê´€ë¦¬ì ìœ í˜•ì´ ì²´í¬ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
   	for(var i=0; i<grade.length; i++){
 		if(grade[i].checked == true){
 			gradeCheckYn = true;
@@ -22,15 +21,15 @@ function check(){
 		}
 	} 
 	if(id.value == ""){
-		alert("¾ÆÀÌµğ¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
+		alert("ì•„ì´ë””ë¥¼ ì…ë ¥í•˜ì„¸ìš”.");
 		id.focus();
 		return false;
 	}else if(pw.value == ""){
-		alert("ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
+		alert("ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•˜ì„¸ìš”.");
 		pw.focus();
 		return false;
 	}else if(!gradeCheckYn){
-		alert("°ü¸®ÀÚ À¯ÇüÀ» ¼±ÅÃÇÏ¼¼¿ä.");
+		alert("ê´€ë¦¬ì ìœ í˜•ì„ ì„ íƒí•˜ì„¸ìš”.");
 		return false;
 	}else{
 		if(gradeVal == "store"){
@@ -56,9 +55,9 @@ function check(){
       <div class="login__body">
    		<div>
 			<input type="radio" name="grade" value="store">
-			<label class="custom-control-label" for="jb-radio-1">¸ÅÀå°ü¸®ÀÚ</label>
+			<label class="custom-control-label" for="jb-radio-1">ë§¤ì¥ê´€ë¦¬ì</label>
 			<input type="radio" name="grade" value="super">
-			<label class="custom-control-label" for="jb-radio-2">½´ÆÛ°ü¸®ÀÚ</label>
+			<label class="custom-control-label" for="jb-radio-2">ìŠˆí¼ê´€ë¦¬ì</label>
 		</div>
         <div class="form__field">
           <input type="text" placeholder="ID" id="userid" name="userid">

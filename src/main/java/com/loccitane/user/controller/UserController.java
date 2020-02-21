@@ -1,6 +1,7 @@
 package com.loccitane.user.controller;
 
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +16,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.service.CouponService;
+import com.loccitane.grade.domain.Grade;
+import com.loccitane.grade.service.GradeService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
+import com.loccitane.utils.Paging;
 
 @Controller // 이 클래스가 컨트롤러라는 것을 알려주는 어노테이션
 public class UserController {
@@ -29,6 +34,8 @@ public class UserController {
 	UserService service;
 	@Autowired
 	CouponService cpservice;
+	@Autowired
+	GradeService grservice;
 	
 	//최초 고객ID 체크 후 휴대폰번호 4자리 입력 후 로그인 체크
 	@PostMapping("/user/login") 
@@ -83,28 +90,6 @@ public class UserController {
 		return nextView;
 	}
 	
-	//슈퍼관리자 로그인 시도
-	@PostMapping("/super/login") 
-	public ModelAndView superLogin(User user, HttpServletResponse response, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
-		ModelAndView nextView = new ModelAndView("jsp/superManagerUserList");
-		User userData = service.managerLogin(user);// 매니저 로그인 DB체크
-		
-		if(userData == null) { //사용자가 존재하지 않을경우
-			response.setContentType("text/html; charset=UTF-8");
-            PrintWriter out = response.getWriter();
-            out.println("<script>alert('등록된 사용자 정보가 없습니다.'); history.go(-1);</script>");
-            out.flush();
-		}else {
-			// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
-			HttpSession httpSession = request.getSession(true);
-			httpSession.setAttribute("loginUser", userData);
-			Page<User> userList = service.getCustomerList(pageable);
-			nextView.addObject("userList", userList);
-		}
-		
-		
-		return nextView;
-	}
 	
 	//로그아웃
 	@GetMapping("/manager/logout") 
@@ -114,7 +99,7 @@ public class UserController {
 		return nextView;
 	}
 	
-	//메뉴 클릭
+	//매장매니저 메뉴 클릭
 	@GetMapping("/manager/{menu}") 
 	public ModelAndView goMenu(@PathVariable("menu") String menu, HttpServletRequest request) throws Exception { 
 		ModelAndView nextView = null;
@@ -164,6 +149,73 @@ public class UserController {
 		List<User> userData = service.searchUserList(searchKey, searchKeyword);
 		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserListPop");
 		nextView.addObject("userData", userData); //사용자데이터
+		return nextView;
+	}
+	
+	//슈퍼관리자 로그인 시도
+	@PostMapping("/super/login") 
+	public ModelAndView superLogin(User user, HttpServletResponse response, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerMain");
+		User userData = service.managerLogin(user);// 매니저 로그인 DB체크
+		
+		if(userData == null) { //사용자가 존재하지 않을경우
+			response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("<script>alert('등록된 사용자 정보가 없습니다.'); history.go(-1);</script>");
+            out.flush();
+		}else {
+			// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
+			HttpSession httpSession = request.getSession(true);
+			httpSession.setAttribute("loginUser", userData);
+		}
+		return nextView;
+	}
+	
+	//슈퍼관리자 홈
+	@GetMapping("/super/home") 
+	public ModelAndView superHome(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerMain");
+		return nextView;
+	}
+	
+	//슈퍼관리자 사용자 리스트
+	@RequestMapping("/super/userlist") 
+	public ModelAndView superUserList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerUserList");
+		
+		String searchKey = request.getParameter("searchKey");
+		String searchKeyword = request.getParameter("searchKeyword");
+		
+		Page<User> userList = null;
+		Paging paging = new Paging();
+		if(searchKey != null && searchKeyword != null) {
+			userList = service.getCustomerList(pageable, searchKey, searchKeyword);
+		}else {
+			userList = service.getCustomerList(pageable);
+		}
+		int curPage = pageable.getPageNumber();
+		if(curPage == 0) curPage = curPage + 1;
+		paging.Pagination((int)userList.getTotalElements(), curPage);
+		
+		nextView.addObject("userList", userList);
+		nextView.addObject("paging", paging);
+		nextView.addObject("searchKey", searchKey);
+		nextView.addObject("searchKeyword", searchKeyword);
+	
+		return nextView;
+	}
+	
+	//슈퍼관리자 사용자 정보보기
+	@RequestMapping("/super/userinfo/{userid}") 
+	public ModelAndView superUserInfo(@PathVariable("userid") String userid){ 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerUserInfo");
+		
+		User userData = service.userCheck(userid);
+		List<Grade> gradeList = grservice.findAll();
+		
+		nextView.addObject("userData", userData);
+		nextView.addObject("gradeList", gradeList);
+	
 		return nextView;
 	}
 	

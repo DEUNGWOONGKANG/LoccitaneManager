@@ -1,6 +1,6 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -8,12 +8,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
 function useCoupon(seq, userid){
-	var result = confirm("ÇØ´ç ÄíÆùÀ» »ç¿ëÃ³¸® ÇÏ½Ã°Ú½À´Ï±î?");
+	var result = confirm("í•´ë‹¹ ì¿ í°ì„ ì‚¬ìš©ì²˜ë¦¬ í•˜ì‹œê² ìŠµë‹ˆê¹Œ?");
 	if(result){
 		location.href = "/manager/couponuse/"+userid+"/"+seq;
 	}
@@ -31,7 +30,7 @@ function useCoupon(seq, userid){
 			<td width="10%">
 			</td>
 			<td>
-				<h1>ÄíÆù»ç¿ëÃ³¸®</h1>
+				<h1>ì¿ í°ì‚¬ìš©ì²˜ë¦¬</h1>
 			</td>
 			<td width="10%">
 			</td>
@@ -48,7 +47,7 @@ function useCoupon(seq, userid){
 			<td width="10%">
 			</td>
 			<td style="text-align:center;">
-				<h1>ÇÚµåÆù ¹øÈ£ µŞÀÚ¸® 4ÀÚ¸®</h1><br>
+				<h1>í•¸ë“œí° ë²ˆí˜¸ ë’·ìë¦¬ 4ìë¦¬</h1><br>
 			</td>
 			<td width="10%">
 			</td>
@@ -58,7 +57,7 @@ function useCoupon(seq, userid){
 			</td>
 			<td style="text-align:center;">
 				<input type="text" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
-				<input id="submitbtn" type="submit" class="button-yellow" value="°Ë»ö">
+				<input id="submitbtn" type="submit" class="button-yellow" value="ê²€ìƒ‰">
 			</td>
 			<td width="10%">
 			</td>
@@ -84,9 +83,9 @@ function useCoupon(seq, userid){
 	<table id="userList">
 		<thead>
 		<tr>
-			<th>ÄíÆù¸í</th>
-			<th>À¯È¿±â°£</th>
-			<th>ÇıÅÃ</th>
+			<th>ì¿ í°ëª…</th>
+			<th>ìœ íš¨ê¸°ê°„</th>
+			<th>í˜œíƒ</th>
 			<th></th>
 		</tr>
 		</thead><!-- #userList Header -->
@@ -97,16 +96,16 @@ function useCoupon(seq, userid){
 				<td><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
 					<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/></td>
 				<td>${coupon.dccnt}
-					<c:if test="${coupon.dck == '1'}">¿ø</c:if>
+					<c:if test="${coupon.dck == '1'}">ì›</c:if>
 					<c:if test="${coupon.dck == '2'}">%</c:if>
-					ÇÒÀÎ
+					í• ì¸
 				</td>
 				<td>
 					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today}">
-						<input type="button" class="button-yellow-small" value="»ç¿ëÃ³¸®" onclick="useCoupon('${coupon.seq}','${coupon.userid}')" >
+						<input type="button" class="button-yellow-small" value="ì‚¬ìš©ì²˜ë¦¬" onclick="useCoupon('${coupon.seq}','${coupon.userid}')" >
 					</c:if>
 					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today}">
-						<input type="button" class="button-gray-small" value="»ç¿ëºÒ°¡" disabled="disabled" >
+						<input type="button" class="button-gray-small" value="ì‚¬ìš©ë¶ˆê°€" disabled="disabled" >
 					</c:if>
 				</td>
 			</tr><!-- #userList Row -->
@@ -116,7 +115,7 @@ function useCoupon(seq, userid){
 	</c:if>
 	<c:if test="${empty couponList}">
 	<div class="nodata">
-		ÄíÆùÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.
+		ì¿ í°ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	</div>
 	</c:if>
 </div>

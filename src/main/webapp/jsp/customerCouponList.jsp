@@ -1,12 +1,11 @@
 <%@page import="com.loccitane.user.domain.User"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
 <title></title>
 <script src="../../js/jquery-3.4.1.min.js"></script>
 <script src="../../js/bootstrap.js"></script>
@@ -60,7 +59,7 @@ function usecoupon(){
 		</td>
 		<td style="text-align:center;">
 			<div class="infotext">
-				<b>´Ô²²¼­ ¹ß±Ş¹ŞÀ¸½Å <span style="color:red;">ÄíÆù</span> ³»¿ª ÀÔ´Ï´Ù.</b>
+				<b>ë‹˜ê»˜ì„œ ë°œê¸‰ë°›ìœ¼ì‹  <span style="color:red;">ì¿ í°</span> ë‚´ì—­ ì…ë‹ˆë‹¤.</b>
 			</div>
 		</td>
 		<td width="10%">
@@ -76,10 +75,10 @@ function usecoupon(){
 		<td style="width:80%; text-align:center">
 			<div class="btn-group btn-group-toggle" data-toggle="buttons" width="100%">
 				<label class="btn btn-warning btn-lg">
-					<input type="radio" name="jb-radio" id="usecoupon" onclick="usedY()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>»ç¿ë°¡´É</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="jb-radio" id="usecoupon" onclick="usedY()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ì‚¬ìš©ê°€ëŠ¥</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				</label>
 				<label class="btn btn-warning btn-lg">
-					<input type="radio" name="jb-radio" id="unusecoupon" onclick="usedN()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>»ç¿ë¸¸·á</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="jb-radio" id="unusecoupon" onclick="usedN()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ì‚¬ìš©ë§Œë£Œ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				</label>
 			</div>
 		</td>
@@ -97,7 +96,7 @@ function usecoupon(){
 				<div class="triangle-r"></div>
 				<div class="info">
 					<h2>${coupon.memo}</h2>
-					À¯È¿±â°£<br>
+					ìœ íš¨ê¸°ê°„<br>
 					<fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
 					<br>
 					<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/>
@@ -108,7 +107,7 @@ function usecoupon(){
 	</c:forEach>
 	<c:if test="${empty couponList}">
 		<div class="nodata">
-			µ¥ÀÌÅÍ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.
+			ë°ì´í„°ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 		</div>
 	</c:if>
 </div>
@@ -122,7 +121,7 @@ function usecoupon(){
 				<div class="triangle-r"></div>
 				<div class="info">
 					<h2>${coupon.memo}</h2>
-					À¯È¿±â°£<br>
+					ìœ íš¨ê¸°ê°„<br>
 					<fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
 					<br>
 					<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/>
@@ -133,7 +132,7 @@ function usecoupon(){
 	</c:forEach>
 	<c:if test="${empty couponList}">
 		<div class="nodata">
-			µ¥ÀÌÅÍ°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.
+			ë°ì´í„°ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 		</div>
 	</c:if>
 </div>
