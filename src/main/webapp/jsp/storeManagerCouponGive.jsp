@@ -16,8 +16,8 @@ if("${giveyn}" == "Y"){
 	alert("쿠폰이 발행되었습니다.");
 }
 $(function(){
-    $("#cptmstartdate").datepicker();
-    $("#cptmenddate").datepicker();
+    $("#startdate").datepicker();
+    $("#enddate").datepicker();
 });
 $.datepicker.setDefaults({
     dateFormat: 'yy-mm-dd',
@@ -45,13 +45,13 @@ function userSearch(){
 			, 'userSearchPop', 'height='+ screen.height + 'width=' + screen.width + 'fullscreen=yes');
 }
 function check(){
-	var couponKind = document.getElementById("couponKind");
+	var couponKind = document.getElementById("cpcode");
 	var username = document.getElementById("username");
-	var startDate = document.getElementById("cptmstartdate");
-	var endDate = document.getElementById("cptmenddate");
+	var startDate = document.getElementById("startdate");
+	var endDate = document.getElementById("enddate");
 	
-	startDate.value = $("#cptmstartdate").val();
-	endDate.value = $("#cptmenddate").val();
+	startDate.value = $("#startdate").val();
+	endDate.value = $("#enddate").val();
 	if(couponKind.options[couponKind.selectedIndex].value == ""){
 		alert("쿠폰 종류를 선택해주세요.");
 		return false;
@@ -108,7 +108,7 @@ function check(){
 			<tr height="100px">
 				<td width="25%">쿠폰선택</td>
 				<td>
-					<select class="selectBox" id="couponKind" name="cptmcpcode">
+					<select class="selectBox" id="cpcode" name="cpcode">
 							<option value=""></option>
 	   					<c:forEach var="coupon" items="${couponList}">
 	   						<option value="${coupon.cpcode}">[${coupon.cpcode}] ${coupon.cpname }</option>
@@ -119,9 +119,9 @@ function check(){
 			<tr height="100px">
 				<td width="25%">쿠폰사용가능일</td>
 				<td>
-					시작일: <input type="text" class="inputDate" id="cptmstartdate" name="cptmstartdate" readonly>  
-					종료일: <input type="text" class="inputDate" id="cptmenddate" name="cptmenddate" readonly>
-					<input type="hidden" id="useyn" name="cptmusedyn" value="N">
+					시작일: <input type="text" class="inputDate" id="startdate" name="startdate" readonly>  
+					종료일: <input type="text" class="inputDate" id="enddate" name="enddate" readonly>
+					<input type="hidden" id="useyn" name="useyn" value="N">
 				</td>
 			</tr>
 			<tr height="100px">

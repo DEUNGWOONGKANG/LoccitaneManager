@@ -36,7 +36,7 @@ function usecoupon(){
 <body leftmargin="0" rightmargin="0" topmargin="0" onload="usecoupon()">
 <div id="headline"></div>
 <div id="logo_div"><img id="logo" src="../../img/logo.png" width="50%"></div>
-<table width="100%">
+<table style="width:100%">
 	<tr>
 		<td colspan=3 height="50px">
 		</td>
@@ -73,7 +73,7 @@ function usecoupon(){
 		<td width="10%">
 		</td>
 		<td style="width:80%; text-align:center">
-			<div class="btn-group btn-group-toggle" data-toggle="buttons" width="100%">
+			<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width:100%">
 				<label class="btn btn-warning btn-lg">
 					<input type="radio" name="jb-radio" id="usecoupon" onclick="usedY()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>사용가능</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				</label>
@@ -86,7 +86,7 @@ function usecoupon(){
 		</td>
 	</tr>
 </table>
-<div width="100%" id="unuse">
+<div style="width:100%" id="unuse">
 	<c:forEach var="coupon" items="${couponList}">
 	<c:if test="${coupon.usedyn eq 'N' and coupon.startdate < today and coupon.enddate > today}">
 		<div id="container">
@@ -111,7 +111,7 @@ function usecoupon(){
 		</div>
 	</c:if>
 </div>
-<div width="100%" id="use">
+<div style="width:100%" id="use">
 	<c:forEach var="coupon" items="${couponList}">
 	<c:if test="${coupon.usedyn eq 'Y' or coupon.startdate > today or coupon.enddate < today}">
 		<div id="container">

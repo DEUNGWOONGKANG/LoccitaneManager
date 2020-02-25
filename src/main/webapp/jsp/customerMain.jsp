@@ -35,7 +35,7 @@ function check(){
 <div id="headline"></div>
 <div id="logo_div"><img id="logo" src="../../img/logo.png" width="50%"></div>
 <form id="loginForm" action="/user/login" method="post" onsubmit="return check()">
-<table width="100%">
+<table style="width:100%">
 	<tr>
 		<td colspan=3 height="200px">
 		</td>

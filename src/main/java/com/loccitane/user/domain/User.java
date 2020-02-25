@@ -51,7 +51,18 @@ public class User {
 	private int totalbuy;
 	
 	@Column(name = "lastupdate")
-	private Date update;
+	private Date lastupdate;
+	
+	@Column(name = "alarmyn")
+	private String alarmyn;
+	
+	public String getAlarmyn() {
+		return alarmyn;
+	}
+
+	public void setAlarmyn(String alarmyn) {
+		this.alarmyn = alarmyn;
+	}
 
 	public int getSeq() {
 		return seq;
@@ -141,12 +152,12 @@ public class User {
 		this.lastpurchase = lastpurchase;
 	}
 
-	public Date getUpdate() {
-		return update;
+	public Date getLastupdate() {
+		return lastupdate;
 	}
 
-	public void setUpdate(Date update) {
-		this.update = update;
+	public void setLastupdate(Date lastupdate) {
+		this.lastupdate = lastupdate;
 	}
 
 	public int getTotalbuy() {

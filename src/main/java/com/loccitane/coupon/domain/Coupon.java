@@ -35,15 +35,24 @@ public class Coupon {
 	
 	@Column(name = "createdate")
 	private Date issueday;
-
-	@Column(name = "useyn")
-	private String usedyn;
 	
+	@Column(name = "createuser")
+	private String createuser;
+
 	@Column(name = "startdate")
 	private Date startdate;
 	
 	@Column(name = "enddate")
 	private Date enddate;
+	
+	@Column(name = "useyn")
+	private String usedyn;
+	
+	@Column(name = "usemanager")
+	private String usemanager;
+	
+	@Column(name = "usedate")
+	private Date usedate;
 	
 	@Column(name = "couponinfo")
 	private String memo;
@@ -53,6 +62,14 @@ public class Coupon {
 	
 	@Column(name = "discountmax")
 	private int discountmax;
+
+	public String getCreateuser() {
+		return createuser;
+	}
+
+	public void setCreateuser(String createuser) {
+		this.createuser = createuser;
+	}
 
 	public int getSeq() {
 		return seq;
@@ -157,5 +174,23 @@ public class Coupon {
 	public void setDiscountmax(int discountmax) {
 		this.discountmax = discountmax;
 	}
+
+	public String getUsemanager() {
+		return usemanager;
+	}
+
+	public void setUsemanager(String usemanager) {
+		this.usemanager = usemanager;
+	}
+
+	public Date getUsedate() {
+		return usedate;
+	}
+
+	public void setUsedate(Date usedate) {
+		this.usedate = usedate;
+	}
+	
+	
 
 }

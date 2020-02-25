@@ -13,6 +13,29 @@
 * =====================
 *
 */
+.btndiv {
+	margin-top:20px;
+	text-align:center;
+}
+.couponInfo {
+	margin-left: auto; 
+	margin-right: auto;
+	margin-top:50px;
+	margin-bottom:20px;
+	width:80%;
+	text-align:center;
+}
+
+.couponInfo th {
+	height:40px;
+	border:1px solid black;
+	background:#BDBDBD;
+}
+.couponInfo td {
+	border:1px solid black;
+	background:#fff;
+}
+
 .userInfo {
 	margin-left: auto; 
 	margin-right: auto;

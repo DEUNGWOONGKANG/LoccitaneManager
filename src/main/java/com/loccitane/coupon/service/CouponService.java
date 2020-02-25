@@ -31,8 +31,8 @@ public class CouponService {
 	}
 	
 	//해당 고객의 쿠폰 데이터 조회
-	public List<Coupon> getUserCoupon(User user) {
-		List<Coupon> couponData  = couponRepo.findAllByUserid(user.getUserid());
+	public List<Coupon> getUserCoupon(String userId) {
+		List<Coupon> couponData  = couponRepo.findAllByUserid(userId);
 		return couponData;
 	}
 	

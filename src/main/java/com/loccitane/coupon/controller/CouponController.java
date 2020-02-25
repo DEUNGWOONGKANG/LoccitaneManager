@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,8 @@ import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
+import com.loccitane.grade.domain.Grade;
+import com.loccitane.grade.service.GradeService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
 
@@ -32,6 +33,8 @@ public class CouponController {
 	UserService service;
 	@Autowired
 	CouponService cpservice;
+	@Autowired
+	GradeService grservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -45,7 +48,7 @@ public class CouponController {
 		User userData = service.userCheck(userid); // 서비스에서 요청에 해당하는 처리를 한다.
 		ModelAndView nextView = new ModelAndView("jsp/storeManagerCouponList");
 		
-		List<Coupon> couponList = cpservice.getUserCoupon(userData); // 해당 사용자의 쿠폰리스트 조회
+		List<Coupon> couponList = cpservice.getUserCoupon(userData.getUserid()); // 해당 사용자의 쿠폰리스트 조회
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("couponList", couponList); //쿠폰리스트
 		nextView.addObject("searchPhone", userData.getPhone().substring(userData.getPhone().length()-4, userData.getPhone().length())); //사용자데이터
@@ -55,7 +58,7 @@ public class CouponController {
 	
 	@GetMapping("/manager/couponuse/{userid}/{cptmseq}") // 쿠폰사용처리
 	public ModelAndView couponUse(@PathVariable("userid") String userid
-			, @PathVariable("cptmseq") int seq, HttpServletRequest request, HttpServletResponse response) throws Exception{
+			, @PathVariable("cptmseq") int seq, HttpServletRequest request) throws Exception{
 		//세션에서 관리자 정보 가져오기
 		HttpSession httpSession = request.getSession(true);
 		User loginUser = (User) httpSession.getAttribute("loginUser");
@@ -71,9 +74,9 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰 부여
+	//쿠폰 부여[매장관리자]
 	@PostMapping("/manager/coupongive") 
-	public ModelAndView couponGive(User user, CouponMember coupon, HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView couponGive(User user, CouponMember coupon, HttpServletRequest request){
 		ModelAndView nextView = null;
 		HttpSession httpSession = request.getSession(true);
 		User loginUser = (User) httpSession.getAttribute("loginUser");
@@ -87,6 +90,44 @@ public class CouponController {
 			nextView.addObject("couponList", couponList);
 			nextView.addObject("giveyn", "Y");
 		}
+		return nextView;
+	}
+	
+	//쿠폰 부여[슈퍼관리자]
+	@PostMapping("/super/coupongive") 
+	public ModelAndView couponGiveSuper(User user, CouponMember coupon, HttpServletRequest request){
+		ModelAndView nextView = null;
+		HttpSession httpSession = request.getSession(true);
+		User loginUser = (User) httpSession.getAttribute("loginUser");
+		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
+			nextView = new ModelAndView("jsp/logout");
+		}else{
+			nextView = new ModelAndView("jsp/superManagerUserInfo");
+			cpservice.giveCoupon(user, coupon, loginUser);
+			
+			User userData = service.userCheck(user.getUserid());
+			List<Grade> gradeList = grservice.findAll();
+			List<Coupon> couponList = cpservice.getUserCoupon(user.getUserid()); // 해당 사용자의 쿠폰리스트 조회
+			
+			nextView.addObject("userData", userData);
+			nextView.addObject("gradeList", gradeList);
+			nextView.addObject("couponList", couponList);
+			nextView.addObject("saveyn", "Y");
+			
+		}
+		return nextView;
+	}
+	
+	//계정관리=>회원정보=>쿠폰부여
+	@GetMapping("/super/coupongive/{userid}") 
+	public ModelAndView couponGive(@PathVariable("userid") String userid){ 
+		ModelAndView nextView = new ModelAndView("jsp/superManagerCouponGive");
+		
+		User userData = service.userCheck(userid);
+		List<Coupon> couponList = cpservice.getUserCoupon(userid); // 해당 사용자의 쿠폰리스트 조회
+		
+		nextView.addObject("userData", userData);
+		nextView.addObject("couponList", couponList);
 		return nextView;
 	}
 }

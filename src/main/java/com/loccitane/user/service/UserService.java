@@ -1,8 +1,10 @@
 package com.loccitane.user.service;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
+import com.loccitane.utils.ExcelRead;
+import com.loccitane.utils.ExcelReadOption;
 
 @Service // 서비스 클래스임을 나타냄
 public class UserService {
@@ -43,7 +47,6 @@ public class UserService {
 	}
 	
 	// 사용자 리스트 전화번호로 조회
-	@SuppressWarnings("null")
 	public List<User> getUserListByPhone(User user) {
 		ArrayList<String> grade = new ArrayList<String>();
 		grade.add("store");
@@ -106,5 +109,38 @@ public class UserService {
 		
 		return userData;
 		
+	}
+	
+	//회원정보메뉴 등급 + 알람수신여부 저장
+	public void saveUser(User user) {
+		User userData  = userRepo.findByUserid(user.getUserid());
+		Date now  = new Date();
+		userData.setGrade(user.getGrade());
+		userData.setAlarmyn(user.getAlarmyn());
+		userData.setLastupdate(now);
+		
+		userRepo.save(userData);
+	}
+	
+	public void excelUpload(File destFile) throws Exception{
+        ExcelReadOption excelReadOption = new ExcelReadOption();
+        excelReadOption.setFilePath(destFile.getAbsolutePath());
+        excelReadOption.setOutputColumns("A","B","C","D","E","F");
+        excelReadOption.setStartRow(2);
+        
+        try {
+	        List<Map<String, String>>excelContent = ExcelRead.read(excelReadOption);
+	        
+	        for(Map<String, String> article: excelContent){
+	            System.out.println(article.get("A"));
+	            System.out.println(article.get("B"));
+	            System.out.println(article.get("C"));
+	            System.out.println(article.get("D"));
+	            System.out.println(article.get("E"));
+	            System.out.println(article.get("F"));
+	            
+	        }
+        }catch(Exception e) {
+        }
 	}
 }

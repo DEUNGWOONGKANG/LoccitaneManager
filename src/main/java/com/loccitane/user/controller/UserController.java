@@ -1,7 +1,11 @@
 package com.loccitane.user.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,14 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
@@ -37,6 +48,12 @@ public class UserController {
 	@Autowired
 	GradeService grservice;
 	
+	@InitBinder
+    protected void initBinder(WebDataBinder binder){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
+    }
+	
 	//최초 고객ID 체크 후 휴대폰번호 4자리 입력 후 로그인 체크
 	@PostMapping("/user/login") 
 	public ModelAndView loginUser(User user, HttpServletResponse response) throws Exception { 
@@ -48,7 +65,7 @@ public class UserController {
             out.println("<script>alert('등록된 고객 정보가 없습니다.'); history.go(-1);</script>");
             out.flush();
 		}else { // 사용자가 존재하는 경우
-			List<Coupon> couponList = cpservice.getUserCoupon(user); // 해당 사용자의 쿠폰리스트 조회
+			List<Coupon> couponList = cpservice.getUserCoupon(user.getUserid()); // 해당 사용자의 쿠폰리스트 조회
 			nextView.addObject("userData", userData); //사용자데이터
 			nextView.addObject("couponList", couponList); //쿠폰리스트
 			nextView.addObject("tel", user.getPhone()); //핸드폰번호 뒤4자리
@@ -173,7 +190,7 @@ public class UserController {
 	
 	//슈퍼관리자 홈
 	@GetMapping("/super/home") 
-	public ModelAndView superHome(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+	public ModelAndView superHome(){ 
 		ModelAndView nextView = new ModelAndView("jsp/superManagerMain");
 		return nextView;
 	}
@@ -206,17 +223,60 @@ public class UserController {
 	}
 	
 	//슈퍼관리자 사용자 정보보기
-	@RequestMapping("/super/userinfo/{userid}") 
+	@GetMapping("/super/userinfo/{userid}") 
 	public ModelAndView superUserInfo(@PathVariable("userid") String userid){ 
 		ModelAndView nextView = new ModelAndView("jsp/superManagerUserInfo");
 		
 		User userData = service.userCheck(userid);
 		List<Grade> gradeList = grservice.findAll();
+		List<Coupon> couponList = cpservice.getUserCoupon(userid); // 해당 사용자의 쿠폰리스트 조회
 		
 		nextView.addObject("userData", userData);
 		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("couponList", couponList);
+		nextView.addObject("saveyn", "N");
 	
 		return nextView;
 	}
+	
+	//슈퍼관리자 계정관리=>회원정보에서 수정시
+	@PostMapping("/super/modifyuser") 
+	public ModelAndView modifyUser(User user, HttpServletResponse response, HttpServletRequest request){ 
+		ModelAndView nextView = superUserInfo(user.getUserid());
+		service.saveUser(user);// 사용자 회원 등급 및 알람수신여부 저장
+		nextView.addObject("saveyn", "Y");
+		return nextView;
+	}
+	
+	//슈퍼관리자 엑셀업로드
+	@GetMapping("/super/excelupload")
+	public ModelAndView superExcelUpload() {
+		ModelAndView nextView = new ModelAndView("jsp/superManagerExcelUpload");
+		return nextView;
+	}
+	
+    @RequestMapping(value = "/super/excelUploadAjax", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView excelUploadAjax(MultipartHttpServletRequest request)  throws Exception{
+        MultipartFile excelFile =request.getFile("excelFile");
+        System.out.println("엑셀 파일 업로드 컨트롤러");
+        if(excelFile==null || excelFile.isEmpty()){
+            throw new RuntimeException("엑셀파일을 선택 해 주세요.");
+        }
+        
+        File destFile = new File("C:\\exceltemp\\"+excelFile.getOriginalFilename());
+        try{
+            excelFile.transferTo(destFile);
+        }catch(IllegalStateException | IOException e){
+            throw new RuntimeException(e.getMessage(),e);
+        }
+        
+        service.excelUpload(destFile);
+        
+        destFile.delete();
+        
+        ModelAndView view = new ModelAndView();
+        view.setViewName("");
+        return view;
+    }
 	
 }
