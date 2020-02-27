@@ -55,7 +55,7 @@ function couponGive(){
     <div class="d-flex align-items-stretch">
       <jsp:include page="superManagerMenu.jsp"></jsp:include>
       <div class="w-100 d-flex flex-wrap">
-      	<form id="formdata" action="/super/modifyuser" method="post" style="width:50%" onsubmit="return check()">
+      	<form id="formdata" action="/super/modifyuser" method="post" style="width:100%" onsubmit="return check()">
       	<input type="hidden" value="${userData.userid}" name="userid" id="userid">
       	<div style="width:100%">
 	      	<table class="userInfo">

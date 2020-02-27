@@ -21,15 +21,7 @@
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
-function checkFileType(filePath) {
-    var fileFormat = filePath.split(".");
-    if (fileFormat.indexOf("xlsx") > -1) {
-        return true;
-    } else {
-        return false;
-    }
-
-}
+var progress;
 
 function check() {
     var file = $("#excelFile").val();
@@ -41,16 +33,81 @@ function check() {
         return false;
     }
 
+    var progressbar = document.getElementById('progress');
+    progressbar.style.display= 'block';
+    progressbar.style.width ='0px';
+
     if (confirm("업로드 하시겠습니까?")) {
-        var options = {
-            success : function(data) {
-                alert("모든 데이터가 업로드 되었습니다.");
-
+    	$("#excelUploadForm").ajaxForm({
+            beforeSend: function(){
+                $("#excelUploadingState").html("<font size = 2><b>0% </b></font>");
+                
+                progress = setInterval(excelUploadProgress, 50);
+                
             },
-            type : "POST"
-        };
-        $("#excelUploadForm").ajaxSubmit(options);
+            success: function() {
+                document.getElementById('progress').style.width = '100%';
+                $("#excelUploadingState").html("<font size = 2><b>100% </b></font>");
+                
+                clearInterval(progress);                    
+                
+                //location.reload();
+                excelUploadProgressClear();
+            },
+            error: function(request,status,error){
+            	//alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 
+                alert("에러가 발생하였습니다.");
+                clearInterval(progress);    
+                //location.reload();
+                //에러 발생시 소스를 넣는다.
+                excelUploadProgressClear();
+            }
+        }); 
+            $("#excelUploadForm").submit();
+
+    }
+}
+function excelUploadProgress(){
+    //count를 0으로 초기화 해야하는가?
+    $.ajax({
+        type: "post",
+        url: "/excelUploadProgress",
+        data: {},
+        dataType :"text",
+        success : function(resultData){
+//             console.log(resultData);
+            if(resultData == 100){
+                clearInterval(progress);    
+            }
+            $("#excelUploadingState").html("<font size = 2><b>"+ resultData +"% </b></font>");
+            document.getElementById('progress').style.width = (resultData*4.32).toString() +'px';
+        },
+        error: function(e){
+            
+        }
+    });                        
+}
+function excelUploadProgressClear(){
+    
+    $.ajax({
+        type: "post",
+        url: "/excelUploadProgressClear",
+        data: {},
+        dataType :"text",
+        success : function(resultData){
+        },
+        error: function(e){
+            
+        }
+    });        
+}
+function checkFileType(filePath) {
+    var fileFormat = filePath.split(".");
+    if (fileFormat.indexOf("xlsx") > -1) {
+        return true;
+    } else {
+        return false;
     }
 }
 </script>
@@ -81,7 +138,35 @@ function check() {
 			    <button class="btn btn-outline-secondary" type="button" onclick="check()">엑셀업로드</button>
 			  </div>
 			</div>
+			<div class="progress" id="progress_info">
+			  <div class="progress-bar" role="progressbar" aria-valuenow="70"
+			  aria-valuemin="0" aria-valuemax="100" id="progress">
+			    <p id= "excelUploadingState" class="excelUploadingState"></p>
+			  </div>
+		    </div>
 		</form> 
+		<table class="couponInfo">
+			<thead>
+			<tr>
+				<th>NO</th>
+				<th>업로드일시</th>
+				<th>작업자</th>
+				<th>작업내용</th>
+			</tr>
+			</thead><!-- #userList Header -->
+			<tbody>
+			<c:if test="${!empty logList}">
+			<c:forEach var="log" items="${logList}">
+				<tr>
+					<td>${log.seq }</td>
+					<td><fmt:formatDate value="${log.logdate}" pattern="YYYY-MM-dd HH:mm:ss"/></td>
+					<td>${log.username}[${log.userid}]</td>
+					<td>${log.logcontent}</td>
+				</tr><!-- #userList Row -->
+			</c:forEach>
+			</c:if>
+			</tbody>
+		</table>
       </div>
     </div>
     <!-- JavaScript files-->

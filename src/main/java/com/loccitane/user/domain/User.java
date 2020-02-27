@@ -32,6 +32,9 @@ public class User {
 	@Column(name = "username")
 	private String username;
 	
+	@Column(name = "birthday")
+	private String birthday;
+	
 	@Column(name = "store")
 	private String store;
 	
@@ -56,6 +59,26 @@ public class User {
 	@Column(name = "alarmyn")
 	private String alarmyn;
 	
+	@Column(name = "secondvisit_1")
+	private Date second1date;
+	
+	@Column(name = "secondvisit_2")
+	private Date second2date;
+	
+	@Column(name = "secondvisit_3")
+	private Date second3date;
+	
+	@Column(name = "secondvisit_4")
+	private Date second4date;
+	
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
 	public String getAlarmyn() {
 		return alarmyn;
 	}
@@ -167,7 +190,37 @@ public class User {
 	public void setTotalbuy(int totalbuy) {
 		this.totalbuy = totalbuy;
 	}
-	
-	
+
+	public Date getSecond1date() {
+		return second1date;
+	}
+
+	public void setSecond1date(Date second1date) {
+		this.second1date = second1date;
+	}
+
+	public Date getSecond2date() {
+		return second2date;
+	}
+
+	public void setSecond2date(Date second2date) {
+		this.second2date = second2date;
+	}
+
+	public Date getSecond3date() {
+		return second3date;
+	}
+
+	public void setSecond3date(Date second3date) {
+		this.second3date = second3date;
+	}
+
+	public Date getSecond4date() {
+		return second4date;
+	}
+
+	public void setSecond4date(Date second4date) {
+		this.second4date = second4date;
+	}
 	
 }

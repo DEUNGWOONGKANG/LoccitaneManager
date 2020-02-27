@@ -62,6 +62,9 @@ public class Coupon {
 	
 	@Column(name = "discountmax")
 	private int discountmax;
+	
+	@Column(name = "reason")
+	private String reason;
 
 	public String getCreateuser() {
 		return createuser;
@@ -190,7 +193,13 @@ public class Coupon {
 	public void setUsedate(Date usedate) {
 		this.usedate = usedate;
 	}
-	
-	
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
 }

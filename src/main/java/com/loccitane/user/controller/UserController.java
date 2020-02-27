@@ -3,6 +3,7 @@ package com.loccitane.user.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +36,8 @@ import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
 import com.loccitane.grade.service.GradeService;
+import com.loccitane.log.domain.Log;
+import com.loccitane.log.service.LogService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
 import com.loccitane.utils.Paging;
@@ -47,6 +50,8 @@ public class UserController {
 	CouponService cpservice;
 	@Autowired
 	GradeService grservice;
+	@Autowired
+	LogService logservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -184,6 +189,7 @@ public class UserController {
 			// 쿠폰사용시 관리자의 정보를 DB에 넣기위해 세션에 로그인 정보 저장
 			HttpSession httpSession = request.getSession(true);
 			httpSession.setAttribute("loginUser", userData);
+			httpSession.setAttribute("menu", "menu1");
 		}
 		return nextView;
 	}
@@ -252,6 +258,8 @@ public class UserController {
 	@GetMapping("/super/excelupload")
 	public ModelAndView superExcelUpload() {
 		ModelAndView nextView = new ModelAndView("jsp/superManagerExcelUpload");
+		List<Log> logList = logservice.getLog("EXCELUPLOAD");
+		nextView.addObject("logList", logList);
 		return nextView;
 	}
 	
@@ -270,13 +278,80 @@ public class UserController {
             throw new RuntimeException(e.getMessage(),e);
         }
         
-        service.excelUpload(destFile);
-        
+        String logContent = service.excelUpload(destFile);
         destFile.delete();
+	    
+	    Log log = new Log();
+	    Date now = new Date();
+	    HttpSession httpSession = request.getSession(true);
+		User loginUser = (User) httpSession.getAttribute("loginUser");
+		
+	    log.setUserid(loginUser.getUserid());
+	    log.setUsername(loginUser.getUsername());
+	    log.setLogkind("EXCELUPLOAD");
+	    log.setLogcontent(logContent);
+	    log.setLogdate(now);
+	    logservice.saveLog(log);
         
-        ModelAndView view = new ModelAndView();
-        view.setViewName("");
-        return view;
+        ModelAndView nextView = new ModelAndView("jsp/superManagerExcelUpload");
+        return nextView;
     }
+    
+    @ResponseBody
+    @RequestMapping(value = "/excelUploadProgress", method = RequestMethod.POST)
+    public String excelUploadProgress(HttpServletRequest request) throws Exception {
+        int resultData = 0;
+        
+        if(UserService.getCurrentState()=="B"){
+            int a =UserService.getCurrentStateCount();
+            int b =UserService.getTotalRowCount();
+            //ModuleServiceImpl.getCurrentStateCount()/ModuleServiceImpl.getTotalRowCount()*100
+            
+            
+            BigDecimal aGd = new BigDecimal(a);
+            BigDecimal bGd = new BigDecimal(b);
+            
+        
+            resultData = aGd.divide(bGd, 2, BigDecimal.ROUND_CEILING).multiply(new BigDecimal(100)).intValue();
+        }
+        
+        
+        return Integer.toString(resultData);
+    }
+    @ResponseBody
+    @RequestMapping(value = "/excelUploadProgressClear", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView excelUploadProgressClear(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    
+    	UserService.setCurrentStateCount(0);
+    	UserService.setTotalRowCount(0);
+    	UserService.setUpdateRowCount(0);
+        UserService.setNoupdateRowCount(0);
+        UserService.setInsertRowCount(0);
+        UserService.setCurrentState(null);
+        
+        return null;
+    }
+    
+    //매장매니저 메뉴 클릭
+  	@GetMapping("/super/menu/{menu}") 
+  	public ModelAndView goAdminMenu(@PathVariable("menu") String menu, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+  		ModelAndView nextView = null;
+  		HttpSession httpSession = request.getSession(true);
+  		User loginUser = (User) httpSession.getAttribute("loginUser");
+  		
+  		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
+  			nextView = logoutManager();
+  		} else if(loginUser != null && menu.equals("menu1")) {
+  			nextView = superHome();
+  		} else if(loginUser != null && menu.equals("menu2_1")){
+  			nextView = superUserList(request, pageable);
+  		} else if(loginUser != null && menu.equals("menu2_2")){
+  			nextView = superExcelUpload();
+  		} else if(loginUser != null && menu.equals("menu3")){
+  		}
+  		
+  		httpSession.setAttribute("menu", menu);
+  		return nextView;
+  	}
 	
 }

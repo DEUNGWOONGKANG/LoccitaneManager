@@ -51,6 +51,9 @@ public class CouponMember {
 	
 	@Column(name = "usedate")
 	private Date cptmusedate;
+	
+	@Column(name = "reason")
+	private String reason;
 
 	public int getCptmseq() {
 		return cptmseq;
@@ -138,6 +141,14 @@ public class CouponMember {
 
 	public void setCptmusedate(Date cptmusedate) {
 		this.cptmusedate = cptmusedate;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 }
