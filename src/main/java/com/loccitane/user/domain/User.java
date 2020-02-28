@@ -17,14 +17,8 @@ public class User {
 	@Column(name = "userseq") 
 	private int seq;
 	
-	@Column(name = "vipcode") 
-	private String vipcode;
-	
-	@Column(name = "userid") 
-	private String userid;
-
-	@Column(name = "userpw")
-	private String userpw;
+	@Column(name = "usercode") 
+	private String usercode;
 
 	@Column(name = "grade")
 	private String grade;
@@ -34,13 +28,7 @@ public class User {
 	
 	@Column(name = "birthday")
 	private String birthday;
-	
-	@Column(name = "store")
-	private String store;
-	
-	@Column(name = "position")
-	private String position;
-	
+
 	@Column(name = "status")
 	private String status;
 	
@@ -95,28 +83,12 @@ public class User {
 		this.seq = seq;
 	}
 
-	public String getVipcode() {
-		return vipcode;
+	public String getUsercode() {
+		return usercode;
 	}
 
-	public void setVipcode(String vipcode) {
-		this.vipcode = vipcode;
-	}
-
-	public String getUserid() {
-		return userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
-
-	public String getUserpw() {
-		return userpw;
-	}
-
-	public void setUserpw(String userpw) {
-		this.userpw = userpw;
+	public void setUsercode(String usercode) {
+		this.usercode = usercode;
 	}
 
 	public String getGrade() {
@@ -133,22 +105,6 @@ public class User {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getStore() {
-		return store;
-	}
-
-	public void setStore(String store) {
-		this.store = store;
-	}
-
-	public String getPosition() {
-		return position;
-	}
-
-	public void setPosition(String position) {
-		this.position = position;
 	}
 
 	public String getStatus() {

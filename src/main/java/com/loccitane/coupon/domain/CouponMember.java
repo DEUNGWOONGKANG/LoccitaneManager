@@ -22,8 +22,8 @@ public class CouponMember {
 	@Column(name = "cptmseq") //대응하는 컬럼명 지정
 	private int cptmseq;
 	
-	@Column(name = "userid") //대응하는 컬럼명 지정
-	private String cptmuserid;
+	@Column(name = "usercode") //대응하는 컬럼명 지정
+	private String cptmusercode;
 
 	@Column(name = "couponcode")
 	private String cptmcpcode;
@@ -63,12 +63,12 @@ public class CouponMember {
 		this.cptmseq = cptmseq;
 	}
 
-	public String getCptmuserid() {
-		return cptmuserid;
+	public String getCptmusercode() {
+		return cptmusercode;
 	}
 
-	public void setCptmuserid(String cptmuserid) {
-		this.cptmuserid = cptmuserid;
+	public void setCptmusercode(String cptmusercode) {
+		this.cptmusercode = cptmusercode;
 	}
 
 	public String getCptmcpcode() {

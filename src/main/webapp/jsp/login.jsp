@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="/css/lc_login.css">
 <script type="text/javascript">
 function check(){
-	var id = document.getElementById("userid");
-	var pw = document.getElementById("userpw");
-	var grade = document.getElementsByName("grade");
+	var id = document.getElementById("loginId");
+	var pw = document.getElementById("loginPw");
+	var grade = document.getElementsByName("type");
 	var gradeCheckYn = false;
 	var gradeVal = "";
 	//관리자 유형이 체크되어 있는지 확인
@@ -32,12 +32,7 @@ function check(){
 		alert("관리자 유형을 선택하세요.");
 		return false;
 	}else{
-		if(gradeVal == "store"){
-			document.getElementById("loginForm").submit();
-		}else if(gradeVal == "super"){
-			document.getElementById("loginForm").action = "/super/login";
-			document.getElementById("loginForm").submit();
-		}
+		document.getElementById("loginForm").submit();
 	}
 	
 }
@@ -54,17 +49,17 @@ function check(){
 
       <div class="login__body">
    		<div>
-			<input type="radio" name="grade" value="store">
+			<input type="radio" name="type" value="store">
 			<label class="custom-control-label" for="jb-radio-1">매장관리자</label>
-			<input type="radio" name="grade" value="super">
+			<input type="radio" name="type" value="super">
 			<label class="custom-control-label" for="jb-radio-2">슈퍼관리자</label>
 		</div>
         <div class="form__field">
-          <input type="text" placeholder="ID" id="userid" name="userid">
+          <input type="text" placeholder="ID" id="loginId" name="loginId">
         </div>
 
         <div class="form__field">
-          <input type="password" placeholder="Password" name="userpw" id="userpw">
+          <input type="password" placeholder="Password" name="loginPw" id="loginPw">
         </div>
 
       </div>

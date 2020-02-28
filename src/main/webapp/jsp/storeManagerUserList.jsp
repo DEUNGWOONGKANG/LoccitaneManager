@@ -11,10 +11,10 @@
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
-function userSelect(userid, username){
+function userSelect(usercode, username){
 	var result = confirm(username+"고객이 맞습니까?");
 	if(result){
-		location.href = '/manager/couponlist/'+userid;
+		location.href = '/manager/couponlist/'+usercode;
 	}
 }
 
@@ -26,7 +26,7 @@ function dormant(){
 <body>
 <jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <div class="wrapper">
-	<form id="searchForm" action="/manager/userSearch" method="post">
+	<form id="searchForm" action="/store/userSearch" method="post">
 	<table style="width:100%; margin-top:20px;">
 		<tr height="50px">
 			<td width="10%">
@@ -91,7 +91,7 @@ function dormant(){
 				</td>
 				<td>${user.grade }</td>
 				<td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
-				<td><input type="button" class="button-yellow-small" value="선택" onclick="userSelect('${user.userid}', '${user.username}')"></td>
+				<td><input type="button" class="button-yellow-small" value="선택" onclick="userSelect('${user.usercode}', '${user.username}')"></td>
 			</tr><!-- 정상사용자 -->
 			</c:if>
 			<c:if test="${user.status == '9'}">

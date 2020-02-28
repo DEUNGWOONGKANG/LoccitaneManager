@@ -21,6 +21,9 @@
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
+if("${saveyn}" == "Y"){
+	alert("저장되었습니다.");	
+}
 function check(){
 	var searchKeyword = document.getElementById("searchKeyword");
 	if(searchKeyword.value == "" || searchKeyword.value == null){
@@ -30,9 +33,13 @@ function check(){
 		document.getElementById("searchForm").submit();
 	}
 }
-function userInfo(usercode){
-	location.href="/super/userinfo/"+usercode;
+function storeInfo(storeId){
+	location.href="/super/storeinfo/"+storeId;
 }
+function storeAdd(){
+	location.href="/super/storeadd";
+}
+
 </script>
   </head>
   <body>
@@ -43,60 +50,43 @@ function userInfo(usercode){
       <div class="w-100 d-flex flex-wrap">
       	<div class="container-fluid px-xl-5">
       		<div class="search">	
-		    	<form id="searchForm" action="/super/userlist" method="post" onsubmit="return check()">
+		    	<form id="searchForm" action="/super/storelist" method="post" onsubmit="return check()">
 		    		<select class="form-control" id="searchKey" name="searchKey">
-						<option value="username">이름</option>
-						<option value="phone">전화번호</option>
-						<option value="usercode">회원번호</option>
+						<option value="name">매장명</option>
+						<option value="tel">전화번호</option>
 					</select>
 			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
 			  		<input type="submit" class="btn btn-warning" value="검색">
 				</form>
 			</div>
       	</div>
-      	<c:if test="${!empty userList.content}">
+      	<c:if test="${!empty storeList.content}">
 	      	<table class="table table-hover" style="margin-left:10px;">
 			  <thead>
 			    <tr>
 			      <th scope="col">NO</th>
-			      <th scope="col">고객번호</th>
-			      <th scope="col">전화번호</th>
-			      <th scope="col">이름</th>
-			      <th scope="col">등급</th>
-			      <th scope="col">마지막구매일</th>
+			      <th scope="col">매장명</th>
+			      <th scope="col">매장전화번호</th>
+			      <th scope="col">매장코드</th>
+			      <th scope="col">매장주소</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			  	<c:forEach var="user" items="${userList.content}" varStatus="status">
-				    <tr style="cursor:pointer;" onclick="userInfo('${user.usercode}')">
+			  	<c:forEach var="store" items="${storeList.content}" varStatus="status">
+				    <tr style="cursor:pointer;" onclick="storeInfo('${store.seq}')">
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>
-				      	<c:set var = "codelength" value = "${fn:length(user.usercode)}"/>
-						${fn:substring(user.usercode, 0, 2)}*************${fn:substring(user.usercode, 15, codelength)}
-				      </td>
-				      <td>
-				      	<c:set var = "plength" value = "${fn:length(user.phone)}"/>
-				      	<c:if test="${plength+0 > 10}">
-							${fn:substring(user.phone, 0, 3)}-****-${fn:substring(user.phone, 7, plength)}
-						</c:if>
-						<c:if test="${plength+0 < 5}">
-							${fn:substring(user.phone, 0, 1)}**${fn:substring(user.phone, 3, plength)}
-						</c:if>
-					  </td>
-				      <td>
-				      	<c:set var = "length" value = "${fn:length(user.username)}"/>
-						${fn:substring(user.username, 0, 1)}*${fn:substring(user.username, 2, length)}
-				      </td>
-				      <td>${user.grade}</td>
-				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
+				      <td>${store.name}</td>
+				      <td>${store.tel}</td>
+				      <td>${store.code}</td>
+				      <td>${store.postcode} ${store.address}</td>
 				    </tr>
 				</c:forEach>
 			  </tbody>
 			</table>
 		</c:if>
-		<c:if test="${empty userList.content}">
+		<c:if test="${empty storeList.content}">
 			<div style="text-align:center;width:100%">
-				<h2>사용자가 존재하지 않습니다.</h2>
+				<h2>매장이 존재하지 않습니다.</h2>
 			</div>
 		</c:if>
 		<div class="container">
@@ -122,6 +112,9 @@ function userInfo(usercode){
 					</ul>
 				</div>
 			</div>
+		</div>
+		<div style="width:80%;margin-left:auto;margin-right:auto;text-align:right;">
+			<input type="button" class="btn btn-warning" value="매장등록" onclick="storeAdd()">
 		</div>
       </div>
     </div>

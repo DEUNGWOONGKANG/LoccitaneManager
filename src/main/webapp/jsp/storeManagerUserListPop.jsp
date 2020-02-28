@@ -9,11 +9,11 @@
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
-function userSelect(userid, username, phone, grade, seq){
+function userSelect(usercode, username, phone, grade, seq){
 	var result = confirm(username+"고객이 맞습니까?");
 	if(result){
 		window.opener.document.getElementById("username").value = username;
-		window.opener.document.getElementById("userid").value = userid;
+		window.opener.document.getElementById("usercode").value = usercode;
 		window.opener.document.getElementById("phone").value = phone;
 		window.opener.document.getElementById("grade").value = grade;
 
@@ -42,7 +42,7 @@ function userSelect(userid, username, phone, grade, seq){
 				<td>${user.phone }</td>
 				<td>${user.grade }</td>
 				<td>
-				<input type="button" class="button-yellow-small" value="선택" onclick="userSelect('${user.userid}', '${user.username}','${user.phone}', '${user.grade}', '${user.seq}')">
+				<input type="button" class="button-yellow-small" value="선택" onclick="userSelect('${user.usercode}', '${user.username}','${user.phone}', '${user.grade}', '${user.seq}')">
 				</td>
 			</tr><!-- #userList Row -->
 		</c:forEach>

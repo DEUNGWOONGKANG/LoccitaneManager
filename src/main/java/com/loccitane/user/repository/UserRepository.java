@@ -14,16 +14,15 @@ import com.loccitane.user.domain.User;
 //JpaRepository의 파라미터 인자에 <Coupon클래스와 , String을 설정>
 @Repository
 public interface UserRepository extends JpaRepository<User, String>{
-	User findByUserid(String userid);
-	User findByUseridAndPhoneEndingWith(String userid, String phone);
-	User findByUseridAndUserpwAndGrade(String userid, String userpw, String grade);
-	List<User> findAllByGradeNotInAndPhoneEndingWithOrderByStatusAsc(ArrayList<String> grade,String phone);
-	List<User> findAllByUsernameAndGradeNotIn(String username, ArrayList<String> grade);
+	List<User> findAllByPhoneEndingWithOrderByStatusAsc(String phone);
 	List<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade);
-	List<User> findAllByUseridAndGradeNotIn(String userid, ArrayList<String> grade);
-	Page<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade, Pageable pageable);
-	Page<User> findAllByUseridAndGradeNotIn(String userid, ArrayList<String> grade, Pageable pageable);
-	Page<User> findAllByUsernameAndGradeNotIn(String username, ArrayList<String> grade, Pageable pageable);
+	Page<User> findAllByPhone(String phone, Pageable pageable);
+	Page<User> findAllByUsername(String username, Pageable pageable);
+	Page<User> findAllByUsercode(String code, Pageable pageable);
 	List<User> findAllByGradeNotInOrderByStatusAsc(ArrayList<String> grade);
-	Page<User> findAllByGradeNotIn(ArrayList<String> grade, Pageable pageable);
+	List<User> findAllByUsername(String searchKeyword);
+	List<User> findAllByPhone(String searchKeyword);
+	List<User> findAllByUsercode(String searchKeyword);
+	User findByUsercode(String usercode);
+	User findByUsercodeAndPhoneEndingWith(String usercode, String phone);
 }

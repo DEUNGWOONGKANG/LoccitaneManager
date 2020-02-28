@@ -34,35 +34,25 @@ function check(){
 	}
 }
 function couponGive(){
-	var userId = document.getElementById("userid").value;
-	location.href="/super/coupongive/"+userId;
+	var usercode = document.getElementById("usercode").value;
+	location.href="/super/coupongive/"+usercode;
 }
 </script>
 </head>
   <body>
     <!-- navbar-->
-    <header class="header">
-      <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="/super/home" class="navbar-brand font-weight-bold text-uppercase text-base"><img src="<%=url %>/img/logo.png" style="width:150px"></a>
-        <ul class="ml-auto d-flex align-items-center list-unstyled mb-0">
-          <li class="nav-item dropdown ml-auto"><a id="userInfo" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"><span style="font-size:12px;"><%=user.getUsername() %>님</span></a>
-            <div aria-labelledby="userInfo" class="dropdown-menu">
-              <a href="/manager/logout" class="dropdown-item">Logout</a>
-            </div>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <jsp:include page="superManagerHeader.jsp"></jsp:include>
     <div class="d-flex align-items-stretch">
       <jsp:include page="superManagerMenu.jsp"></jsp:include>
       <div class="w-100 d-flex flex-wrap">
       	<form id="formdata" action="/super/modifyuser" method="post" style="width:100%" onsubmit="return check()">
-      	<input type="hidden" value="${userData.userid}" name="userid" id="userid">
+      	<input type="hidden" value="${userData.usercode}" name="usercode" id="usercode">
       	<div style="width:100%">
 	      	<table class="userInfo">
 			  <tbody>
 			    <tr>
 			      <th>회원번호</th>
-				  <td>${userData.userid}</td>
+				  <td>${userData.usercode}</td>
 			    </tr>
 			    <tr>
 			      <th>이름</th>

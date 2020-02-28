@@ -72,7 +72,7 @@ function check(){
 		</td>
 		<td width="90%" style="text-align:center;">
 				<input type="password" class="endNumInput" id="phone" name="phone" style="width:70%;height:100px;">
-				<input type="hidden" value="${userid}" id="userid" name="userid">
+				<input type="hidden" value="${usercode}" id="usercode" name="usercode">
 		</td>
 		<td width="5%">
 		</td>

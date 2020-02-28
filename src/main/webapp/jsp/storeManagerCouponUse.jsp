@@ -21,7 +21,7 @@ function check(){
 <body>
 <jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <div class="wrapper">
-	<form id="searchForm" action="/manager/userSearch" method="post" onsubmit="return check()">
+	<form id="searchForm" action="/store/userSearch" method="post" onsubmit="return check()">
 	<table style="width:100%; margin-top:20px;">
 		<tr height="50px">
 			<td width="10%">

@@ -11,10 +11,10 @@
 <title></title>
 <link href="<%=url %>/css/lc_userlist.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript">
-function useCoupon(seq, userid){
+function useCoupon(seq, usercode){
 	var result = confirm("해당 쿠폰을 사용처리 하시겠습니까?");
 	if(result){
-		location.href = "/manager/couponuse/"+userid+"/"+seq;
+		location.href = "/manager/couponuse/"+usercode+"/"+seq;
 	}
 	
 }
@@ -24,7 +24,7 @@ function useCoupon(seq, userid){
 <jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <jsp:useBean id="today" class="java.util.Date" />
 <div class="wrapper">
-	<form id="searchForm" action="/manager/userSearch" method="post">
+	<form id="searchForm" action="/store/userSearch" method="post">
 	<table style="width:100%; margin-top:20px;">
 		<tr height="50px">
 			<td width="10%">
@@ -102,7 +102,7 @@ function useCoupon(seq, userid){
 				</td>
 				<td>
 					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today}">
-						<input type="button" class="button-yellow-small" value="사용처리" onclick="useCoupon('${coupon.seq}','${coupon.userid}')" >
+						<input type="button" class="button-yellow-small" value="사용처리" onclick="useCoupon('${coupon.seq}','${coupon.usercode}')" >
 					</c:if>
 					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today}">
 						<input type="button" class="button-gray-small" value="사용불가" disabled="disabled" >

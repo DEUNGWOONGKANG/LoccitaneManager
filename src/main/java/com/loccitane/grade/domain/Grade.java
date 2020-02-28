@@ -21,8 +21,8 @@ public class Grade {
 	@Column(name = "name") 
 	private String name;
 	
-	@Column(name = "level") 
-	private int level;
+	@Column(name = "kname") 
+	private String kname;
 	
 	@Column(name = "minimum") 
 	private int minimum;
@@ -57,14 +57,6 @@ public class Grade {
 		this.name = name;
 	}
 
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
 	public int getMinimum() {
 		return minimum;
 	}
@@ -88,4 +80,14 @@ public class Grade {
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+
+	public String getKname() {
+		return kname;
+	}
+
+	public void setKname(String kname) {
+		this.kname = kname;
+	}
+	
+	
 }

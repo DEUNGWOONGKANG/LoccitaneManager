@@ -12,6 +12,7 @@ import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.repository.CouponCoreRepository;
 import com.loccitane.coupon.repository.CouponMemberRepository;
 import com.loccitane.coupon.repository.CouponRepository;
+import com.loccitane.store.domain.Store;
 import com.loccitane.user.domain.User;
 
 @Service // 서비스 클래스임을 나타냄
@@ -31,30 +32,30 @@ public class CouponService {
 	}
 	
 	//해당 고객의 쿠폰 데이터 조회
-	public List<Coupon> getUserCoupon(String userId) {
-		List<Coupon> couponData  = couponRepo.findAllByUserid(userId);
+	public List<Coupon> getUserCoupon(String usercode) {
+		List<Coupon> couponData  = couponRepo.findAllByUsercode(usercode);
 		return couponData;
 	}
 	
 	//쿠폰 사용처리
-	public void useCoupon(String userid, int seq, User loginUser) {
+	public void useCoupon(String usercode, int seq, Store loginUser) {
 		CouponMember coupon = couponMemRepo.findByCptmseq(seq);
 		Date now  = new Date();
 		coupon.setCptmusedate(now);
 		coupon.setCptmusedyn("Y");
-		coupon.setCptmuseuserid(loginUser.getUserid());
+		coupon.setCptmuseuserid(loginUser.getId());
 		couponMemRepo.save(coupon);
 	}
 	
 	//매장 관리자 고객 쿠폰 부여
-	public void giveCoupon(User user, CouponMember coupon, User loginUser) {
+	public void giveCoupon(User user, CouponMember coupon, Store loginUser) {
 		CouponMember newCoupon = new CouponMember();
 		Date now  = new Date();
 		
 		newCoupon.setCptmcpcode(coupon.getCptmcpcode());
-		newCoupon.setCptmuserid(user.getUserid());
+		newCoupon.setCptmusercode(user.getUsercode());
 		newCoupon.setCptmissueday(now);
-		newCoupon.setCptmgiveuser(loginUser.getUserid());
+		newCoupon.setCptmgiveuser(loginUser.getId());
 		newCoupon.setCptmstartdate(coupon.getCptmstartdate());
 		newCoupon.setCptmenddate(coupon.getCptmenddate());
 		newCoupon.setCptmusedyn("N");

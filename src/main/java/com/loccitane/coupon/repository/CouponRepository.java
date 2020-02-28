@@ -10,5 +10,5 @@ import com.loccitane.coupon.domain.Coupon;
 //JpaRepository의 파라미터 인자에 <Coupon클래스와 , String를 설정>
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, Integer>{
-	List<Coupon> findAllByUserid(String userid);
+	List<Coupon> findAllByUsercode(String usercode);
 }

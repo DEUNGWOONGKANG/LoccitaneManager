@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.loccitane.log.domain.Log;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ExcelRead;
@@ -92,65 +91,50 @@ public class UserService {
 		return list;
 	}
 	
-	// 사용자 userid값으로 조회
-	public User userCheck(String userid) {
-		User userData  = userRepo.findByUserid(userid);
+	// 사용자 usercode값으로 조회
+	public User userCheck(String usercode) {
+		User userData  = userRepo.findByUsercode(usercode);
 		return userData;
 	}
 		
 	// 사용자(고객) 로그인 
 	public User userLogin(User user) {
-		User userData = userRepo.findByUseridAndPhoneEndingWith(user.getUserid(), user.getPhone()); 
-		return userData;
-	}
-	
-	// 관리자 로그인 
-	public User managerLogin(User user) {
-		User userData = userRepo.findByUseridAndUserpwAndGrade(user.getUserid(), user.getUserpw(), user.getGrade()); 
+		User userData = userRepo.findByUsercodeAndPhoneEndingWith(user.getUsercode(), user.getPhone()); 
 		return userData;
 	}
 	
 	// 사용자 리스트 전화번호로 조회
 	public List<User> getUserListByPhone(User user) {
-		ArrayList<String> grade = new ArrayList<String>();
-		grade.add("store");
-		grade.add("super");
-		List<User> userData = userRepo.findAllByGradeNotInAndPhoneEndingWithOrderByStatusAsc(grade,user.getPhone());
+		List<User> userData = userRepo.findAllByPhoneEndingWithOrderByStatusAsc(user.getPhone());
 		return userData;
 	}
 	
 	// 고객리스트 조회
 	public Page<User> getCustomerList(Pageable pageable) {
-		ArrayList<String> grade = new ArrayList<String>();
-		grade.add("store");
-		grade.add("super");
-		
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
         
-		Page<User> userData = userRepo.findAllByGradeNotIn(grade,pageable);
+		Page<User> userData = userRepo.findAll(pageable);
 		return userData;
 	}
 	
 	// 고객리스트 조회
 	public Page<User> getCustomerList(Pageable pageable,String searchKey, String searchKeyword) {
-		ArrayList<String> grade = new ArrayList<String>();
-		grade.add("store");
-		grade.add("super");
-		
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
         
 		Page<User> userData = null;
 		
-		if(searchKey.equals("username")) {
-			userData = userRepo.findAllByUsernameAndGradeNotIn(searchKeyword, grade, pageable);
+		if(searchKey == null) {
+			userData = userRepo.findAll(pageable);
+		}else if(searchKey.equals("username")) {
+			userData = userRepo.findAllByUsername(searchKeyword, pageable);
 		}else if(searchKey.equals("phone")) {
-			userData = userRepo.findAllByPhoneAndGradeNotIn(searchKeyword, grade, pageable);
-		}else if(searchKey.equals("userid")) {
-			userData = userRepo.findAllByUseridAndGradeNotIn(searchKeyword, grade, pageable);
+			userData = userRepo.findAllByPhone(searchKeyword, pageable);
+		}else if(searchKey.equals("usercode")) {
+			userData = userRepo.findAllByUsercode(searchKeyword,  pageable);
 		}else{
-			userData = userRepo.findAllByGradeNotIn(grade,pageable);
+			userData = userRepo.findAll(pageable);
 		}
 		
 		return userData;
@@ -159,16 +143,13 @@ public class UserService {
 	//고객 검색
 	public List<User> searchUserList(String searchKey, String searchKeyword){
 		List<User> userData = null;
-		ArrayList<String> grade = new ArrayList<String>();
-		grade.add("store");
-		grade.add("super");
 		
 		if(searchKey.equals("username")) {
-			userData = userRepo.findAllByUsernameAndGradeNotIn(searchKeyword, grade);
+			userData = userRepo.findAllByUsername(searchKeyword);
 		}else if(searchKey.equals("phone")) {
-			userData = userRepo.findAllByPhoneAndGradeNotIn(searchKeyword, grade);
+			userData = userRepo.findAllByPhone(searchKeyword);
 		}else{
-			userData = userRepo.findAllByUseridAndGradeNotIn(searchKeyword, grade);
+			userData = userRepo.findAllByUsercode(searchKeyword);
 		}
 		
 		return userData;
@@ -177,7 +158,7 @@ public class UserService {
 	
 	//회원정보메뉴 등급 + 알람수신여부 저장
 	public void saveUser(User user) {
-		User userData  = userRepo.findByUserid(user.getUserid());
+		User userData  = userRepo.findByUsercode(user.getUsercode());
 		Date now  = new Date();
 		userData.setGrade(user.getGrade());
 		userData.setAlarmyn(user.getAlarmyn());
@@ -190,7 +171,7 @@ public class UserService {
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 		ExcelReadOption excelReadOption = new ExcelReadOption();
 		excelReadOption.setFilePath(destFile.getAbsolutePath());
-		excelReadOption.setOutputColumns("A","B","C","D","E","F","G","H","I","J","K","L");
+		excelReadOption.setOutputColumns("A","B","C","D","E","F");
 		excelReadOption.setStartRow(2);
 		Date now = new Date();
 		
@@ -207,22 +188,18 @@ public class UserService {
 		    cal.add(Calendar.YEAR,  -1);
 		    
 		    for(Map<String, String> article: excelContent){
-		    	User check = userCheck(article.get("B"));
+		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
 		    	if(check == null) {
 		    		//DB에 사용자가 없는 경우 신규 생성
 		    		check = new User();
-		    		check.setVipcode(article.get("A"));
-		    		check.setUserid(article.get("B"));
-		    		check.setUserpw(article.get("C"));
-		    		check.setUsername(article.get("D"));
-		    		check.setBirthday(article.get("E"));
-		    		check.setStore(article.get("F"));
-		    		check.setPosition(article.get("G"));
-		    		check.setPhone(article.get("H"));
-		    		check.setLastpurchase(transFormat.parse(article.get("I")));
-		    		check.setTotalbuy(Integer.parseInt(article.get("J")));
-		    		check.setAlarmyn(article.get("K"));
+		    		check.setUsercode(article.get("A"));
+		    		check.setUsername(article.get("B"));
+		    		check.setBirthday(article.get("C"));
+		    		check.setPhone(article.get("D"));
+		    		check.setLastpurchase(transFormat.parse(article.get("E")));
+		    		check.setTotalbuy(Integer.parseInt(article.get("F")));
+		    		check.setAlarmyn("Y");
 		    		if(check.getLastpurchase().before(cal.getTime())) {
 		    			check.setStatus("9");
 		    		}else {
@@ -233,55 +210,39 @@ public class UserService {
 		    	}else{
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
 		    		// 변경된 사항이 없을경우 UPDATE 하지 않음.
-		    		if(!check.getVipcode().equals(article.get("A"))) {
-		    			check.setVipcode(article.get("A"));
+		    		if(!check.getUsercode().equals(article.get("A"))) {
+		    			check.setUsercode(article.get("A"));
 		    			dataAdd = true;
 		    		}
-		    		if(!check.getUserid().equals(article.get("B"))) {
-		    			check.setUserid(article.get("B"));
+		    		if(!check.getUsername().equals(article.get("B"))) {
+		    			check.setUsername(article.get("B"));
 		    			dataAdd = true;
 		    		}
-		    		if(!check.getUserpw().equals(article.get("C"))) {
-		    			check.setUserpw(article.get("C"));
+		    		if(!check.getBirthday().equals(article.get("C"))) {
+		    			check.setBirthday(article.get("C"));
 		    			dataAdd = true;
 		    		}
-		    		if(!check.getUsername().equals(article.get("D"))) {
-		    			check.setUsername(article.get("D"));
-		    			dataAdd = true;
-		    		}
-		    		if(!check.getBirthday().equals(article.get("E"))) {
-		    			check.setBirthday(article.get("E"));
-		    			dataAdd = true;
-		    		}
-		    		if(!check.getStore().equals(article.get("F"))) {
-		    			check.setStore(article.get("F"));
-		    			dataAdd = true;
-		    		}
-		    		if(!check.getPosition().equals(article.get("G"))) {
-		    			check.setPosition(article.get("G"));
-		    			dataAdd = true;
-		    		}
-		    		if(!check.getPhone().equals(article.get("H"))) {
-		    			check.setPhone(article.get("H"));
+		    		if(!check.getPhone().equals(article.get("D"))) {
+		    			check.setPhone(article.get("D"));
 		    			dataAdd = true;
 		    		}
 		    		//날짜 비교는 Timestamp로 비교한다.
-		    		Timestamp ts = new Timestamp(transFormat.parse(article.get("I")).getTime());
+		    		Timestamp ts = new Timestamp(transFormat.parse(article.get("E")).getTime());
 		    		if(!check.getLastpurchase().equals(ts)){
 		    			check.setLastpurchase(ts);
 			    		check.setStatus("1");
 		    			dataAdd = true;
 		    		}
-		    		if(check.getTotalbuy() != Integer.parseInt(article.get("J"))) {
-		    			check.setTotalbuy(Integer.parseInt(article.get("J")));
+		    		if(check.getTotalbuy() != Integer.parseInt(article.get("F"))) {
+		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    			dataAdd = true;
 		    		}
-		    		if(!check.getAlarmyn().equals(article.get("K"))) {
-		    			check.setAlarmyn(article.get("K"));
-		    			dataAdd = true;
-		    		}
-		    		if(check.getLastpurchase().before(cal.getTime())) {
+		    		if(check.getLastpurchase().before(cal.getTime()) && check.getStatus().equals("1")) {
 		    			check.setStatus("9");
+		    			dataAdd = true;
+		    		}
+		    		if(check.getLastpurchase().after(cal.getTime()) && check.getStatus().equals("9")) {
+		    			check.setStatus("1");
 		    			dataAdd = true;
 		    		}
 		    		

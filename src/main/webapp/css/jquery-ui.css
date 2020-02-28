@@ -68,8 +68,6 @@
 	vertical-align: middle;
 	margin-top: -.25em;
 	position: relative;
-	text-indent: -99999px;
-	overflow: hidden;
 	background-repeat: no-repeat;
 }
 
@@ -482,8 +480,6 @@ button.ui-button::-moz-focus-inner {
 /* Icons */
 .ui-datepicker .ui-icon {
 	display: block;
-	text-indent: -99999px;
-	overflow: hidden;
 	background-repeat: no-repeat;
 	left: .5em;
 	top: .3em;

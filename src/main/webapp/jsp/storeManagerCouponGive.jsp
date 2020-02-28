@@ -41,14 +41,26 @@ function userSearch(){
 		return false;
 	}
 	
-	window.open('/manager/userSearch/'+searchKey.options[searchKey.selectedIndex].value+'/'+searchKeyword
+	window.open('/store/userSearch/'+searchKey.options[searchKey.selectedIndex].value+'/'+searchKeyword
 			, 'userSearchPop', 'height='+ screen.height + 'width=' + screen.width + 'fullscreen=yes');
+}
+function change(){
+	var reason = document.getElementById("reason");
+	var val = reason.options[reason.selectedIndex].value;
+
+	if(val == "3"){
+		document.getElementById("reason_etc").readOnly = false;
+	}else{
+		document.getElementById("reason_etc").readOnly = true;
+	}
 }
 function check(){
 	var couponKind = document.getElementById("cpcode");
 	var username = document.getElementById("username");
 	var startDate = document.getElementById("startdate");
 	var endDate = document.getElementById("enddate");
+	var reason = document.getElementById("reason");
+	var reason_etc = document.getElementById("reason_etc");
 	
 	startDate.value = $("#startdate").val();
 	endDate.value = $("#enddate").val();
@@ -68,6 +80,12 @@ function check(){
 	if(username.value == "" || username.value == null){
 		alert("발행대상고객을 선택해주세요.");
 		return false;
+	}
+	if(reason.options[reason.selectedIndex].value == "3"){
+		if(reason_etc.value == "" || reason_etc.value == null){
+			alert("발행사유를 입력해주세요.");
+			return false;		
+		}
 	}
 	
 	var result = confirm(username.value+" 고객님에게 쿠폰을 발행하시겠습니까?");
@@ -130,7 +148,7 @@ function check(){
 					<select id="searchKey" class="selectBox2">
 						<option value="username">이름</option>
 						<option value="phone">전화번호</option>
-						<option value="userid">회원번호</option>
+						<option value="usercode">회원번호</option>
 					</select>
 					<input type="text" id="searchKeyword" class="inputText">  
 					<input id="searchbtn" type="button" class="button-yellow-small" value="검색" onclick="userSearch()">
@@ -138,10 +156,21 @@ function check(){
 			</tr>
 			<tr height="150px">
 				<td style="border-left:1px solid #e0e0e0;">
-					<input type="hidden" id="userid" name="userid">
+					<input type="hidden" id="usercode" name="usercode">
 					<input type="hidden" id="grade" name="grade" readonly>
 					이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" class="viewText" id="username" readonly><br>
 					전화번호: <input type="text" class="viewText" id="phone" name="phone" readonly><br>
+				</td>
+			</tr>
+			<tr height="100px">
+				<td width="25%">발행사유</td>
+				<td>
+					<select id="reason" class="selectBox2" onchange="change()">
+						<option value="1">1. 교환/환불</option>
+						<option value="2">2. 사용기한 만료</option>
+						<option value="3">3. 기타</option>
+					</select>
+					<input type="text"  id="reason_etc" name="reason_etc" class="inputText" readonly>
 				</td>
 			</tr>
 		</tbody>

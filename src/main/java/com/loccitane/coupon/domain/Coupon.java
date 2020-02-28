@@ -18,8 +18,8 @@ public class Coupon {
 	@Column(name = "cptmseq") //대응하는 컬럼명 지정
 	private int seq;
 	
-	@Column(name = "userid") //대응하는 컬럼명 지정
-	private String userid;
+	@Column(name = "usercode") //대응하는 컬럼명 지정
+	private String usercode;
 
 	@Column(name = "couponcode")
 	private String cpcode;
@@ -82,12 +82,12 @@ public class Coupon {
 		this.seq = seq;
 	}
 
-	public String getUserid() {
-		return userid;
+	public String getUsercode() {
+		return usercode;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUsercode(String usercode) {
+		this.usercode = usercode;
 	}
 
 	public String getCpcode() {
