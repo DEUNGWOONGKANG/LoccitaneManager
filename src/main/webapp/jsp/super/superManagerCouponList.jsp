@@ -33,11 +33,11 @@ function check(){
 		document.getElementById("searchForm").submit();
 	}
 }
-function storeInfo(storeId){
-	location.href="/super/storeinfo/"+storeId;
+function couponInfo(seq){
+	location.href="/super/couponinfo/"+seq;
 }
-function storeAdd(){
-	location.href="/super/storeadd";
+function couponAdd(){
+	location.href="/super/couponadd";
 }
 
 </script>
@@ -50,71 +50,91 @@ function storeAdd(){
       <div class="w-100 d-flex flex-wrap">
       	<div class="container-fluid px-xl-5">
       		<div class="search">	
-		    	<form id="searchForm" action="/super/storelist" method="post" onsubmit="return check()">
+		    	<form id="searchForm" action="/super/couponlist" method="post" onsubmit="return check()">
 		    		<select class="form-control" id="searchKey" name="searchKey">
-						<option value="name">매장명</option>
-						<option value="tel">전화번호</option>
+						<option value="cpcode">쿠폰코드</option>
+						<option value="cpname">쿠폰명</option>
+						<option value="createuser">생성자</option>
+						<option value="useyn">사용여부</option>
 					</select>
 			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
 			  		<input type="submit" class="btn btn-warning" value="검색">
 				</form>
 			</div>
       	</div>
-      	<c:if test="${!empty storeList.content}">
+      	<c:if test="${!empty couponList.content}">
 	      	<table class="table table-hover" style="margin-left:10px;">
 			  <thead>
 			    <tr>
 			      <th scope="col">NO</th>
-			      <th scope="col">매장명</th>
-			      <th scope="col">매장전화번호</th>
-			      <th scope="col">매장코드</th>
-			      <th scope="col">매장주소</th>
+			      <th scope="col">쿠폰코드</th>
+			      <th scope="col">쿠폰명</th>
+			      <th scope="col">할인내용</th>
+			      <th scope="col">작성자</th>
+			      <th scope="col">사용여부</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			  	<c:forEach var="store" items="${storeList.content}" varStatus="status">
-				    <tr style="cursor:pointer;" onclick="storeInfo('${store.seq}')">
+			  	<c:forEach var="coupon" items="${couponList.content}" varStatus="status">
+				    <tr style="cursor:pointer;" onclick="couponInfo('${coupon.seq}')">
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${store.name}</td>
-				      <td>${store.tel}</td>
-				      <td>${store.code}</td>
-				      <td>${store.postcode} ${store.address}</td>
+				      <td>${coupon.cpcode}</td>
+				      <td>${coupon.cpname}</td>
+				      <td>
+				      	<c:if test="${!empty coupon.minimum}">
+				      		${coupon.minimum}원 이상 구매시
+				      	</c:if>
+				      	${coupon.dccnt}
+				      	<c:if test="${coupon.dck == 1}">
+				      	원 할인
+				      	</c:if>
+				      	<c:if test="${coupon.dck == 2}">
+				      	% 할인
+				      	</c:if>
+				      	<c:if test="${!empty coupon.dcmax}">
+				      	(최대할인  ${coupon.dcmax}원 까지)
+				      	</c:if>
+				      </td>
+				      <td>${coupon.createuser}</td>
+				      <td>${coupon.useyn}</td>
 				    </tr>
 				</c:forEach>
 			  </tbody>
 			</table>
 		</c:if>
-		<c:if test="${empty storeList.content}">
+		<c:if test="${empty couponList.content}">
 			<div style="text-align:center;width:100%">
-				<h2>매장이 존재하지 않습니다.</h2>
+				<h2>쿠폰이 존재하지 않습니다.</h2>
 			</div>
 		</c:if>
+		<c:if test="${!empty couponList.content}">
 		<div class="container">
 			<div class="row">
 				<div class="col">
 					<ul class="pagination">
 						<c:if test="${paging.curRange > 1}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum-10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
+							<li class="page-item"><a class="page-link" href="/super/couponlist?page=${(paging.curRange-2)*10+1}&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
 						</c:if>
 						<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
 							<c:choose>
 								<c:when test="${pageNum eq  paging.curPage}">
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
+									<li class="page-item"><a class="page-link" href="/super/couponlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
+									<li class="page-item"><a class="page-link" href="/super/couponlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
 						<c:if test="${paging.curRange < paging.rangeCnt}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum+10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
+							<li class="page-item"><a class="page-link" href="/super/couponlist?page=${paging.curRange*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
 						</c:if>
 					</ul>
 				</div>
 			</div>
 		</div>
+		</c:if>
 		<div style="width:80%;margin-left:auto;margin-right:auto;text-align:right;">
-			<input type="button" class="btn btn-warning" value="매장등록" onclick="storeAdd()">
+			<input type="button" class="btn btn-warning" value="쿠폰생성" onclick="couponAdd()">
 		</div>
       </div>
     </div>

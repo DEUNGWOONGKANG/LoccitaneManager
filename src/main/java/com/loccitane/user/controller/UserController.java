@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
+import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
 import com.loccitane.grade.service.GradeService;
@@ -66,7 +67,7 @@ public class UserController {
 	@GetMapping("/user/check/{usercode}") // 최초 고객 URL 랜딩페이지에서 ID값 체크
 	public ModelAndView checkUser(@PathVariable("usercode") String usercode){
 		User user = service.userCheck(usercode); // 서비스에서 요청에 해당하는 처리를 한다.
-		ModelAndView nextView = new ModelAndView("jsp/customerMain");
+		ModelAndView nextView = new ModelAndView("customerMain");
 		if(user == null) {
 			//존재하지 않는 ID일경우 휴대폰 번호 입력란 DISABLED 처리
 			nextView.addObject("check", "N");
@@ -81,7 +82,7 @@ public class UserController {
 	//최초 고객ID 체크 후 휴대폰번호 4자리 입력 후 로그인 체크
 	@PostMapping("/user/login") 
 	public ModelAndView loginUser(User user, HttpServletResponse response) throws Exception { 
-		ModelAndView nextView = new ModelAndView("jsp/customerCouponList");
+		ModelAndView nextView = new ModelAndView("customerCouponList");
 		User userData = service.userLogin(user); //해당 유저id값+전화번호 뒷자리4자리로 사용자 존재여부 확인
 		if(userData == null) { //사용자가 존재하지 않을경우
 			response.setContentType("text/html; charset=UTF-8");
@@ -101,7 +102,7 @@ public class UserController {
 	//로그아웃
 	@GetMapping("/logout") 
 	public ModelAndView logoutManager(){ 
-		ModelAndView nextView = new ModelAndView("jsp/logout");
+		ModelAndView nextView = new ModelAndView("logout");
 		
 		return nextView;
 	}
@@ -114,12 +115,12 @@ public class UserController {
 		Store loginUser = (Store) httpSession.getAttribute("loginUser");
 		
 		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
-			nextView = new ModelAndView("jsp/logout");
+			nextView = new ModelAndView("logout");
 		} else if(loginUser != null && menu.equals("menu1")) {
-			nextView = new ModelAndView("jsp/storeManagerCouponUse");
+			nextView = new ModelAndView("store/storeManagerCouponUse");
 			httpSession.setAttribute("menu", "menuli1");
 		} else if(loginUser != null && menu.equals("menu2")){
-			nextView = new ModelAndView("jsp/storeManagerCouponGive");
+			nextView = new ModelAndView("store/storeManagerCouponGive");
 			List<CouponCore> couponList = cpservice.getCouponList();
 			httpSession.setAttribute("menu", "menuli2");
 			nextView.addObject("couponList", couponList);
@@ -134,14 +135,14 @@ public class UserController {
 	//최초 로그인 페이지
 	@GetMapping("/") 
 	public ModelAndView main(){ 
-		ModelAndView nextView = new ModelAndView("jsp/login");
+		ModelAndView nextView = new ModelAndView("login");
 		return nextView;
 	}
 	
 	//매장 매니저 - 사용자 뒷번호로 검색
 	@PostMapping("/store/userSearch") 
 	public ModelAndView getUserList(User user){
-		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserList");
+		ModelAndView nextView = new ModelAndView("store/storeManagerUserList");
 		List<User> userData = service.getUserListByPhone(user);
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("searchPhone", user.getPhone()); //사용자데이터
@@ -153,7 +154,7 @@ public class UserController {
 	public ModelAndView searchUser(@PathVariable("searchKey") String searchKey
 			,@PathVariable("searchKeyword") String searchKeyword ){
 		List<User> userData = service.searchUserList(searchKey, searchKeyword);
-		ModelAndView nextView = new ModelAndView("jsp/storeManagerUserListPop");
+		ModelAndView nextView = new ModelAndView("store/storeManagerUserListPop");
 		nextView.addObject("userData", userData); //사용자데이터
 		return nextView;
 	}
@@ -161,14 +162,14 @@ public class UserController {
 	//슈퍼관리자 홈
 	@GetMapping("/super/home") 
 	public ModelAndView superHome(){ 
-		ModelAndView nextView = new ModelAndView("jsp/superManagerMain");
+		ModelAndView nextView = new ModelAndView("super/superManagerMain");
 		return nextView;
 	}
 	
 	//슈퍼관리자 사용자 리스트
 	@RequestMapping("/super/userlist") 
 	public ModelAndView superUserList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
-		ModelAndView nextView = new ModelAndView("jsp/superManagerUserList");
+		ModelAndView nextView = new ModelAndView("super/superManagerUserList");
 		
 		String searchKey = request.getParameter("searchKey");
 		String searchKeyword = request.getParameter("searchKeyword");
@@ -191,10 +192,10 @@ public class UserController {
 	//슈퍼관리자 사용자 정보보기
 	@GetMapping("/super/userinfo/{usercode}") 
 	public ModelAndView superUserInfo(@PathVariable("usercode") String usercode){ 
-		ModelAndView nextView = new ModelAndView("jsp/superManagerUserInfo");
+		ModelAndView nextView = new ModelAndView("super/superManagerUserInfo");
 		
 		User userData = service.userCheck(usercode);
-		List<Grade> gradeList = grservice.findAll();
+		List<Grade> gradeList = grservice.getGradeUse();
 		List<Coupon> couponList = cpservice.getUserCoupon(usercode); // 해당 사용자의 쿠폰리스트 조회
 		
 		nextView.addObject("userData", userData);
@@ -217,7 +218,7 @@ public class UserController {
 	//슈퍼관리자 엑셀업로드
 	@GetMapping("/super/excelupload")
 	public ModelAndView superExcelUpload() {
-		ModelAndView nextView = new ModelAndView("jsp/superManagerExcelUpload");
+		ModelAndView nextView = new ModelAndView("super/superManagerExcelUpload");
 		List<Log> logList = logservice.getLog("EXCELUPLOAD");
 		nextView.addObject("logList", logList);
 		return nextView;
@@ -226,25 +227,20 @@ public class UserController {
     @RequestMapping(value = "/super/excelUploadAjax", method = RequestMethod.POST)
     public @ResponseBody ModelAndView excelUploadAjax(MultipartHttpServletRequest request)  throws Exception{
         MultipartFile excelFile =request.getFile("excelFile");
-        System.out.println("엑셀 파일 업로드 컨트롤러");
+        HttpSession httpSession = request.getSession(true);
+        Store loginUser = (Store) httpSession.getAttribute("loginUser");
         if(excelFile==null || excelFile.isEmpty()){
             throw new RuntimeException("엑셀파일을 선택 해 주세요.");
         }
-        
+        Date now = new Date();
+        Log log = new Log();
         File destFile = new File("C:\\exceltemp\\"+excelFile.getOriginalFilename());
         try{
             excelFile.transferTo(destFile);
-        }catch(IllegalStateException | IOException e){
-            throw new RuntimeException(e.getMessage(),e);
-        }
+            String logContent = service.excelUpload(destFile);
         
-        String logContent = service.excelUpload(destFile);
         destFile.delete();
 	    
-	    Log log = new Log();
-	    Date now = new Date();
-	    HttpSession httpSession = request.getSession(true);
-		Store loginUser = (Store) httpSession.getAttribute("loginUser");
 		
 	    log.setUserid(loginUser.getId());
 	    log.setUsername(loginUser.getManagername());
@@ -253,7 +249,16 @@ public class UserController {
 	    log.setLogdate(now);
 	    logservice.saveLog(log);
         
-        ModelAndView nextView = new ModelAndView("jsp/superManagerExcelUpload");
+        }catch(IllegalStateException | IOException e){
+        	log.setLogcontent("엑셀업로드 오류");
+			log.setLogdate(now);
+			log.setLogkind("EXCELUPLOAD");
+			log.setUserid(loginUser.getId());
+			log.setUsername(loginUser.getManagername());
+			logservice.saveLog(log);
+			throw new RuntimeException(e.getMessage(),e);
+        }
+        ModelAndView nextView = new ModelAndView("super/superManagerExcelUpload");
         return nextView;
     }
     
@@ -292,20 +297,67 @@ public class UserController {
         return null;
     }
     
-    //슈퍼관리자 매장 리스트
+    //슈퍼관리자 쿠폰 리스트
+  	@RequestMapping("/super/couponlist") 
+  	public ModelAndView superCouponList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+  		ModelAndView nextView = new ModelAndView("super/superManagerCouponList");
+  		
+  		String searchKey = request.getParameter("searchKey");
+  		String searchKeyword = request.getParameter("searchKeyword");
+  		
+  		Page<CouponCore> couponList = cpservice.getAllCouponList(pageable, searchKey, searchKeyword);
+  		Paging paging = new Paging();
+	  	if(couponList != null) {
+	  		int curPage = pageable.getPageNumber();
+	  		if(curPage == 0) curPage = curPage + 1;
+	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+  		}
+  		nextView.addObject("couponList", couponList);
+  		nextView.addObject("paging", paging);
+  		nextView.addObject("searchKey", searchKey);
+  		nextView.addObject("searchKeyword", searchKeyword);
+  	
+  		return nextView;
+  	}
+  	
+  	//슈퍼관리자 사용자별 쿠폰 리스트
+  	@RequestMapping("/super/coupontomember") 
+  	public ModelAndView superCouponToMemberList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+  		ModelAndView nextView = new ModelAndView("super/superManagerCouponToMember");
+  		
+  		String searchKey = request.getParameter("searchKey");
+  		String searchKeyword = request.getParameter("searchKeyword");
+  		String status = request.getParameter("status");
+  		
+  		Page<Coupon> couponList = cpservice.getCouponToMemberList(pageable, searchKey, searchKeyword, status);
+  		Paging paging = new Paging();
+	  	if(couponList != null) {
+	  		int curPage = pageable.getPageNumber();
+	  		if(curPage == 0) curPage = curPage + 1;
+	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+  		}
+  		nextView.addObject("couponList", couponList);
+  		nextView.addObject("paging", paging);
+  		nextView.addObject("searchKey", searchKey);
+  		nextView.addObject("searchKeyword", searchKeyword);
+  	
+  		return nextView;
+  	}
+    
+  	//슈퍼관리자 매장 리스트
   	@RequestMapping("/super/storelist") 
   	public ModelAndView superStoreList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
-  		ModelAndView nextView = new ModelAndView("jsp/superManagerStoreList");
+  		ModelAndView nextView = new ModelAndView("super/superManagerStoreList");
   		
   		String searchKey = request.getParameter("searchKey");
   		String searchKeyword = request.getParameter("searchKeyword");
   		
   		Page<Store> storeList = storeservice.getStoreList(pageable, searchKey, searchKeyword);
   		Paging paging = new Paging();
-	  	if(storeList != null) {
-	  		int curPage = pageable.getPageNumber();
-	  		if(curPage == 0) curPage = curPage + 1;
-	  		paging.Pagination((int)storeList.getTotalElements(), curPage);
+  	  	if(storeList != null) {
+  	  		int curPage = pageable.getPageNumber();
+  	  		if(curPage == 0) curPage = curPage + 1;
+  	  		paging.Pagination((int)storeList.getTotalElements(), curPage);
   		}
   		nextView.addObject("storeList", storeList);
   		nextView.addObject("paging", paging);
@@ -314,7 +366,7 @@ public class UserController {
   	
   		return nextView;
   	}
-    
+  	
     //매장매니저 메뉴 클릭
   	@GetMapping("/super/menu/{menu}") 
   	public ModelAndView goAdminMenu(@PathVariable("menu") String menu, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
@@ -324,18 +376,73 @@ public class UserController {
   		
   		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
   			nextView = logoutManager();
-  		} else if(loginUser != null && menu.equals("menu1")) {
+  		}else if(loginUser != null && menu.equals("menu1")){
   			nextView = superHome();
-  		} else if(loginUser != null && menu.equals("menu2_1")){
+  		}else if(loginUser != null && menu.equals("menu2_1")){
   			nextView = superUserList(request, pageable);
-  		} else if(loginUser != null && menu.equals("menu2_2")){
+  		}else if(loginUser != null && menu.equals("menu2_2")){
   			nextView = superExcelUpload();
-  		} else if(loginUser != null && menu.equals("menu3")){
+  		}else if(loginUser != null && menu.equals("menu3")){
   			nextView = superStoreList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu4_1")){
+  			nextView = superCouponList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu4_2")){
+  			nextView = superCouponPublish();
+  		}else if(loginUser != null && menu.equals("menu4_3")){
+  			nextView = superCouponToMemberList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu4_4")){
+  			nextView = superCouponRequestList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu6")){
+  			nextView = superGradeList();
   		}
-  		
   		httpSession.setAttribute("menu", menu);
   		return nextView;
   	}
-	
+  	
+  	//슈퍼관리자 쿠폰승인요청
+  	@RequestMapping("/super/couponrequest") 
+  	private ModelAndView superCouponRequestList(HttpServletRequest request, Pageable pageable) {
+  		//슈퍼관리자 사용자별 쿠폰 리스트
+  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
+  		
+  		String searchKey = request.getParameter("searchKey");
+  		String searchKeyword = request.getParameter("searchKeyword");
+  		
+  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
+  		Paging paging = new Paging();
+	  	if(couponList != null) {
+	  		int curPage = pageable.getPageNumber();
+	  		if(curPage == 0) curPage = curPage + 1;
+	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+  		}
+  		nextView.addObject("couponList", couponList);
+  		nextView.addObject("paging", paging);
+  		nextView.addObject("searchKey", searchKey);
+  		nextView.addObject("searchKeyword", searchKeyword);
+  	
+  		return nextView;
+  	}
+
+	//슈퍼관리자 쿠폰발행페이지
+  	@GetMapping("/super/couponpublish") 
+  	public ModelAndView superCouponPublish(){ 
+  		ModelAndView nextView = new ModelAndView("super/superManagerCouponPublish");
+  		List<CouponCore> allCoupon = cpservice.getCouponList(); // 전체쿠폰리스트
+  		nextView.addObject("allCoupon", allCoupon);
+  		
+  		return nextView;
+  	}
+  	
+  	//슈퍼관리자 등급관리
+  	@GetMapping("/super/gradelist") 
+  	private ModelAndView superGradeList() {
+  		//슈퍼관리자 사용자별 쿠폰 리스트
+  		ModelAndView nextView = new ModelAndView("super/superManagerGradeList");
+  		List<Grade> gradeList = grservice.findAll();
+  		
+  		nextView.addObject("gradeList", gradeList);
+  		return nextView;
+  	}
+  	
 }
+

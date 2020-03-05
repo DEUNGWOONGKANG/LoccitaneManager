@@ -13,7 +13,7 @@
 <script src="<%=url %>/js/jquery-ui.js"></script>
 <script type="text/javascript">
 if("${giveyn}" == "Y"){
-	alert("쿠폰이 발행되었습니다.");
+	alert("쿠폰발행이 요청되었습니다.");
 }
 $(function(){
     $("#startdate").datepicker();
@@ -88,7 +88,7 @@ function check(){
 		}
 	}
 	
-	var result = confirm(username.value+" 고객님에게 쿠폰을 발행하시겠습니까?");
+	var result = confirm(username.value+" 고객님에게 쿠폰을 발행요청하시겠습니까?");
 	
 	if(result){
 		document.getElementById("searchForm").submit();
@@ -165,7 +165,7 @@ function check(){
 			<tr height="100px">
 				<td width="25%">발행사유</td>
 				<td>
-					<select id="reason" class="selectBox2" onchange="change()">
+					<select id="reason" name="reason" class="selectBox2" onchange="change()">
 						<option value="1">1. 교환/환불</option>
 						<option value="2">2. 사용기한 만료</option>
 						<option value="3">3. 기타</option>
@@ -176,7 +176,7 @@ function check(){
 		</tbody>
 	</table>
 	<div style="text-align:center;margin-top:30px;">
-		<input id="submitbtn" type="submit" class="button-yellow" value="쿠폰발행">
+		<input id="submitbtn" type="submit" class="button-yellow" value="쿠폰발행요청">
 	</div>
 </form>
 </div>

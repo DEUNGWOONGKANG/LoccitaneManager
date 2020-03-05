@@ -11,8 +11,8 @@ import javax.persistence.Table;
 
 @org.hibernate.annotations.DynamicUpdate
 @Entity // domain클래스인것을 나타내는 어노테이션
-@Table(name = "v_coupontomember") //대응하는 테이블 설정
-public class Coupon {
+@Table(name = "v_coupontomember_temp") //대응하는 테이블 설정
+public class CouponTemp {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "cptmseq") //대응하는 컬럼명 지정
@@ -51,15 +51,6 @@ public class Coupon {
 	@Column(name = "enddate")
 	private Date enddate;
 	
-	@Column(name = "useyn")
-	private String usedyn;
-	
-	@Column(name = "usemanager")
-	private String usemanager;
-	
-	@Column(name = "usedate")
-	private Date usedate;
-	
 	@Column(name = "couponinfo")
 	private String memo;
 	
@@ -71,6 +62,9 @@ public class Coupon {
 	
 	@Column(name = "reason")
 	private String reason;
+	
+	@Column(name = "requestyn")
+	private String requestyn;
 
 	public String getCreateuser() {
 		return createuser;
@@ -136,14 +130,6 @@ public class Coupon {
 		this.issueday = issueday;
 	}
 
-	public String getUsedyn() {
-		return usedyn;
-	}
-
-	public void setUsedyn(String usedyn) {
-		this.usedyn = usedyn;
-	}
-
 	public Date getStartdate() {
 		return startdate;
 	}
@@ -184,22 +170,6 @@ public class Coupon {
 		this.discountmax = discountmax;
 	}
 
-	public String getUsemanager() {
-		return usemanager;
-	}
-
-	public void setUsemanager(String usemanager) {
-		this.usemanager = usemanager;
-	}
-
-	public Date getUsedate() {
-		return usedate;
-	}
-
-	public void setUsedate(Date usedate) {
-		this.usedate = usedate;
-	}
-
 	public String getReason() {
 		return reason;
 	}
@@ -223,4 +193,13 @@ public class Coupon {
 	public void setCouponno(String couponno) {
 		this.couponno = couponno;
 	}
+
+	public String getRequestyn() {
+		return requestyn;
+	}
+
+	public void setRequestyn(String requestyn) {
+		this.requestyn = requestyn;
+	}
+	
 }

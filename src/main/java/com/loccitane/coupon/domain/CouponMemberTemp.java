@@ -1,9 +1,5 @@
 package com.loccitane.coupon.domain;
 
-
-
-
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,8 +11,8 @@ import javax.persistence.Table;
 
 @org.hibernate.annotations.DynamicUpdate
 @Entity // domain클래스인것을 나타내는 어노테이션
-@Table(name = "coupontomember") //대응하는 테이블 설정
-public class CouponMember {
+@Table(name = "coupontomember_temp") //대응하는 테이블 설정
+public class CouponMemberTemp {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "cptmseq") //대응하는 컬럼명 지정
@@ -37,23 +33,17 @@ public class CouponMember {
 	@Column(name = "createuser")
 	private String createuser;
 	
-	@Column(name = "useyn")
-	private String useyn;
-	
 	@Column(name = "startdate")
 	private Date startdate;
 	
 	@Column(name = "enddate")
 	private Date enddate;
 	
-	@Column(name = "usemanager")
-	private String usemanager;
-	
-	@Column(name = "usedate")
-	private Date usedate;
-	
 	@Column(name = "reason")
 	private String reason;
+	
+	@Column(name = "requestyn")
+	private String requestyn;
 
 	public int getSeq() {
 		return seq;
@@ -103,14 +93,6 @@ public class CouponMember {
 		this.createuser = createuser;
 	}
 
-	public String getUseyn() {
-		return useyn;
-	}
-
-	public void setUseyn(String useyn) {
-		this.useyn = useyn;
-	}
-
 	public Date getStartdate() {
 		return startdate;
 	}
@@ -127,22 +109,6 @@ public class CouponMember {
 		this.enddate = enddate;
 	}
 
-	public String getUsemanager() {
-		return usemanager;
-	}
-
-	public void setUsemanager(String usemanager) {
-		this.usemanager = usemanager;
-	}
-
-	public Date getUsedate() {
-		return usedate;
-	}
-
-	public void setUsedate(Date usedate) {
-		this.usedate = usedate;
-	}
-
 	public String getReason() {
 		return reason;
 	}
@@ -151,6 +117,12 @@ public class CouponMember {
 		this.reason = reason;
 	}
 
-	
+	public String getRequestyn() {
+		return requestyn;
+	}
+
+	public void setRequestyn(String requestyn) {
+		this.requestyn = requestyn;
+	}
 
 }

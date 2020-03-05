@@ -109,8 +109,8 @@ function change(){
 					<td>
 						<select class="form-control" id="cpcode" name="cpcode">
 								<option value=""></option>
-		   					<c:forEach var="coupon" items="${couponList}">
-		   						<option value="${coupon.cpcode}">[${coupon.cpcode}] ${coupon.cpname }</option>
+		   					<c:forEach var="allcoupon" items="${allCoupon}">
+		   						<option value="${allcoupon.cpcode}">[${allcoupon.cpcode}] ${allcoupon.cpname }</option>
 		   					</c:forEach>
 				    	</select>
 					</td>
@@ -126,8 +126,7 @@ function change(){
 				<tr height="70px">
 					<th width="25%">발행대상고객</th>
 					<td style="border-left:1px solid #e0e0e0;">
-						<input type="hidden" id="usercode" name="usercode">
-						<input type="hidden" id="grade" name="grade" readonly>
+						<input type="hidden" id="usercode" name="usercode" value="${userData.usercode}">
 						이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" class="form-control" id="username" readonly value="${userData.username }">
 						연락처: <input type="text" class="form-control" id="phone" name="phone" readonly value="${userData.phone }"><br>
 					</td>
@@ -135,7 +134,7 @@ function change(){
 				<tr height="70px">
 				<th width="25%">발행사유</th>
 				<td>
-					<select id="reason" class="form-control" onchange="change()">
+					<select id="reason" name="reason" class="form-control" onchange="change()">
 						<option value="1">1. 교환/환불</option>
 						<option value="2">2. 사용기한 만료</option>
 						<option value="3">3. 기타</option>

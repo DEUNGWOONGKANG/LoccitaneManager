@@ -15,14 +15,14 @@ import com.loccitane.user.domain.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String>{
 	List<User> findAllByPhoneEndingWithOrderByStatusAsc(String phone);
-	List<User> findAllByPhoneAndGradeNotIn(String phone, ArrayList<String> grade);
 	Page<User> findAllByPhone(String phone, Pageable pageable);
 	Page<User> findAllByUsername(String username, Pageable pageable);
 	Page<User> findAllByUsercode(String code, Pageable pageable);
-	List<User> findAllByGradeNotInOrderByStatusAsc(ArrayList<String> grade);
 	List<User> findAllByUsername(String searchKeyword);
 	List<User> findAllByPhone(String searchKeyword);
 	List<User> findAllByUsercode(String searchKeyword);
+	List<User> findAllByGrade(String grade);
 	User findByUsercode(String usercode);
 	User findByUsercodeAndPhoneEndingWith(String usercode, String phone);
+	List<User> findAllByBirthdayIsNotNull();
 }

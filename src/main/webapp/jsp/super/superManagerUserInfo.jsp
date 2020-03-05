@@ -37,6 +37,9 @@ function couponGive(){
 	var usercode = document.getElementById("usercode").value;
 	location.href="/super/coupongive/"+usercode;
 }
+function goback(){
+	history.back();
+}
 </script>
 </head>
   <body>
@@ -101,7 +104,7 @@ function couponGive(){
 			  </tbody>
 			</table>
 			<div class="btndiv">
-				<button type="button" class="btn btn-secondary">목록</button>
+				<button type="button" class="btn btn-secondary" onclick="goback()">목록</button>
 				<button type="submit" class="btn btn-warning">수정</button>
 			</div>
 			<table class="couponInfo">

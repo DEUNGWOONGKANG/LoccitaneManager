@@ -31,13 +31,13 @@ public class CouponCore {
 	private String dck;
 	
 	@Column(name = "discountvalue")
-	private int dccnt;
+	private String dccnt;
 	
 	@Column(name = "useminimum")
-	private int minimum;
+	private String minimum;
 	
 	@Column(name = "discountmax")
-	private int dcmax;
+	private String dcmax;
 
 	@Column(name = "useyn")
 	private String useyn;
@@ -83,27 +83,27 @@ public class CouponCore {
 		this.dck = dck;
 	}
 
-	public int getDccnt() {
+	public String getDccnt() {
 		return dccnt;
 	}
 
-	public void setDccnt(int dccnt) {
+	public void setDccnt(String dccnt) {
 		this.dccnt = dccnt;
 	}
 
-	public int getMinimum() {
+	public String getMinimum() {
 		return minimum;
 	}
 
-	public void setMinimum(int minimum) {
+	public void setMinimum(String minimum) {
 		this.minimum = minimum;
 	}
 
-	public int getDcmax() {
+	public String getDcmax() {
 		return dcmax;
 	}
 
-	public void setDcmax(int dcmax) {
+	public void setDcmax(String dcmax) {
 		this.dcmax = dcmax;
 	}
 

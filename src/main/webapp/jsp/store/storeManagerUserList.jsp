@@ -87,7 +87,12 @@ function dormant(){
 				</td>
 				<td>
 				<c:set var = "plength" value = "${fn:length(user.phone)}"/>
-				${fn:substring(user.phone, 0, 4)}****${fn:substring(user.phone, 8, plength)}
+			      	<c:if test="${plength+0 > 10}">
+						${fn:substring(user.phone, 0, 3)}-****-${fn:substring(user.phone, 7, plength)}
+					</c:if>
+					<c:if test="${plength+0 < 5}">
+						${fn:substring(user.phone, 0, 1)}**${fn:substring(user.phone, 3, plength)}
+					</c:if>
 				</td>
 				<td>${user.grade }</td>
 				<td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>

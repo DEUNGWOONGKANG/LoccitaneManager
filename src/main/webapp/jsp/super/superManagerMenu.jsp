@@ -27,7 +27,9 @@
 	     <div id="pages2" class="collapse">
 	       <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
 	         <li class="sidebar-list-item" id="menu4_1"><a id="menu4_1a" href="/super/menu/menu4_1" class="sidebar-link text-muted pl-lg-5"><b>쿠폰관리</b></a></li>
-	         <li class="sidebar-list-item" id="menu4_2"><a id="menu4_2a" href="/super/menu/menu4_2" class="sidebar-link text-muted pl-lg-5"><b>사용자별쿠폰관리</b></a></li>
+	         <li class="sidebar-list-item" id="menu4_2"><a id="menu4_2a" href="/super/menu/menu4_2" class="sidebar-link text-muted pl-lg-5"><b>쿠폰발행</b></a></li>
+	         <li class="sidebar-list-item" id="menu4_3"><a id="menu4_3a" href="/super/menu/menu4_3" class="sidebar-link text-muted pl-lg-5"><b>사용자별쿠폰관리</b></a></li>
+	         <li class="sidebar-list-item" id="menu4_4"><a id="menu4_4a" href="/super/menu/menu4_4" class="sidebar-link text-muted pl-lg-5"><b>쿠폰요청승인</b></a></li>
 	       </ul>
 	     </div>
 	   </li>
@@ -57,7 +59,7 @@ function active(num){
 			
 			if(num == "menu2_1" || num == "menu2_2"){
 				document.getElementById("pages").className = document.getElementById("pages").className + " show";
-			}else if(num == "menu4_1" || num == "menu4_2"){
+			}else if(num == "menu4_1" || num == "menu4_2" || num == "menu4_3" || num == "menu4_4"){
 				document.getElementById("pages2").className = document.getElementById("pages2").className + " show";
 			}else if(num == "menu5_1" || num == "menu5_2" || num == "menu5_3"){
 				document.getElementById("pages3").className = document.getElementById("pages3").className + " show";

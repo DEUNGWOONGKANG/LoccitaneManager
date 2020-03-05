@@ -30,9 +30,7 @@ function check(){
 		document.getElementById("searchForm").submit();
 	}
 }
-function userInfo(usercode){
-	location.href="/super/userinfo/"+usercode;
-}
+
 </script>
   </head>
   <body>
@@ -43,86 +41,88 @@ function userInfo(usercode){
       <div class="w-100 d-flex flex-wrap">
       	<div class="container-fluid px-xl-5">
       		<div class="search">	
-		    	<form id="searchForm" action="/super/userlist" method="post" onsubmit="return check()">
+		    	<form id="searchForm" action="/super/coupontomember" method="post" onsubmit="return check()">
+		    		상태
+		    		<select class="form-control" id="status" name="status">
+						<option value="ALL">전체</option>
+						<option value="Y">사용</option>
+						<option value="N">미사용</option>
+					</select>
 		    		<select class="form-control" id="searchKey" name="searchKey">
-						<option value="username">이름</option>
-						<option value="phone">전화번호</option>
-						<option value="usercode">회원번호</option>
+						<option value="cpcode">소유자</option>
+						<option value="cpname">쿠폰코드</option>
+						<option value="createuser">쿠폰번호</option>
 					</select>
 			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
 			  		<input type="submit" class="btn btn-warning" value="검색">
 				</form>
 			</div>
       	</div>
-      	<c:if test="${!empty userList.content}">
+      	<c:if test="${!empty couponList.content}">
 	      	<table class="table table-hover" style="margin-left:10px;">
 			  <thead>
 			    <tr>
 			      <th scope="col">NO</th>
-			      <th scope="col">고객번호</th>
-			      <th scope="col">전화번호</th>
-			      <th scope="col">이름</th>
-			      <th scope="col">등급</th>
-			      <th scope="col">마지막구매일</th>
+			      <th scope="col">쿠폰코드</th>
+			      <th scope="col">쿠폰명</th>
+			      <th scope="col">쿠폰번호</th>
+			      <th scope="col">소유자</th>
+			      <th scope="col">유효기간</th>
+			      <th scope="col">상태</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			  	<c:forEach var="user" items="${userList.content}" varStatus="status">
-				    <tr style="cursor:pointer;" onclick="userInfo('${user.usercode}')">
+			  	<c:forEach var="coupon" items="${couponList.content}" varStatus="status">
+				    <tr style="cursor:pointer;">
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
+				      <td>${coupon.cpcode}</td>
+				      <td>${coupon.cpname}</td>
+				      <td>${coupon.couponno}</td>
+				      <td>${coupon.username}[${coupon.usercode}]</td>
 				      <td>
-				      	<c:set var = "codelength" value = "${fn:length(user.usercode)}"/>
-						${fn:substring(user.usercode, 0, 2)}*************${fn:substring(user.usercode, 15, codelength)}
+				      	<fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/>~
+				      	<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/>
 				      </td>
 				      <td>
-				      	<c:set var = "plength" value = "${fn:length(user.phone)}"/>
-				      	<c:if test="${plength+0 > 10}">
-							${fn:substring(user.phone, 0, 3)}-****-${fn:substring(user.phone, 7, plength)}
-						</c:if>
-						<c:if test="${plength+0 < 5}">
-							${fn:substring(user.phone, 0, 1)}**${fn:substring(user.phone, 3, plength)}
-						</c:if>
-					  </td>
-				      <td>
-				      	<c:set var = "length" value = "${fn:length(user.username)}"/>
-						${fn:substring(user.username, 0, 1)}*${fn:substring(user.username, 2, length)}
+				      	<c:if test="${coupon.usedyn eq 'Y'}">사용</c:if>
+				      	<c:if test="${coupon.usedyn eq 'N'}">미사용</c:if>
 				      </td>
-				      <td>${user.grade}</td>
-				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
 				    </tr>
 				</c:forEach>
 			  </tbody>
 			</table>
 		</c:if>
-		<c:if test="${empty userList.content}">
+		<c:if test="${empty couponList.content}">
 			<div style="text-align:center;width:100%">
-				<h2>사용자가 존재하지 않습니다.</h2>
+				<h2>리스트가 존재하지 않습니다.</h2>
 			</div>
 		</c:if>
+		<c:if test="${!empty couponList.content}">
 		<div class="container">
 			<div class="row">
 				<div class="col">
 					<ul class="pagination">
 						<c:if test="${paging.curRange > 1}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum-10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
+							<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${(paging.curRange-2)*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
 						</c:if>
 						<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
 							<c:choose>
 								<c:when test="${pageNum eq  paging.curPage}">
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
+									<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
+									<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
 						<c:if test="${paging.curRange < paging.rangeCnt}">
-							<li class="page-item"><a class="page-link" href="/super/userlist?page=${pageNum+10 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
+							<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${paging.curRange*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
 						</c:if>
 					</ul>
 				</div>
 			</div>
 		</div>
+		</c:if>
       </div>
     </div>
     <!-- JavaScript files-->

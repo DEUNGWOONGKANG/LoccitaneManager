@@ -22,13 +22,33 @@
 <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
 function check(){
-	var result = confirm("저장하시겠습니까?");
-	
-	if(result){
-		document.getElementById("formdata").submit();
-	}else{
+	var id = document.getElementById("code");
+	var pw = document.getElementById("pw");
+	var name = document.getElementById("name");
+	if(id.value == ""){
+		alert("매장코드를 입력하세요.");
+		id.focus();
 		return false;
+	}else if(pw.value == ""){
+		alert("비밀번호를 입력하세요.");
+		pw.focus();
+		return false;
+	}else if(name.value == ""){
+		alert("매장명을 입력하세요.");
+		pw.focus();
+		return false;
+	}else{
+		var result = confirm("수정하시겠습니까?");
+		
+		if(result){
+			document.getElementById("formdata").submit();
+		}else{
+			return false;
+		}
 	}
+}
+function goback(){
+	history.back();
 }
 
 </script>
@@ -40,42 +60,52 @@ function check(){
       <jsp:include page="superManagerMenu.jsp"></jsp:include>
       <div class="w-100 d-flex flex-wrap">
       	<form id="formdata" action="/super/storesave" method="post" style="width:100%" onsubmit="return check()">
+      	<input type="hidden" id="oldcode" name="oldcode" value="${storeData.code }">
+      	<input type="hidden" id="seq" name="seq" value="${storeData.seq }">
       	<div style="width:100%">
 	      	<table class="storeAdd">
 			  <tbody>
 			    <tr>
 			      <th>매장명<span style="font-size:10px; color:red;">(필수)</span></th>
-				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:70%"></td>
+				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:70%" value="${storeData.name }"></td>
 			    </tr>
 			    <tr>
 			      <th>매장코드<span style="font-size:10px;">(ID,<span style="color:red;">필수</span>)</span></th>
-				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:70%"></td>
+				  <td><input type="text" placeholder="매장코드" class="form-control" id="code" name="code" style="width:70%" value="${storeData.code }"></td>
+			    </tr>
+			    <tr>
+			      <th>비밀번호<span style="font-size:10px; color:red;">(필수)</span></th>
+				  <td><input type="text" placeholder="비밀번호" class="form-control" id="pw" name="pw" style="width:70%" value="${storeData.pw }"></td>
+			    </tr>
+			    <tr>
+			      <th>담당자명</th>
+				  <td><input type="text" placeholder="담당자명" class="form-control" id="managername" name="managername" style="width:70%" value="${storeData.managername }"></td>
 			    </tr>
 			    <tr>
 			      <th>우편번호</th>
-				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:30%"></td>
+				  <td><input type="text" placeholder="우편번호" class="form-control" id="postcode" name="postcode" style="width:30%" value="${storeData.postcode }"></td>
 			    </tr>
 			    <tr>
 			      <th>주소</th>
-				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:90%"></td>
+				  <td><input type="text" placeholder="주소" class="form-control" id="address" name="address" style="width:90%" value="${storeData.address }"></td>
 			    </tr>
 			    <tr>
 			      <th>전화번호</th>
-				  <td><input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:50%"></td>
+				  <td><input type="text" placeholder="전화번호" class="form-control" id="tel" name="tel" style="width:50%" value="${storeData.tel }"></td>
 			    </tr>
 			    <tr>
 			      <th>위치</th>
-				  <td>위도 <input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:70%">
-				   | 경도 <input type="text" placeholder="매장명" class="form-control" id="name" name="name" style="width:70%"></td>
+				  <td>위도 <input type="text" placeholder="위도" class="form-control" id="latitude" name="latitude" style="width:30%" value="${storeData.latitude }">
+				   | 경도 <input type="text" placeholder="경도" class="form-control" id="longtitude" name="longtitude" style="width:30%" value="${storeData.longtitude }"></td>
 			    </tr>
 			    <tr style="height:100px">
 			      <th>메모</th>
-				  <td><textarea class="form-control" id="name" name="name" style="width:98%;height:100%"></textarea></td>
+				  <td><textarea class="form-control" id="memo" name="memo" style="width:98%;height:100%">${storeData.memo }</textarea></td>
 			    </tr>
 			  </tbody>
 			</table>
 			<div class="btndiv">
-				<button type="button" class="btn btn-secondary">목록</button>
+				<button type="button" class="btn btn-secondary" onclick="goback()">목록</button>
 				<button type="submit" class="btn btn-warning">등록</button>
 			</div>
 		</div>

@@ -13,7 +13,7 @@
 <body>
 <div id="header-wrapper">
 		<div id="loginInfo">
-			<%=user.getUsername() %> 님
+			<%=user.getManagername() %> 님
 			<input id="logoutbtn" type="button" class="button-gray-small" value="로그아웃" onclick="logout()">
 		</div>
 	<div id="header" class="container">

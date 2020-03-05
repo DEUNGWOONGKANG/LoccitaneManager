@@ -19,17 +19,18 @@ public class StoreService {
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
         
-		@SuppressWarnings("unused")
 		Page<Store> storeData = null;
 		if(searchKey == null) {
 			storeData = storeRepo.findAllByCodeNot("super", pageable);
 		}else if(searchKey.equals("name")) {
 			storeData = storeRepo.findAllByNameAndCodeNot(searchKeyword, "super", pageable);
-		}else{
+		}else if(searchKey.equals("tel")) {
 			storeData = storeRepo.findAllByTelAndCodeNot(searchKeyword, "super", pageable);
+		}else{
+			storeData = storeRepo.findAllByCodeNot("super", pageable);
 		}
 		
-		return null;
+		return storeData;
 	}
 	
 	// 관리자 로그인 
@@ -47,5 +48,15 @@ public class StoreService {
 		return storeData;
 	}
 	
+	// 매장추가
+	public void storeSave(Store store) {
+		storeRepo.save(store);
+	}
+	
+	public Store getStoreInfo(int seq) {
+		Store storeData = storeRepo.findBySeq(seq);
+	 
+		return storeData;
+	}
 
 }

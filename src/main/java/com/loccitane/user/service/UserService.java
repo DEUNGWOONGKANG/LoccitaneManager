@@ -110,15 +110,6 @@ public class UserService {
 	}
 	
 	// 고객리스트 조회
-	public Page<User> getCustomerList(Pageable pageable) {
-		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
-        pageable = PageRequest.of(page, 10);
-        
-		Page<User> userData = userRepo.findAll(pageable);
-		return userData;
-	}
-	
-	// 고객리스트 조회
 	public Page<User> getCustomerList(Pageable pageable,String searchKey, String searchKeyword) {
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
@@ -269,6 +260,33 @@ public class UserService {
 					"변경데이터:"+updateRowCount+"건 | "+
 					"미변경데이터:"+noupdateRowCount+"건";
 		return log;
+	}
+	
+	
+	//생일자 검색하여 생일쿠폰 발행
+	public void birthdayCouponGive() {
+		//생일 데이터가 존재하는 모든 사용자 가져오기
+		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
+		List<User> userList = userRepo.findAllByBirthdayIsNotNull();
+		List<User> birthdayUser = new ArrayList<User>();
+		Calendar now = Calendar.getInstance();
+		// 15일 후 생일 체크
+		now.add(Calendar.DAY_OF_MONTH,+15);
+		Date birth = now.getTime();
+		String birthcheck = transFormat.format(birth);
+		for(int i=0; i<userList.size(); i++) {
+			String userBirthday = userList.get(i).getBirthday();
+			userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
+			if(userBirthday.equals(birthcheck)) {
+				birthdayUser.add(userList.get(i));
+			}
+		}
+		
+	}
+
+	public void gradeUp() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

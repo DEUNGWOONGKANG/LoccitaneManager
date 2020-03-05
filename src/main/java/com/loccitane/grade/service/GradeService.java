@@ -14,8 +14,21 @@ public class GradeService {
 	GradeRepository gradeRepo;
 	
 	// 모든 등급 조회
-	public List<Grade> findAll(){
+	public List<Grade> getGradeUse(){
 		List<Grade> list = gradeRepo.findAllByUseyn("Y");
 		return list;
+	}
+
+	public List<Grade> findAll() {
+		List<Grade> list = gradeRepo.findAllByOrderByMinimumDesc();
+		return list;
+	}
+
+	public Grade find(int seq) {
+		return gradeRepo.findBySeq(seq);
+	}
+
+	public void gradeSave(Grade oldGrade) {
+		gradeRepo.save(oldGrade);
 	}
 }
