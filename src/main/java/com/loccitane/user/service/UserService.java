@@ -228,10 +228,6 @@ public class UserService {
 		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    			dataAdd = true;
 		    		}
-		    		if(check.getLastpurchase().before(cal.getTime()) && check.getStatus().equals("1")) {
-		    			check.setStatus("9");
-		    			dataAdd = true;
-		    		}
 		    		if(check.getLastpurchase().after(cal.getTime()) && check.getStatus().equals("9")) {
 		    			check.setStatus("1");
 		    			dataAdd = true;
@@ -264,7 +260,7 @@ public class UserService {
 	
 	
 	//생일자 검색하여 생일쿠폰 발행
-	public void birthdayCouponGive() {
+	public List<User> getBirthdayList() {
 		//생일 데이터가 존재하는 모든 사용자 가져오기
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		List<User> userList = userRepo.findAllByBirthdayIsNotNull();
@@ -281,12 +277,13 @@ public class UserService {
 				birthdayUser.add(userList.get(i));
 			}
 		}
-		
+		return birthdayUser;
 	}
-
-	public void gradeUp() {
-		// TODO Auto-generated method stub
+	
+	//회원정보메뉴 등급 + 알람수신여부 저장
+	public void saveAll(List<User> users) {
 		
+		userRepo.saveAll(users);
 	}
 
 }

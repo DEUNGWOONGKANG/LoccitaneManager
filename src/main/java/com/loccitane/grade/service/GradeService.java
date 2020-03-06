@@ -23,6 +23,11 @@ public class GradeService {
 		List<Grade> list = gradeRepo.findAllByOrderByMinimumDesc();
 		return list;
 	}
+	
+	public List<Grade> findAllAsc() {
+		List<Grade> list = gradeRepo.findAllByOrderByMinimumAsc();
+		return list;
+	}
 
 	public Grade find(int seq) {
 		return gradeRepo.findBySeq(seq);

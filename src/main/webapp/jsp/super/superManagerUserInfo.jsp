@@ -50,6 +50,7 @@ function goback(){
       <div class="w-100 d-flex flex-wrap">
       	<form id="formdata" action="/super/modifyuser" method="post" style="width:100%" onsubmit="return check()">
       	<input type="hidden" value="${userData.usercode}" name="usercode" id="usercode">
+      	<input type="hidden" value="${userData.seq}" name="seq" id="seq">
       	<div style="width:100%">
 	      	<table class="userInfo">
 			  <tbody>
@@ -93,6 +94,21 @@ function goback(){
 						<c:otherwise>
 							<input type="radio" name="alarmyn" value="Y">수신허용
 							<input type="radio" name="alarmyn" value="N" checked>수신거부
+						</c:otherwise>
+					</c:choose>
+				  </td>
+			    </tr>
+			    <tr>
+			      <th scope="row">상태</th>
+				  <td>
+				  	<c:choose>
+						<c:when test="${userData.status == 1 }">
+							<input type="radio" name="status" value="1" checked> 사용가능
+							<input type="radio" name="status" value="9"> 휴면
+						</c:when>
+						<c:otherwise>
+							<input type="radio" name="status" value="1"> 사용가능
+							<input type="radio" name="status" value="9" checked> 휴면
 						</c:otherwise>
 					</c:choose>
 				  </td>

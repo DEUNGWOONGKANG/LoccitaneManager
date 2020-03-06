@@ -210,10 +210,14 @@ public class UserController {
 	@PostMapping("/super/modifyuser") 
 	public ModelAndView modifyUser(User user, HttpServletResponse response, HttpServletRequest request){ 
 		ModelAndView nextView = superUserInfo(user.getUsercode());
-		service.saveUser(user);// 사용자 회원 등급 및 알람수신여부 저장
-		nextView.addObject("saveyn", "Y");
+		User updateData = service.userCheck(user.getUsercode());
+		updateData.setGrade(user.getGrade());
+		updateData.setAlarmyn(user.getAlarmyn());
+		updateData.setStatus(user.getStatus());
+		service.saveUser(updateData);// 사용자 회원 등급 및 알람수신여부 저장
+ 		nextView.addObject("saveyn", "Y");
 		return nextView;
-	}
+	} 
 	
 	//슈퍼관리자 엑셀업로드
 	@GetMapping("/super/excelupload")
