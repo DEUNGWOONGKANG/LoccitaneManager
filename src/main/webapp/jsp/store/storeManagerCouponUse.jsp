@@ -45,7 +45,7 @@ function check(){
 			</td>
 			<td style="text-align:center; border:2px solid #ffcb00;height:400px;">
 				<h1>핸드폰 번호 뒷자리 4자리</h1><br>
-				<input type="text" class="endNumInput" id="phone" name="phone">
+				<input type="number" class="endNumInput" id="phone" name="phone">
 				<br><br>
 				<input id="submitbtn" type="submit" class="button-yellow" value="검색">
 			</td>

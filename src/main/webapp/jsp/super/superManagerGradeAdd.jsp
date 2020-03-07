@@ -111,7 +111,7 @@ function goback(){
 			    </tr>
 			    <tr>
 			      <th>등급조건</th>
-				  <td><input type="text" placeholder="최소구매액" class="form-control" id="minimum" name="minimum" style="width:30%" value="${grade.minimum }">원</td>
+				  <td><input type="number" placeholder="최소구매액" class="form-control" id="minimum" name="minimum" style="width:30%" value="${grade.minimum }">원</td>
 			    </tr>
 			    <tr style="height:100px">
 			      <th>메모</th>

@@ -14,7 +14,7 @@
 function userSelect(usercode, username){
 	var result = confirm(username+"고객이 맞습니까?");
 	if(result){
-		location.href = '/manager/couponlist/'+usercode;
+		location.href = '/store/couponlist/'+usercode;
 	}
 }
 
@@ -58,7 +58,7 @@ function dormant(){
 			<td width="10%">
 			</td>
 			<td style="text-align:center;">
-				<input type="text" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
+				<input type="number" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
 				<input id="submitbtn" type="submit" class="button-yellow" value="검색">
 			</td>
 			<td width="10%">

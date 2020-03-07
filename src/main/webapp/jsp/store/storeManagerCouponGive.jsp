@@ -50,8 +50,10 @@ function change(){
 
 	if(val == "3"){
 		document.getElementById("reason_etc").readOnly = false;
+		document.getElementById("reason_etc").className = "inputText";
 	}else{
 		document.getElementById("reason_etc").readOnly = true;
+		document.getElementById("reason_etc").className = "viewText";
 	}
 }
 function check(){
@@ -101,7 +103,7 @@ function check(){
 <body>
 <jsp:include page="storeManagerHeader.jsp"></jsp:include>
 <div class="wrapper">
-<form id="couponGive" action="/manager/coupongive" method="post" onsubmit="return check()">
+<form id="couponGive" action="/store/coupongive" method="post" onsubmit="return check()">
 	<table style="width:100%; margin-top:20px;">
 		<tr height="50px">
 			<td width="10%">
@@ -170,7 +172,7 @@ function check(){
 						<option value="2">2. 사용기한 만료</option>
 						<option value="3">3. 기타</option>
 					</select>
-					<input type="text"  id="reason_etc" name="reason_etc" class="inputText" readonly>
+					<input type="text"  id="reason_etc" name="reason_etc" class="viewText" readonly>
 				</td>
 			</tr>
 		</tbody>

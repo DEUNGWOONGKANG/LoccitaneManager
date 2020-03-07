@@ -25,7 +25,7 @@ public class Grade {
 	private String kname;
 	
 	@Column(name = "minimum") 
-	private int minimum;
+	private String minimum;
 	
 	@Column(name = "useyn") 
 	private String useyn;
@@ -57,11 +57,11 @@ public class Grade {
 		this.name = name;
 	}
 
-	public int getMinimum() {
+	public String getMinimum() {
 		return minimum;
 	}
 
-	public void setMinimum(int minimum) {
+	public void setMinimum(String minimum) {
 		this.minimum = minimum;
 	}
 

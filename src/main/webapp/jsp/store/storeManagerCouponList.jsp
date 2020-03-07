@@ -14,7 +14,7 @@
 function useCoupon(seq, usercode){
 	var result = confirm("해당 쿠폰을 사용처리 하시겠습니까?");
 	if(result){
-		location.href = "/manager/couponuse/"+usercode+"/"+seq;
+		location.href = "/store/couponuse/"+usercode+"/"+seq;
 	}
 	
 }
@@ -56,7 +56,7 @@ function useCoupon(seq, usercode){
 			<td width="10%">
 			</td>
 			<td style="text-align:center;">
-				<input type="text" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
+				<input type="number" class="endNumInput" id="phone" name="phone" style="width:30%;height:60px;" value=${searchPhone }>
 				<input id="submitbtn" type="submit" class="button-yellow" value="검색">
 			</td>
 			<td width="10%">

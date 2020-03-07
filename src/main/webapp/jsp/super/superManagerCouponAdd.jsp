@@ -94,13 +94,13 @@ function goback(){
 			    </tr>
 			    <tr>
 			      <th>할인액 / 률</th>
-				  <td><input type="text" placeholder="할인액 / 률" class="form-control" id="dccnt" name="dccnt" style="width:30%"></td>
+				  <td><input type="number" placeholder="할인액 / 률" class="form-control" id="dccnt" name="dccnt" style="width:30%"></td>
 			    </tr>
 			    <tr>
 			      <th>사용조건</th>
 				  <td>
-				  	<input type="text" placeholder="최소구매금액" class="form-control" id="minimum" name="minimum" style="width:30%">원 이상 구매시 사용가능 / 
-				  	최대 <input type="text" placeholder="최대할인액" class="form-control" id="dcmax" name="dcmax" style="width:30%">원 할인
+				  	<input type="number" placeholder="최소구매금액" class="form-control" id="minimum" name="minimum" style="width:30%">원 이상 구매시 사용가능 / 
+				  	최대 <input type="number" placeholder="최대할인액" class="form-control" id="dcmax" name="dcmax" style="width:30%">원 할인
 				  </td>
 			    </tr>
 			    <tr>
