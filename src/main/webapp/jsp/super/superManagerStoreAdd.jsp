@@ -25,16 +25,16 @@ function check(){
 	var id = document.getElementById("code");
 	var pw = document.getElementById("pw");
 	var name = document.getElementById("name");
-	if(id.value == ""){
+	if(name.value == ""){
+		alert("매장명을 입력하세요.");
+		name.focus();
+		return false;
+	}else if(id.value == ""){
 		alert("매장코드를 입력하세요.");
 		id.focus();
 		return false;
 	}else if(pw.value == ""){
 		alert("비밀번호를 입력하세요.");
-		pw.focus();
-		return false;
-	}else if(name.value == ""){
-		alert("매장명을 입력하세요.");
 		pw.focus();
 		return false;
 	}else{

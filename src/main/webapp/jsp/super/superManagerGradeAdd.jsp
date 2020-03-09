@@ -26,7 +26,7 @@ function check(){
 	var name = document.getElementById("name");
 	var kname = document.getElementById("kname");
 	var useyn = document.getElementsByName("useyn");
-	var minimum = document.getElementsByName("minimum");
+	var minimum = document.getElementById("minimum");
 	var useynCheckYn = false;
 	for(var i=0; i<useyn.length; i++){
 		if(useyn[i].checked == true){

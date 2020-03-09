@@ -1,6 +1,9 @@
 package com.loccitane.coupon.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -66,9 +69,17 @@ public class CouponService {
 	}
 	
 	//관리자 고객 쿠폰 부여
-	public void giveCoupon(CouponMember coupon, Store loginUser, HttpServletRequest request) {
+	public void giveCoupon(CouponMember coupon, String Id, HttpServletRequest request) {
 		CouponMember newCoupon = new CouponMember();
 		Date now  = new Date();
+		
+		Date end = coupon.getEnddate();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(end);
+		cal.add(Calendar.HOUR_OF_DAY, 23);
+		cal.add(Calendar.MINUTE, 59);
+		cal.add(Calendar.SECOND, 59);
+		end = cal.getTime();
 		
 		int n = 16; // n자리 쿠폰 
 		char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
@@ -89,16 +100,18 @@ public class CouponService {
 			newCoupon.setReason("교환/환불");
 		}else if(coupon.getReason().equals("2")) {
 			newCoupon.setReason("사용기한 만료");
-		}else {
+		}else if(coupon.getReason().equals("3")) {
 			newCoupon.setReason(request.getParameter("reason_etc"));
+		}else {
+			newCoupon.setReason(coupon.getReason());
 		}
 		newCoupon.setCouponno(couponNum);
 		newCoupon.setCpcode(coupon.getCpcode());
 		newCoupon.setUsercode(coupon.getUsercode());
 		newCoupon.setCreatedate(now);
-		newCoupon.setCreateuser(loginUser.getId());
+		newCoupon.setCreateuser(Id);
 		newCoupon.setStartdate(coupon.getStartdate());
-		newCoupon.setEnddate(coupon.getEnddate());
+		newCoupon.setEnddate(end);
 		newCoupon.setUseyn("N");
 		
 		couponMemRepo.save(newCoupon);
@@ -109,6 +122,14 @@ public class CouponService {
 		CouponMemberTemp newCoupon = new CouponMemberTemp();
 		Date now  = new Date();
 		
+		Date end = coupon.getEnddate();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(end);
+		cal.add(Calendar.HOUR_OF_DAY, 23);
+		cal.add(Calendar.MINUTE, 59);
+		cal.add(Calendar.SECOND, 59);
+		end = cal.getTime();
+		
 		int n = 16; // n자리 쿠폰 
 		char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
 				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
@@ -137,7 +158,7 @@ public class CouponService {
 		newCoupon.setCreatedate(now);
 		newCoupon.setCreateuser(loginUser.getId());
 		newCoupon.setStartdate(coupon.getStartdate());
-		newCoupon.setEnddate(coupon.getEnddate());
+		newCoupon.setEnddate(end);
 		newCoupon.setRequestyn("N");
 		
 		couponMemTempRepo.save(newCoupon);
@@ -155,6 +176,14 @@ public class CouponService {
 		}
 		List<CouponMember> couponList = new ArrayList<CouponMember>();
 		Date now  = new Date();
+		
+		Date end = coupon.getEnddate();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(end);
+		cal.add(Calendar.HOUR_OF_DAY, 23);
+		cal.add(Calendar.MINUTE, 59);
+		cal.add(Calendar.SECOND, 59);
+		end = cal.getTime();
 		
 		for(int a = 0; a<userList.size(); a++) {
 			CouponMember newCoupon = new CouponMember();
@@ -188,7 +217,7 @@ public class CouponService {
 			newCoupon.setCreatedate(now);
 			newCoupon.setCreateuser(loginUser.getId());
 			newCoupon.setStartdate(coupon.getStartdate());
-			newCoupon.setEnddate(coupon.getEnddate());
+			newCoupon.setEnddate(end);
 			newCoupon.setUseyn("N");
 			
 			couponList.add(newCoupon);
@@ -294,7 +323,7 @@ public class CouponService {
 	}
 
 	//쿠폰 발행 승인처리
-	public void couponApproval(int seq) {
+	public CouponMember couponApproval(int seq) {
 		//TEMP에 있는 데이터 찾아서 승인완료로 변경
 		CouponTemp coupon = coupontempRepo.findBySeq(seq);
 		CouponMember newCoupon = new CouponMember();
@@ -316,13 +345,13 @@ public class CouponService {
 	}
 	
 	//모든 쿠폰 발행 승인처리
-	public void allCouponApproval() {
+	public List<CouponMember> allCouponApproval() {
 		//TEMP에 있는 데이터 찾아서 승인완료로 변경
 		List<CouponTemp> coupon = coupontempRepo.findAllByRequestyn("N");
-		CouponMember newCoupon = new CouponMember();
 		List<CouponMember> approvalCoupon = new ArrayList<CouponMember>();
 		//신규쿠폰 생성하여 TEMP => 정상 DB로 이동
 		for(int i=0; i<coupon.size(); i++) {
+			CouponMember newCoupon = new CouponMember();
 			newCoupon.setCouponno(coupon.get(i).getCouponno());
 			newCoupon.setCpcode(coupon.get(i).getCpcode());
 			newCoupon.setCreatedate(coupon.get(i).getIssueday());
@@ -339,6 +368,7 @@ public class CouponService {
 		couponMemRepo.saveAll(approvalCoupon);
 		//저장 후 TEMP에 있는 데이터는 REQUESTYN을 Y로 변경하여 UPDATE
 		coupontempRepo.saveAll(coupon);
+		return approvalCoupon;
 	}
 
 }

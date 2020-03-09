@@ -40,7 +40,7 @@ public class GradeController {
 
 		String oldSeq = request.getParameter("oldseq");
 		Grade oldGrade = null;
-		if(oldSeq != null) {
+		if(!oldSeq.equals("")) {
 			oldGrade = service.find(Integer.parseInt(oldSeq));
 			oldGrade.setCode(grade.getCode());
 			oldGrade.setKname(grade.getKname());

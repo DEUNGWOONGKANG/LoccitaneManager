@@ -53,6 +53,8 @@ function check() {
                 
                 //location.reload();
                 excelUploadProgressClear();
+
+                alert("업로드가 완료되었습니다.");
             },
             error: function(request,status,error){
             	//alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);

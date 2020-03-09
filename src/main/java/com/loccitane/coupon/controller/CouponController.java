@@ -113,7 +113,7 @@ public class CouponController {
 			nextView = new ModelAndView("logout");
 		}else{
 			nextView = new ModelAndView("super/superManagerUserInfo");
-			cpservice.giveCoupon(coupon, loginUser, request);
+			cpservice.giveCoupon(coupon, loginUser.getId(), request);
 			
 			User userData = service.userCheck(coupon.getUsercode());
 			List<Grade> gradeList = grservice.getGradeUse();
@@ -139,7 +139,7 @@ public class CouponController {
 		}else{
 			nextView = new ModelAndView("super/superManagerCouponPublish");
 			if(request.getParameter("type").equals("user")) {
-				cpservice.giveCoupon(coupon, loginUser, request);
+				cpservice.giveCoupon(coupon, loginUser.getId(), request);
 			} else if(request.getParameter("type").equals("grade")) {
 				cpservice.giveCouponToGrade(coupon, loginUser, request);
 			}
@@ -220,7 +220,7 @@ public class CouponController {
 	//쿠폰 발행 개별승인
 	@RequestMapping("/super/approval/{seq}") 
 	public ModelAndView couponApproval(@PathVariable("seq") int seq, HttpServletRequest request, Pageable pageable){ 
-		cpservice.couponApproval(seq);
+		CouponMember approvalData = cpservice.couponApproval(seq);
 		//슈퍼관리자 사용자별 쿠폰 리스트
   		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
   		
@@ -245,7 +245,7 @@ public class CouponController {
 	//쿠폰 발행 전체승인
 	@RequestMapping("/super/allapproval") 
 	public ModelAndView couponAllApproval(HttpServletRequest request, Pageable pageable){ 
-		cpservice.allCouponApproval();
+		List<CouponMember> approvalList = cpservice.allCouponApproval();
 		//슈퍼관리자 사용자별 쿠폰 리스트
   		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
   		
