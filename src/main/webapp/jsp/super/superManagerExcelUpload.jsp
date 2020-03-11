@@ -54,7 +54,6 @@ function check() {
                 //location.reload();
                 excelUploadProgressClear();
 
-                alert("업로드가 완료되었습니다.");
             },
             error: function(request,status,error){
             	//alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -78,12 +77,14 @@ function excelUploadProgress(){
         data: {},
         dataType :"text",
         success : function(resultData){
-//             console.log(resultData);
+             console.log(resultData);
             if(resultData == 100){
                 clearInterval(progress);    
             }
-            $("#excelUploadingState").html("<font size = 2><b>"+ resultData +"% </b></font>");
-            document.getElementById('progress').style.width = (resultData*4.32).toString() +'px';
+            if(resultData != 0){
+	            $("#excelUploadingState").html("<font size = 2><b>"+ resultData +"% </b></font>");
+	            document.getElementById('progress').style.width = (resultData*4.32).toString() +'px';
+        	}
         },
         error: function(e){
             
@@ -148,9 +149,9 @@ function checkFileType(filePath) {
 			</thead><!-- #userList Header -->
 			<tbody>
 			<c:if test="${!empty logList}">
-			<c:forEach var="log" items="${logList}">
+			<c:forEach var="log" items="${logList}" varStatus="status">
 				<tr>
-					<td>${log.seq }</td>
+					<td>${status.count }</td>
 					<td><fmt:formatDate value="${log.logdate}" pattern="YYYY-MM-dd HH:mm:ss"/></td>
 					<td>${log.username}[${log.userid}]</td>
 					<td>${log.logcontent}</td>

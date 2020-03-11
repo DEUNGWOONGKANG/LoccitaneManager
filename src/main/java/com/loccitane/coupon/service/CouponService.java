@@ -1,7 +1,5 @@
 package com.loccitane.coupon.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,7 +67,7 @@ public class CouponService {
 	}
 	
 	//관리자 고객 쿠폰 부여
-	public void giveCoupon(CouponMember coupon, String Id, HttpServletRequest request) {
+	public void giveCoupon(CouponMember coupon, String Id, String reason_etc) {
 		CouponMember newCoupon = new CouponMember();
 		Date now  = new Date();
 		
@@ -101,7 +99,7 @@ public class CouponService {
 		}else if(coupon.getReason().equals("2")) {
 			newCoupon.setReason("사용기한 만료");
 		}else if(coupon.getReason().equals("3")) {
-			newCoupon.setReason(request.getParameter("reason_etc"));
+			newCoupon.setReason(reason_etc);
 		}else {
 			newCoupon.setReason(coupon.getReason());
 		}
@@ -342,6 +340,7 @@ public class CouponService {
 		//저장 후 TEMP에 있는 데이터는 REQUESTYN을 Y로 변경하여 UPDATE
 		coupon.setRequestyn("Y");
 		coupontempRepo.save(coupon);
+		return newCoupon;
 	}
 	
 	//모든 쿠폰 발행 승인처리

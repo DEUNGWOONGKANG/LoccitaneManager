@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,12 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.loccitane.coupon.domain.Coupon;
-import com.loccitane.grade.domain.Grade;
 import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
-import com.loccitane.user.controller.UserController;
-import com.loccitane.user.domain.User;
 import com.loccitane.utils.Paging;
 
 @Controller // 이 클래스가 컨트롤러라는 것을 알려주는 어노테이션

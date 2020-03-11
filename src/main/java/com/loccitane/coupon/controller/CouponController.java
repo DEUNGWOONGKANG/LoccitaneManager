@@ -113,7 +113,7 @@ public class CouponController {
 			nextView = new ModelAndView("logout");
 		}else{
 			nextView = new ModelAndView("super/superManagerUserInfo");
-			cpservice.giveCoupon(coupon, loginUser.getId(), request);
+			cpservice.giveCoupon(coupon, loginUser.getId(), request.getParameter("reason_etc"));
 			
 			User userData = service.userCheck(coupon.getUsercode());
 			List<Grade> gradeList = grservice.getGradeUse();
@@ -139,7 +139,7 @@ public class CouponController {
 		}else{
 			nextView = new ModelAndView("super/superManagerCouponPublish");
 			if(request.getParameter("type").equals("user")) {
-				cpservice.giveCoupon(coupon, loginUser.getId(), request);
+				cpservice.giveCoupon(coupon, loginUser.getId(), request.getParameter("reason_etc"));
 			} else if(request.getParameter("type").equals("grade")) {
 				cpservice.giveCouponToGrade(coupon, loginUser, request);
 			}

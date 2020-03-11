@@ -275,13 +275,15 @@ public class UserController {
             int a =UserService.getCurrentStateCount();
             int b =UserService.getTotalRowCount();
             //ModuleServiceImpl.getCurrentStateCount()/ModuleServiceImpl.getTotalRowCount()*100
-            
+            //System.err.println("a>>>>>>>>>>"+a);
+            //System.err.println("b>>>>>>>>>>"+b);
             
             BigDecimal aGd = new BigDecimal(a);
             BigDecimal bGd = new BigDecimal(b);
             
         
             resultData = aGd.divide(bGd, 2, BigDecimal.ROUND_CEILING).multiply(new BigDecimal(100)).intValue();
+            System.err.println("resultData>>>>>>>>>>"+resultData);
         }
         
         

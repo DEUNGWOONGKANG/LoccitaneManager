@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.loccitane.coupon.domain.CouponMember;
+import com.loccitane.coupon.service.CouponService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ExcelRead;
@@ -25,6 +27,9 @@ import com.loccitane.utils.ExcelReadOption;
 public class UserService {
 	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
 	UserRepository userRepo;
+	
+	@Autowired
+	CouponService cpservice;
 	
 	private static int totalRowCount = 0; // 전체 행 개수
     private static int updateRowCount = 0; // 성공한 데이터 개수
@@ -225,6 +230,51 @@ public class UserService {
 		    			dataAdd = true;
 		    		}
 		    		if(check.getTotalbuy() != Integer.parseInt(article.get("F"))) {
+		    			if(check.getTotalbuy() < Integer.parseInt(article.get("F"))){
+		    				CouponMember cp = new CouponMember();
+		    				Calendar cl = Calendar.getInstance();
+		    				boolean couponYn = false;
+		    				cl.setTime(now);
+		    				cl.set(Calendar.HOUR_OF_DAY, 0);
+		    				cl.set(Calendar.MINUTE, 0);
+		    				cl.set(Calendar.SECOND, 0);
+		    				cp.setStartdate(cl.getTime());
+		    				cp.setReason("첫구매 감사쿠폰");
+		    				if(check.getGrade().equals("REGULAR") && check.getSecond1date() == null){
+		    					cp.setCpcode("SECREG");
+		    					//종료날짜는 90일더한날짜로 세팅
+								cl.add(Calendar.DATE, 90);
+								cp.setEnddate(cl.getTime());
+								cp.setUsercode(check.getUsercode());
+								check.setSecond1date(now);
+								couponYn = true;
+		    				}else if(check.getGrade().equals("PREMIUM") && check.getSecond2date() == null){
+		    					cp .setCpcode("SECPRM");
+		    					//종료날짜는 90일더한날짜로 세팅
+								cl.add(Calendar.DATE, 90);
+								cp.setEnddate(cl.getTime());
+								cp.setUsercode(check.getUsercode());
+								check.setSecond2date(now);
+								couponYn = true;
+		    				}else if(check.getGrade().equals("LOYAL") && check.getSecond3date() == null){
+		    					cp.setCpcode("SECLOY");
+		    					//종료날짜는 180일더한날짜로 세팅
+								cl.add(Calendar.DATE, 180);
+								cp.setEnddate(cl.getTime());
+								cp.setUsercode(check.getUsercode());
+								check.setSecond3date(now);
+								couponYn = true;
+		    				}else if(check.getGrade().equals("PRESTIGE") && check.getSecond4date() == null){
+		    					cp.setCpcode("SECPRT");
+		    					//종료날짜는 180일더한날짜로 세팅
+								cl.add(Calendar.DATE, 180);
+								cp.setEnddate(cl.getTime());
+								cp.setUsercode(check.getUsercode());
+								check.setSecond4date(now);
+								couponYn = true;
+		    				}
+		    				if(couponYn) cpservice.giveCoupon(cp, "system", cp.getReason());
+		    			}
 		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    			dataAdd = true;
 		    		}

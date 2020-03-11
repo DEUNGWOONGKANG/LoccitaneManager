@@ -24,6 +24,7 @@ public class ExcelCellRef {
         return CellReference.convertNumToColString(cellNum);
     }
     
+	@SuppressWarnings("deprecation")
 	public static String getValue(Cell cell) {
         String value = "";
         
