@@ -53,71 +53,23 @@
 				</form>
 			</div>
       	</div>
-      	<c:if test="${!empty couponList.content}">
 	      	<table class="table table-hover" style="margin-left:10px;">
 			  <thead>
 			    <tr>
-			      <th scope="col">NO</th>
-			      <th scope="col">쿠폰코드</th>
-			      <th scope="col">쿠폰명</th>
-			      <th scope="col">쿠폰번호</th>
-			      <th scope="col">소유자</th>
-			      <th scope="col">유효기간</th>
-			      <th scope="col">상태</th>
+			      <th scope="col">시간</th>
+			      <th scope="col">사용량</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			  	<c:forEach var="coupon" items="${couponList.content}" varStatus="status">
+			  	<c:forEach var="coupon" items="${useCouponList}" >
 				    <tr style="cursor:pointer;">
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${coupon.cpcode}</td>
-				      <td>${coupon.cpname}</td>
-				      <td>${coupon.couponno}</td>
-				      <td>${coupon.username}[${coupon.usercode}]</td>
 				      <td>
-				      	<fmt:formatDate value="" pattern="YYYY-MM-dd"/>~
-				      	<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/>
-				      </td>
-				      <td>
-				      	<c:if test="${coupon.usedyn eq 'Y'}">사용</c:if>
-				      	<c:if test="${coupon.usedyn eq 'N'}">미사용</c:if>
 				      </td>
 				    </tr>
 				</c:forEach>
 			  </tbody>
 			</table>
-		</c:if>
-		<c:if test="${empty couponList.content}">
-			<div style="text-align:center;width:100%">
-				<h2>리스트가 존재하지 않습니다.</h2>
-			</div>
-		</c:if>
-		<c:if test="${!empty couponList.content}">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<ul class="pagination">
-						<c:if test="${paging.curRange > 1}">
-							<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${(paging.curRange-2)*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
-						</c:if>
-						<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
-							<c:choose>
-								<c:when test="${pageNum eq  paging.curPage}">
-									<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
-								</c:when>
-								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
-						<c:if test="${paging.curRange < paging.rangeCnt}">
-							<li class="page-item"><a class="page-link" href="/super/coupontomember?page=${paging.curRange*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
-						</c:if>
-					</ul>
-				</div>
-			</div>
-		</div>
-		</c:if>
       </div>
     </div>
     <!-- JavaScript files-->

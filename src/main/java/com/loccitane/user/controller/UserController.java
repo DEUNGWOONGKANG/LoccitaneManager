@@ -400,6 +400,8 @@ public class UserController {
   			nextView = superCouponRequestList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu6")){
   			nextView = superGradeList();
+  		}else if(loginUser != null && menu.equals("menu7")){
+  			nextView = superGradeList();
   		}
   		httpSession.setAttribute("menu", menu);
   		return nextView;
