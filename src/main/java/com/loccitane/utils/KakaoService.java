@@ -9,16 +9,14 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.json.simple.JSONObject;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import com.loccitane.store.domain.Store;
 import com.loccitane.user.domain.User;
 
 @Component
 public class KakaoService {
 	
+	@SuppressWarnings("unchecked")
 	public static void post(String templateId, User user){
 		try {
 			URL url = new URL("https://devtalkapi.lgcns.com/request/kakao.json");
