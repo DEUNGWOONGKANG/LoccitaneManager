@@ -8,9 +8,18 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.json.simple.JSONObject;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+
+import com.loccitane.store.domain.Store;
+import com.loccitane.user.domain.User;
+
+@Component
 public class KakaoService {
 	
-	public static void post(String strUrl, String jsonMessage){
+	public static void post(String templateId, User user){
 		try {
 			URL url = new URL("https://devtalkapi.lgcns.com/request/kakao.json");
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -26,7 +35,46 @@ public class KakaoService {
 			con.setDefaultUseCaches(false);
 			
 			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-			wr.write(jsonMessage); //json 형식의 message 전달 
+			
+			JSONObject formData = new JSONObject();
+			formData.put("service", "1810021384");
+			formData.put("mobile", user.getPhone());
+			formData.put("template", templateId);
+			
+			String msg = "";
+			switch (templateId) {
+				case "10027":
+					msg = "[록시땅] 마이 프로방스 멤버십 등급 안내\r\n" + 
+						  user.getUsername() + " 고객님, 현재 고객님의 등급은 [" + user.getGrade() + "] 입니다. \r\n" + 
+						  "\r\n" + 
+						  "*고객 등급은 분기별로 한 번씩 업데이트 됩니다.\r\n" + 
+						  "*문의사항은 가까운 매장 혹은 록시땅 고객센터(02-2054-0500)으로 연락주시기 바랍니다.";
+					break;
+				case "10028":
+					msg = "[록시땅] 쿠폰 발급 안내\r\n" + 
+						  user.getUsername() + " 고객님, \r\n" + 
+						  "<[" + user.getGrade() + "] 등급업 축하 기프트 쿠폰>이 발급 되었습니다.\r\n" + 
+						  "지금 바로 사용 가능한 나의 쿠폰을 확인해보세요.";
+					break;
+				case "10030":
+					msg = "[록시땅] 쿠폰 발급 안내\r\n" + 
+					      user.getUsername() + " 고객님, \r\n" + 
+					      "<[" + user.getGrade() + "] 등급 첫 구매 감사 쿠폰>이 발급 되었습니다.\r\n" + 
+					      "지금 바로 사용 가능한 나의 쿠폰을 확인해보세요.";
+					break;
+				case "10031":
+					msg = "[록시땅] 쿠폰 발급 안내\r\n" + 
+					      user.getUsername() + " 고객님, <[" + user.getGrade() + "] 등급 첫 구매 감사 쿠폰> \r\n" + 
+					      "2종이 발급 되었습니다.\r\n" + 
+					      "지금 바로 사용 가능한 나의 쿠폰을 확인해보세요.";
+					break;
+				default:
+					break;
+			}
+			formData.put("message", msg);
+			
+			System.out.println(formData.toJSONString());
+			wr.write(formData.toJSONString()); //json 형식의 message 전달 
 			wr.flush();
 
 			StringBuilder sb = new StringBuilder();
@@ -46,7 +94,17 @@ public class KakaoService {
 		} catch (Exception e){
 			System.err.println(e.toString());
 		}
-}
+	}
+
+//	@Override
+//	public void run(ApplicationArguments args) throws Exception {
+//		// TODO Auto-generated method stub
+//		User user = new User();
+//		user.setPhone("01076151510");
+//		user.setUsername("황인재");
+//		user.setGrade("프리스티지");
+//		post("10031", user);
+//	}
 
 
 //	String myResult = "";
