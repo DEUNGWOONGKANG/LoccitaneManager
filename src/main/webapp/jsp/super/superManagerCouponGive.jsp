@@ -43,23 +43,32 @@ $.datepicker.setDefaults({
 function check(){
 	var couponKind = document.getElementById("cpcode");
 	var username = document.getElementById("username");
-	var startDate = document.getElementById("startdate");
-	var endDate = document.getElementById("enddate");
+	var startDate = $("#startdate").val();
+	var endDate = $("#enddate").val();
 	var reason = document.getElementById("reason");
 	var reason_etc = document.getElementById("reason_etc");
+
+	var start = startDate.split('-');
+	var end = endDate.split('-');
+	var stdt = new Date();
+	var eddt = new Date();
+	stdt.setFullYear(start[0], start[1]-1, start[2]);
+	eddt.setFullYear(end[0], end[1]-1, end[2]);
 	
-	startDate.value = $("#startdate").val();
-	endDate.value = $("#enddate").val();
 	if(couponKind.options[couponKind.selectedIndex].value == ""){
 		alert("쿠폰 종류를 선택해주세요.");
 		return false;
 	}
-	if(startDate.value == "" || startDate.value == null){
+	if(startDate == "" || startDate == null){
 		alert("쿠폰사용시작일을 선택해주세요.");
 		return false;
 	}
-	if(endDate.value == "" || endDate.value == null){
+	if(endDate == "" || endDate == null){
 		alert("쿠폰사용종료일을 선택해주세요.");
+		return false;
+	}
+	if(stdt > eddt){
+		alert("시작일과 종료일을 확인해주세요.");
 		return false;
 	}
 	if(username.value == "" || username.value == null){

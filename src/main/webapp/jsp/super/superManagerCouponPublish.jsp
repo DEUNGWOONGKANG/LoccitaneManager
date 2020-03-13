@@ -57,8 +57,8 @@ $.datepicker.setDefaults({
 function check(){
 	var couponKind = document.getElementById("cpcode");
 	var username = document.getElementById("username");
-	var startDate = document.getElementById("startdate");
-	var endDate = document.getElementById("enddate");
+	var startDate = $("#startdate").val();
+	var endDate = $("#enddate").val();
 	var reason = document.getElementById("reason");
 	var reason_etc = document.getElementById("reason_etc");
 	var type = document.getElementsByName("type");
@@ -72,18 +72,26 @@ function check(){
 			typeVal = type[i].value;
 		}
 	} 
-	startDate.value = $("#startdate").val();
-	endDate.value = $("#enddate").val();
+	var start = startDate.split('-');
+	var end = endDate.split('-');
+	var stdt = new Date();
+	var eddt = new Date();
+	stdt.setFullYear(start[0], start[1]-1, start[2]);
+	eddt.setFullYear(end[0], end[1]-1, end[2]);
 	if(couponKind.options[couponKind.selectedIndex].value == ""){
 		alert("쿠폰 종류를 선택해주세요.");
 		return false;
 	}
-	if(startDate.value == "" || startDate.value == null){
+	if(startDate == "" || startDate == null){
 		alert("쿠폰사용시작일을 선택해주세요.");
 		return false;
 	}
-	if(endDate.value == "" || endDate.value == null){
+	if(endDate == "" || endDate == null){
 		alert("쿠폰사용종료일을 선택해주세요.");
+		return false;
+	}
+	if(stdt > eddt){
+		alert("시작일과 종료일을 확인해주세요.");
 		return false;
 	}
 	if(!typeCheckYn){
@@ -197,10 +205,9 @@ function userSearch(){
 					<td>
 						<select id="grade" name="grade" class="form-control">
 							<option value="ALL">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;모든등급 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </option>
-							<option value="REGULAR">REGULAR</option>
-							<option value="PREMIUM">PREMIUM</option>
-							<option value="LOYAL">LOYAL</option>
-							<option value="PRESTIGE">PRESTIGE</option>
+							<c:forEach var="grade" items="${gradeList}">
+								<option value="${grade.name}" >${grade.name}</option>
+							</c:forEach>
 						</select>
 					</td>
 				</tr>

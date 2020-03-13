@@ -436,7 +436,9 @@ public class UserController {
   	public ModelAndView superCouponPublish(){ 
   		ModelAndView nextView = new ModelAndView("super/superManagerCouponPublish");
   		List<CouponCore> allCoupon = cpservice.getCouponList(); // 전체쿠폰리스트
+  		List<Grade> gradeList = grservice.findAllAsc();
   		nextView.addObject("allCoupon", allCoupon);
+  		nextView.addObject("gradeList", gradeList);
   		
   		return nextView;
   	}

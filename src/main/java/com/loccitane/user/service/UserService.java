@@ -92,26 +92,22 @@ public class UserService {
 
 	// 사용자 전체조회
 	public List<User> findAll() {
-		List<User> list = userRepo.findAll();
-		return list;
+		return userRepo.findAll();
 	}
 	
 	// 사용자 usercode값으로 조회
 	public User userCheck(String usercode) {
-		User userData  = userRepo.findByUsercode(usercode);
-		return userData;
+		return userRepo.findByUsercode(usercode);
 	}
 		
 	// 사용자(고객) 로그인 
 	public User userLogin(User user) {
-		User userData = userRepo.findByUsercodeAndPhoneEndingWith(user.getUsercode(), user.getPhone()); 
-		return userData;
+		return userRepo.findByUsercodeAndPhoneEndingWith(user.getUsercode(), user.getPhone());
 	}
 	
 	// 사용자 리스트 전화번호로 조회
 	public List<User> getUserListByPhone(User user) {
-		List<User> userData = userRepo.findAllByPhoneEndingWithOrderByStatusAsc(user.getPhone());
-		return userData;
+		return userRepo.findAllByPhoneEndingWithOrderByStatusAsc(user.getPhone());
 	}
 	
 	// 고객리스트 조회
@@ -124,11 +120,11 @@ public class UserService {
 		if(searchKey == null) {
 			userData = userRepo.findAll(pageable);
 		}else if(searchKey.equals("username")) {
-			userData = userRepo.findAllByUsername(searchKeyword, pageable);
+			userData = userRepo.findAllByUsernameContaining(searchKeyword, pageable);
 		}else if(searchKey.equals("phone")) {
-			userData = userRepo.findAllByPhone(searchKeyword, pageable);
+			userData = userRepo.findAllByPhoneContaining(searchKeyword, pageable);
 		}else if(searchKey.equals("usercode")) {
-			userData = userRepo.findAllByUsercode(searchKeyword,  pageable);
+			userData = userRepo.findAllByUsercodeContaining(searchKeyword,  pageable);
 		}else{
 			userData = userRepo.findAll(pageable);
 		}
@@ -323,17 +319,30 @@ public class UserService {
 		for(int i=0; i<userList.size(); i++) {
 			String userBirthday = userList.get(i).getBirthday();
 			userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
-			if(userBirthday.equals(birthcheck)) {
-				birthdayUser.add(userList.get(i));
+			if(userList.get(i).getGrade().equals("PREMIUM") || userList.get(i).getGrade().equals("LOYAL") || userList.get(i).getGrade().equals("PRESTIGE")) {
+				if(userBirthday.equals(birthcheck)) {
+					birthdayUser.add(userList.get(i));
+				}
 			}
 		}
 		return birthdayUser;
 	}
 	
-	//회원정보메뉴 등급 + 알람수신여부 저장
 	public void saveAll(List<User> users) {
-		
 		userRepo.saveAll(users);
 	}
+
+	public List<User> getUserListByGrade(String grade) {
+		return userRepo.findAllByGrade(grade);
+	}
+	
+	public List<User> getUpdateUserList(Date now, Date yesterday) {
+		return userRepo.findAllByLastupdateBetween(yesterday, now);
+	}
+
+	public List<User> findGradeupList() {
+		return userRepo.findAllByGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqual("REGULAR", 200000, "PREMIUM", 600000, "LOYAL", 1000000);
+	}
+
 
 }

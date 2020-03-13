@@ -78,7 +78,7 @@ function storeAdd(){
 				      <td>${store.name}</td>
 				      <td>${store.tel}</td>
 				      <td>${store.code}</td>
-				      <td>
+				      <td style="text-align:left;">
 				      <c:if test="${!empty store.postcode}">(${store.postcode})</c:if>
 				      ${store.address}</td>
 				    </tr>

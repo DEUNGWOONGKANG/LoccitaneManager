@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -16,8 +16,8 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
-@Controller
-public class FtpController {
+@Service
+public class SftpService {
   
    protected static String FTP_IP   = "203.245.44.51"; // FTP 접속지 IP
    protected static int    FTP_PORT = 22;             // FTP 접속지 Port
@@ -30,8 +30,7 @@ public class FtpController {
    /**
     * FTP 방식으로 연결
     */
-   @RequestMapping(value = "/csvupload", method=RequestMethod.GET)
-   public void connectFtp() {
+   public void sendFile() {
      
       // FTP 관련 객체 선언
       Session ses = null;             // 접속계정
@@ -65,13 +64,35 @@ public class FtpController {
          // 채널을 FTP용 채널 객체로 개스팅
          chSftp = (ChannelSftp)ch;     
          
-         String filePath = "C:/csv/user.csv";     // 나중에 DB에서 필요한 경로 당기면 good
+         Date now = new Date();
+         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+         String today = sdf.format(now);
          
-         File file= new File(filePath);       // file 객체 생성 (파일 경로 입력)
-            fi = new FileInputStream(file);
-            chSftp.put(fi, "/csv/user.csv");   // 서버에 파일 보내기
-            chSftp.quit();                     // Sftp 연결 종료
-            System.out.println("FTP 연결을 종료합니다.");
+         String filePath = "C:/exceldata/";
+         
+         String userExcel = today+"user.xlsx";
+         String userFilePath = filePath+userExcel;
+         String couponExcel = today+"coupon.xlsx";
+         String couponFilePath = filePath+couponExcel;
+         String coupontomemberExcel = today+"coupontomember.xlsx";
+         String coupontomemberFilePath = filePath+coupontomemberExcel;
+         
+         chSftp.cd("/imrnortaty/exceldata");  
+         
+         File userFile= new File(userFilePath);  
+         fi = new FileInputStream(userFile);
+         chSftp.put(fi, userExcel);   // 서버에 파일 보내기
+         
+         File couponFile= new File(couponFilePath);  
+         fi = new FileInputStream(couponFile);
+         chSftp.put(fi, couponExcel);   // 서버에 파일 보내기
+         
+         File coupontomemberFile= new File(coupontomemberFilePath);  
+         fi = new FileInputStream(coupontomemberFile);
+         chSftp.put(fi, coupontomemberExcel);   // 서버에 파일 보내기
+         
+         chSftp.quit();                // Sftp 연결 종료
+         System.out.println("FTP 연결을 종료합니다.");
             
             
          } catch(SftpException e) { 

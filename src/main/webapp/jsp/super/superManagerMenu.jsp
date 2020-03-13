@@ -29,7 +29,7 @@
 	         <li class="sidebar-list-item" id="menu4_1"><a id="menu4_1a" href="/super/menu/menu4_1" class="sidebar-link text-muted pl-lg-5"><b>쿠폰관리</b></a></li>
 	         <li class="sidebar-list-item" id="menu4_2"><a id="menu4_2a" href="/super/menu/menu4_2" class="sidebar-link text-muted pl-lg-5"><b>쿠폰발행</b></a></li>
 	         <li class="sidebar-list-item" id="menu4_3"><a id="menu4_3a" href="/super/menu/menu4_3" class="sidebar-link text-muted pl-lg-5"><b>사용자별쿠폰관리</b></a></li>
-	         <li class="sidebar-list-item" id="menu4_4"><a id="menu4_4a" href="/super/menu/menu4_4" class="sidebar-link text-muted pl-lg-5"><b>쿠폰요청승인</b></a></li>
+	         <!-- <li class="sidebar-list-item" id="menu4_4"><a id="menu4_4a" href="/super/menu/menu4_4" class="sidebar-link text-muted pl-lg-5"><b>쿠폰요청승인</b></a></li>-->
 	       </ul>
 	     </div>
 	   </li>

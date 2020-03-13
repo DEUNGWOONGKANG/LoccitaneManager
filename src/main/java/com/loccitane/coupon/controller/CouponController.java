@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
@@ -86,7 +87,7 @@ public class CouponController {
 	
 	//쿠폰 부여[매장관리자]
 	@PostMapping("/store/coupongive") 
-	public ModelAndView couponGive(CouponMemberTemp coupon, HttpServletRequest request){
+	public ModelAndView couponGive(CouponMember coupon, HttpServletRequest request){
 		ModelAndView nextView = null;
 		HttpSession httpSession = request.getSession(true);
 		Store loginUser = (Store) httpSession.getAttribute("loginUser");
@@ -94,7 +95,9 @@ public class CouponController {
 			nextView = new ModelAndView("logout");
 		}else{
 			nextView = new ModelAndView("store/storeManagerCouponGive");
-			cpservice.giveCouponRequest(coupon, loginUser, request);
+			//슈퍼관리자의 승인=>즉시발행으로 변경
+			//cpservice.giveCouponRequest(coupon, loginUser, request);
+			cpservice.giveCoupon(coupon, loginUser.getId(), request.getParameter("reason_etc"));
 			
 			List<CouponCore> couponList = cpservice.getCouponList();
 			nextView.addObject("couponList", couponList);
@@ -122,14 +125,14 @@ public class CouponController {
 			nextView.addObject("userData", userData);
 			nextView.addObject("gradeList", gradeList);
 			nextView.addObject("couponList", couponList);
-			nextView.addObject("saveyn", "Y");
+			nextView.addObject("giveyn", "Y");
 			
 		}
 		return nextView;
 	}
 	
 	//쿠폰 부여[슈퍼관리자] - 쿠폰관리 - 쿠폰발행
-	@RequestMapping("/super/couponpublish") 
+	@RequestMapping(value= "/super/couponpublish", method = RequestMethod.POST) 
 	public ModelAndView couponPublish(CouponMember coupon, HttpServletRequest request) throws Exception { 
 		ModelAndView nextView = null;
 		HttpSession httpSession = request.getSession(true);

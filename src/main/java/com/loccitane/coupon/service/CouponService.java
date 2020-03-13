@@ -74,9 +74,9 @@ public class CouponService {
 		Date end = coupon.getEnddate();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(end);
-		cal.add(Calendar.HOUR_OF_DAY, 23);
-		cal.add(Calendar.MINUTE, 59);
-		cal.add(Calendar.SECOND, 59);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
 		end = cal.getTime();
 		
 		int n = 16; // n자리 쿠폰 
@@ -234,11 +234,11 @@ public class CouponService {
         if(searchKey == null) {
         	couponList = couponCoreRepo.findAll(pageable);
 		}else if(searchKey.equals("cpcode")) {
-			couponList = couponCoreRepo.findAllByCpcode(searchKeyword, pageable);
+			couponList = couponCoreRepo.findAllByCpcodeContaining(searchKeyword, pageable);
 		}else if(searchKey.equals("cpname")) {
-			couponList = couponCoreRepo.findAllByCpname(searchKeyword, pageable);
+			couponList = couponCoreRepo.findAllByCpnameContaining(searchKeyword, pageable);
 		}else if(searchKey.equals("createuser")) {
-			couponList = couponCoreRepo.findAllByCreateuser(searchKeyword,  pageable);
+			couponList = couponCoreRepo.findAllByCreateuserContaining(searchKeyword,  pageable);
 		}else if(searchKey.equals("useyn")) {
 			couponList = couponCoreRepo.findAllByUseyn(searchKeyword,  pageable);
 		}else{
@@ -368,6 +368,16 @@ public class CouponService {
 		//저장 후 TEMP에 있는 데이터는 REQUESTYN을 Y로 변경하여 UPDATE
 		coupontempRepo.saveAll(coupon);
 		return approvalCoupon;
+	}
+
+	public List<CouponMember> getUpdateCoupontomember(Date now, Date yesterday) {
+		
+		return couponMemRepo.findAllByCreatedateBetweenOrUsedateBetween(yesterday, now, yesterday, now);
+	}
+
+	public List<CouponCore> getUpdateCoupon(Date now, Date yesterday) {
+		
+		return couponCoreRepo.findAllByCreatedateBetween(yesterday, now);
 	}
 
 }

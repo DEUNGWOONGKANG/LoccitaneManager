@@ -11,9 +11,9 @@ import com.loccitane.store.domain.Store;
 public interface StoreRepository extends JpaRepository<Store, String> {
 
 	Store findByIdAndPwAndCode(String loginId, String loginPw, String type);
-	Store findByIdAndPw(String loginId, String loginPw);
+	Store findByIdAndPwAndCodeNot(String loginId, String loginPw, String type);
 	Page<Store> findAllByCodeNot(String code, Pageable pageable);
-	Page<Store> findAllByNameAndCodeNot(String searchKeyword, String code, Pageable pageable);
-	Page<Store> findAllByTelAndCodeNot(String searchKeyword, String code, Pageable pageable);
+	Page<Store> findAllByNameContainingAndCodeNot(String searchKeyword, String code, Pageable pageable);
+	Page<Store> findAllByTelContainingAndCodeNot(String searchKeyword, String code, Pageable pageable);
 	Store findBySeq(int seq);
 }

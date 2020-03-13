@@ -23,9 +23,9 @@ public class StoreService {
 		if(searchKey == null) {
 			storeData = storeRepo.findAllByCodeNot("super", pageable);
 		}else if(searchKey.equals("name")) {
-			storeData = storeRepo.findAllByNameAndCodeNot(searchKeyword, "super", pageable);
+			storeData = storeRepo.findAllByNameContainingAndCodeNot(searchKeyword, "super", pageable);
 		}else if(searchKey.equals("tel")) {
-			storeData = storeRepo.findAllByTelAndCodeNot(searchKeyword, "super", pageable);
+			storeData = storeRepo.findAllByTelContainingAndCodeNot(searchKeyword, "super", pageable);
 		}else{
 			storeData = storeRepo.findAllByCodeNot("super", pageable);
 		}
@@ -42,7 +42,7 @@ public class StoreService {
 			storeData = storeRepo.findByIdAndPwAndCode(loginId, loginPw, type); 
 		}else{
 			//매장관리자용 로그인
-			storeData = storeRepo.findByIdAndPw(loginId, loginPw); 
+			storeData = storeRepo.findByIdAndPwAndCodeNot(loginId, loginPw, "super"); 
 		}
 		
 		return storeData;

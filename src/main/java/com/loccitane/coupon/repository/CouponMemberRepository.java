@@ -1,5 +1,8 @@
 package com.loccitane.coupon.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +12,6 @@ import com.loccitane.coupon.domain.CouponMember;
 @Repository
 public interface CouponMemberRepository extends JpaRepository<CouponMember, String>{
 	CouponMember findBySeq(int seq);
+
+	List<CouponMember> findAllByCreatedateBetweenOrUsedateBetween(Date yesterday, Date now, Date yesterday2, Date now2);
 }

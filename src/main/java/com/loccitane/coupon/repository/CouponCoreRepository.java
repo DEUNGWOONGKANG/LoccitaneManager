@@ -1,6 +1,7 @@
 package com.loccitane.coupon.repository;
 
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -14,9 +15,10 @@ import com.loccitane.coupon.domain.CouponCore;
 @Repository
 public interface CouponCoreRepository extends JpaRepository<CouponCore, Integer>{
 	List<CouponCore> findAllByUseyn(String useyn);
-	Page<CouponCore> findAllByCpcode(String searchKeyword, Pageable pageable);
-	Page<CouponCore> findAllByCpname(String searchKeyword, Pageable pageable);
-	Page<CouponCore> findAllByCreateuser(String searchKeyword, Pageable pageable);
+	Page<CouponCore> findAllByCpcodeContaining(String searchKeyword, Pageable pageable);
+	Page<CouponCore> findAllByCpnameContaining(String searchKeyword, Pageable pageable);
+	Page<CouponCore> findAllByCreateuserContaining(String searchKeyword, Pageable pageable);
 	Page<CouponCore> findAllByUseyn(String searchKeyword, Pageable pageable);
 	CouponCore findBySeq(int seq);
+	List<CouponCore> findAllByCreatedateBetween(Date yesterday, Date now);
 }

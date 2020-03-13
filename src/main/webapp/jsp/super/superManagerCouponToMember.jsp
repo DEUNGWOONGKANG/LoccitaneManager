@@ -73,7 +73,7 @@ function check(){
 			  </thead>
 			  <tbody>
 			  	<c:forEach var="coupon" items="${couponList.content}" varStatus="status">
-				    <tr style="cursor:pointer;">
+				    <tr>
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
 				      <td>${coupon.cpcode}</td>
 				      <td>${coupon.cpname}</td>
