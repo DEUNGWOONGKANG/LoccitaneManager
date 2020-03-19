@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,15 +18,21 @@ import org.springframework.stereotype.Service;
 
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
+import com.loccitane.log.domain.Log;
+import com.loccitane.log.service.LogService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ExcelRead;
 import com.loccitane.utils.ExcelReadOption;
+import com.loccitane.utils.KakaoService;
 
 @Service // 서비스 클래스임을 나타냄
 public class UserService {
 	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
 	UserRepository userRepo;
+	
+	@Autowired
+	LogService logservice;
 	
 	@Autowired
 	CouponService cpservice;
@@ -166,7 +172,7 @@ public class UserService {
 		excelReadOption.setOutputColumns("A","B","C","D","E","F");
 		excelReadOption.setStartRow(2);
 		Date now = new Date();
-		
+		int cnt = 0;
 		setCurrentState("A"); // 엑셀파일 읽어 오기 전 상태를 A
       
 		List<Map<String, String>>excelContent = ExcelRead.read(excelReadOption);
@@ -192,6 +198,7 @@ public class UserService {
 		    		check.setLastpurchase(transFormat.parse(article.get("E")));
 		    		check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    		check.setAlarmyn("Y");
+		    		check.setGrade("REGULAR");
 		    		if(check.getLastpurchase().before(cal.getTime())) {
 		    			check.setStatus("9");
 		    		}else {
@@ -228,8 +235,10 @@ public class UserService {
 		    		if(check.getTotalbuy() != Integer.parseInt(article.get("F"))) {
 		    			if(check.getTotalbuy() < Integer.parseInt(article.get("F"))){
 		    				CouponMember cp = new CouponMember();
+		    				CouponMember cp2 = new CouponMember();
 		    				Calendar cl = Calendar.getInstance();
 		    				boolean couponYn = false;
+		    				boolean highgrade = false;
 		    				cl.setTime(now);
 		    				cl.set(Calendar.HOUR_OF_DAY, 0);
 		    				cl.set(Calendar.MINUTE, 0);
@@ -260,6 +269,12 @@ public class UserService {
 								cp.setUsercode(check.getUsercode());
 								check.setSecond3date(now);
 								couponYn = true;
+								highgrade = true;
+								cp2.setStartdate(cl.getTime());
+			    				cp2.setReason("첫구매 감사쿠폰");
+			    				cp2.setCpcode("SECLOY");
+			    				cp2.setEnddate(cl.getTime());
+								cp2.setUsercode(check.getUsercode());
 		    				}else if(check.getGrade().equals("PRESTIGE") && check.getSecond4date() == null){
 		    					cp.setCpcode("SECPRT");
 		    					//종료날짜는 180일더한날짜로 세팅
@@ -268,8 +283,31 @@ public class UserService {
 								cp.setUsercode(check.getUsercode());
 								check.setSecond4date(now);
 								couponYn = true;
+								highgrade = true;
+								cp2.setStartdate(cl.getTime());
+			    				cp2.setReason("첫구매 감사쿠폰");
+			    				cp2.setCpcode("SECPRT");
+			    				cp2.setEnddate(cl.getTime());
+								cp2.setUsercode(check.getUsercode());
 		    				}
-		    				if(couponYn) cpservice.giveCoupon(cp, "system", cp.getReason());
+		    				if(couponYn) {
+		    					cpservice.giveCoupon(cp, "system", cp.getReason());
+		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
+		    					if(check.getAlarmyn().equals("Y")) {
+		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
+		    							JSONObject result = KakaoService.post("10030", check);
+		    							String status = (String) result.get("status");
+		    							if(status.equals("OK")) cnt ++;
+		    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
+		    							JSONObject result = KakaoService.post("10031", check);
+		    							String status = (String) result.get("status");
+		    							if(status.equals("OK")) cnt ++;
+		    						}
+		    						
+		    					}
+		    				}
+		    				
+		    				
 		    			}
 		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    			dataAdd = true;
@@ -297,6 +335,15 @@ public class UserService {
 		    }
 		    userRepo.saveAll(saveList);
 		}
+		if(cnt > 0) {
+			Log log = new Log();
+			log.setUserid("system");
+		    log.setUsername("system");
+		    log.setLogkind("KAKAO");
+		    log.setLogcontent("[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ");
+		    log.setLogdate(now);
+		    logservice.saveLog(log);
+		}
 		String log = "총 데이터:"+currentStateCount+"건 | "+
 					"신규데이터:"+insertRowCount+"건 | "+
 					"변경데이터:"+updateRowCount+"건 | "+
@@ -309,7 +356,11 @@ public class UserService {
 	public List<User> getBirthdayList() {
 		//생일 데이터가 존재하는 모든 사용자 가져오기
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
-		List<User> userList = userRepo.findAllByBirthdayIsNotNull();
+		List<String> grades = new ArrayList<String>();
+		grades.add("PREMIUM");
+		grades.add("LOYAL");
+		grades.add("PRESTIGE");
+		List<User> userList = userRepo.findAllByGradeInAndBirthdayIsNotNull(grades);
 		List<User> birthdayUser = new ArrayList<User>();
 		Calendar now = Calendar.getInstance();
 		// 15일 후 생일 체크
@@ -319,10 +370,8 @@ public class UserService {
 		for(int i=0; i<userList.size(); i++) {
 			String userBirthday = userList.get(i).getBirthday();
 			userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
-			if(userList.get(i).getGrade().equals("PREMIUM") || userList.get(i).getGrade().equals("LOYAL") || userList.get(i).getGrade().equals("PRESTIGE")) {
-				if(userBirthday.equals(birthcheck)) {
-					birthdayUser.add(userList.get(i));
-				}
+			if(userBirthday.equals(birthcheck)) {
+				birthdayUser.add(userList.get(i));
 			}
 		}
 		return birthdayUser;

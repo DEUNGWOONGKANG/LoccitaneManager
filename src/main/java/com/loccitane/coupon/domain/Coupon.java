@@ -33,6 +33,9 @@ public class Coupon {
 	@Column(name = "couponname")
 	private String cpname;
 	
+	@Column(name = "grade")
+	private String grade;
+	
 	@Column(name = "discountkind")
 	private String dck;
 	
@@ -40,7 +43,7 @@ public class Coupon {
 	private String dccnt;
 	
 	@Column(name = "createdate")
-	private Date issueday;
+	private Date createdate;
 	
 	@Column(name = "createuser")
 	private String createuser;
@@ -128,12 +131,12 @@ public class Coupon {
 		this.dccnt = dccnt;
 	}
 
-	public Date getIssueday() {
-		return issueday;
+	public Date getCreateday() {
+		return createdate;
 	}
 
-	public void setIssueday(Date issueday) {
-		this.issueday = issueday;
+	public void setCreateday(Date createdate) {
+		this.createdate = createdate;
 	}
 
 	public String getUsedyn() {
@@ -223,4 +226,14 @@ public class Coupon {
 	public void setCouponno(String couponno) {
 		this.couponno = couponno;
 	}
+
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+	
+	
 }

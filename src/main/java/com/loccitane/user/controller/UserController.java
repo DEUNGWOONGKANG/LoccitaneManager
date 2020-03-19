@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
+import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
@@ -125,9 +130,146 @@ public class UserController {
 			httpSession.setAttribute("menu", "menuli2");
 			nextView.addObject("couponList", couponList);
 			nextView.addObject("giveyn", "N");
-
-		} else {
+		} else if(loginUser != null && menu.equals("menu3")){
+			nextView = new ModelAndView("store/storeManagerResultToTime");
+			httpSession.setAttribute("menu", "menuli3");
+			List<Grade> gradeList = grservice.getGradeUse();
+			nextView.addObject("gradeList", gradeList);
+			Date now = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			Date startDate = cal.getTime();
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			Date endDate = cal.getTime();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String day = sdf.format(now);
+			nextView.addObject("srchday", day);
+			nextView.addObject("srchgrade", "ALL");
 			
+			List<Integer> times = new ArrayList<Integer>();
+			for(int i=0; i<24; i++) {
+				times.add(i, 0);
+			}
+			
+			List<Coupon> useCouponList = cpservice.getUseCouponList(loginUser.getId(), startDate, endDate, "ALL", "ALL");
+			sdf = new SimpleDateFormat("HH");
+			for(Coupon cm : useCouponList) {
+				int time = Integer.parseInt(sdf.format(cm.getUsedate()));
+				times.set(time, times.get(time)+1);
+			}
+			nextView.addObject("times", times);
+		}else if(loginUser != null && menu.equals("menu4")){
+			nextView = new ModelAndView("store/storeManagerResultToDay");
+			httpSession.setAttribute("menu", "menuli4");
+			List<Grade> gradeList = grservice.getGradeUse();
+			nextView.addObject("gradeList", gradeList);
+			Date now = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.set(Calendar.DATE, 1);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			Date startDate = cal.getTime();
+			// 해당 월의 날수
+			int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+			
+			cal.set(Calendar.DATE, daysOfMonth);
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			Date endDate = cal.getTime();
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+			String day = sdf.format(now);
+			nextView.addObject("srchday", day);
+			nextView.addObject("srchgrade", "ALL");
+			
+			List<Integer> dayUseCnt = new ArrayList<Integer>();
+			List<Integer> dayCreateCnt = new ArrayList<Integer>();
+			for(int i=0; i < daysOfMonth; i++) {
+				dayUseCnt.add(i, 0);
+				dayCreateCnt.add(i, 0);
+			}
+			// 쿠폰 사용량 가져오기
+			List<Coupon> useCouponList = cpservice.getUseCouponList(loginUser.getId(), startDate, endDate, "ALL", "ALL");
+			sdf = new SimpleDateFormat("dd");
+			for(int j=0; j<useCouponList.size(); j++) {
+				Coupon cm = useCouponList.get(j);
+				int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+				dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+				
+				}
+			// 쿠폰 발행량 가져오기
+			List<Coupon> createCouponList = cpservice.getCreateCouponList(loginUser.getId(), startDate, endDate, "ALL", "ALL");
+			for(int j=0; j<createCouponList.size(); j++) {
+				Coupon cm = createCouponList.get(j);
+				int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+				dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+				}
+			
+			nextView.addObject("dayUseCnt", dayUseCnt);
+			nextView.addObject("dayCreateCnt", dayCreateCnt);
+		}else if(loginUser != null && menu.equals("menu5")){
+			nextView = new ModelAndView("store/storeManagerResultToCoupon");
+			httpSession.setAttribute("menu", "menuli5");
+			List<Grade> gradeList = grservice.getGradeUse();
+			List<CouponCore> couponList = cpservice.getCouponList(); // 전체쿠폰리스트
+			nextView.addObject("gradeList", gradeList);
+			nextView.addObject("couponList", couponList);
+			
+			Date now = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.set(Calendar.DATE, 1);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			Date startDate = cal.getTime();
+			// 해당 월의 날수
+			int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+			
+			cal.set(Calendar.DATE, daysOfMonth);
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			Date endDate = cal.getTime();
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+			String day = sdf.format(now);
+			nextView.addObject("srchday", day);
+			nextView.addObject("srchgrade", "ALL");
+			
+			List<Integer> dayUseCnt = new ArrayList<Integer>();
+			List<Integer> dayCreateCnt = new ArrayList<Integer>();
+			for(int i=0; i < daysOfMonth; i++) {
+				dayUseCnt.add(i, 0);
+				dayCreateCnt.add(i, 0);
+			}
+			// 쿠폰 사용량 가져오기
+			List<Coupon> useCouponList = cpservice.getUseCouponList(loginUser.getId(), startDate, endDate, "ALL", "ALL");
+			sdf = new SimpleDateFormat("dd");
+			for(int j=0; j<useCouponList.size(); j++) {
+				Coupon cm = useCouponList.get(j);
+				int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+				dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+				
+				}
+			// 쿠폰 발행량 가져오기
+			List<Coupon> createCouponList = cpservice.getCreateCouponList(loginUser.getId(), startDate, endDate, "ALL", "ALL");
+			for(int j=0; j<createCouponList.size(); j++) {
+				Coupon cm = createCouponList.get(j);
+				int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+				dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+				}
+			
+			nextView.addObject("dayUseCnt", dayUseCnt);
+			nextView.addObject("dayCreateCnt", dayCreateCnt);
 		}
 		return nextView;
 	}
@@ -398,6 +540,12 @@ public class UserController {
   			nextView = superCouponToMemberList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu4_4")){
   			nextView = superCouponRequestList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu5_1")){
+  			nextView = superResultToTime(request);
+  		}else if(loginUser != null && menu.equals("menu5_2")){
+  			nextView = superResultToDay(request);
+  		}else if(loginUser != null && menu.equals("menu5_3")){
+  			nextView = superResultToCoupon(request);
   		}else if(loginUser != null && menu.equals("menu6")){
   			nextView = superGradeList();
   		}else if(loginUser != null && menu.equals("menu7")){
@@ -407,7 +555,196 @@ public class UserController {
   		return nextView;
   	}
   	
-  	//슈퍼관리자 쿠폰승인요청
+  	//슈퍼관리자 시간별 사용량
+  	@RequestMapping("/super/resulttotime") 
+  	private ModelAndView superResultToTime(HttpServletRequest request) throws ParseException {
+  		ModelAndView nextView = new ModelAndView("super/superManagerResultToTime");
+		List<Grade> gradeList = grservice.getGradeUse();
+		List<Store> storeList = storeservice.geAllStoreList();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+		Calendar cal = Calendar.getInstance();
+		String day = request.getParameter("startdate");
+		if(day == null) {
+			day = sdf.format(now);
+		}
+		Date srchday = sdf.parse(day);
+		cal.setTime(srchday);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		List<Integer> times = new ArrayList<Integer>();
+		for(int i=0; i<24; i++) {
+			times.add(i, 0);
+		}
+		String shop = request.getParameter("shop");
+		String grade = request.getParameter("grade");
+		if(shop == null) shop = "ALL";
+		if(grade == null) grade = "ALL";
+		List<Coupon> useCouponList = cpservice.getUseCouponList(shop, startDate, endDate, grade, "ALL");
+		sdf = new SimpleDateFormat("HH");
+		for(Coupon cm : useCouponList) {
+			int time = Integer.parseInt(sdf.format(cm.getUsedate()));
+			times.set(time, times.get(time)+1);
+		}
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchid", shop);
+		nextView.addObject("srchgrade", grade);
+		nextView.addObject("times", times);
+		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("storeList", storeList);
+		return nextView;
+	}
+  	
+  	//슈퍼관리자 일자별 사용량
+  	@RequestMapping("/super/resulttoday") 
+  	private ModelAndView superResultToDay(HttpServletRequest request) throws ParseException {
+  		ModelAndView nextView = new ModelAndView("super/superManagerResultToDay");
+		List<Grade> gradeList = grservice.getGradeUse();
+		List<Store> storeList = storeservice.geAllStoreList();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		
+		Date now = new Date();
+		Calendar cal = Calendar.getInstance();
+		String day = request.getParameter("startdate");
+		if(day == null) {
+			day = sdf.format(now);
+		}
+		Date srchday = sdf.parse(day);
+		cal.setTime(srchday);
+		cal.set(Calendar.DATE, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		
+		// 해당 월의 날수
+		int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		cal.set(Calendar.DATE, daysOfMonth);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		String shop = request.getParameter("shop");
+		String grade = request.getParameter("grade");
+		if(shop == null) shop = "ALL";
+		if(grade == null) grade = "ALL";
+		
+		List<Integer> dayUseCnt = new ArrayList<Integer>();
+		List<Integer> dayCreateCnt = new ArrayList<Integer>();
+		for(int i=0; i < daysOfMonth; i++) {
+			dayUseCnt.add(i, 0);
+			dayCreateCnt.add(i, 0);
+		}
+		
+		// 쿠폰 사용량 가져오기
+		List<Coupon> useCouponList = cpservice.getUseCouponList(shop, startDate, endDate, grade, "ALL");
+		sdf = new SimpleDateFormat("dd");
+		for(int j=0; j<useCouponList.size(); j++) {
+			Coupon cm = useCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+			dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+			
+			}
+		// 쿠폰 발행량 가져오기
+		List<Coupon> createCouponList = cpservice.getCreateCouponList(shop, startDate, endDate, grade, "ALL");
+		for(int j=0; j<createCouponList.size(); j++) {
+			Coupon cm = createCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+			dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+			}
+		
+		nextView.addObject("dayUseCnt", dayUseCnt);
+		nextView.addObject("dayCreateCnt", dayCreateCnt);
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchid", shop);
+		nextView.addObject("srchgrade", grade);
+		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("storeList", storeList);
+		return nextView;
+	}
+  	
+  //슈퍼관리자 일자별 사용량
+  	@RequestMapping("/super/resulttocoupon") 
+  	private ModelAndView superResultToCoupon(HttpServletRequest request) throws ParseException {
+  		ModelAndView nextView = new ModelAndView("super/superManagerResultToCoupon");
+		List<Grade> gradeList = grservice.getGradeUse();
+		List<Store> storeList = storeservice.geAllStoreList();
+		List<CouponCore> couponList = cpservice.getCouponList(); // 전체쿠폰리스트
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		
+		Date now = new Date();
+		Calendar cal = Calendar.getInstance();
+		String day = request.getParameter("startdate");
+		if(day == null) {
+			day = sdf.format(now);
+		}
+		Date srchday = sdf.parse(day);
+		cal.setTime(srchday);
+		cal.set(Calendar.DATE, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		
+		// 해당 월의 날수
+		int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		cal.set(Calendar.DATE, daysOfMonth);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		String shop = request.getParameter("shop");
+		String grade = request.getParameter("grade");
+		String code = request.getParameter("code");
+		if(shop == null) shop = "ALL";
+		if(grade == null) grade = "ALL";
+		if(code == null) code = "ALL";
+		
+		List<Integer> dayUseCnt = new ArrayList<Integer>();
+		List<Integer> dayCreateCnt = new ArrayList<Integer>();
+		for(int i=0; i < daysOfMonth; i++) {
+			dayUseCnt.add(i, 0);
+			dayCreateCnt.add(i, 0);
+		}
+		
+		// 쿠폰 사용량 가져오기
+		List<Coupon> useCouponList = cpservice.getUseCouponList(shop, startDate, endDate, grade, code);
+		sdf = new SimpleDateFormat("dd");
+		for(int j=0; j<useCouponList.size(); j++) {
+			Coupon cm = useCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+			dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+			
+			}
+		// 쿠폰 발행량 가져오기
+		List<Coupon> createCouponList = cpservice.getCreateCouponList(shop, startDate, endDate, grade, code);
+		for(int j=0; j<createCouponList.size(); j++) {
+			Coupon cm = createCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+			dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+			}
+		
+		nextView.addObject("dayUseCnt", dayUseCnt);
+		nextView.addObject("dayCreateCnt", dayCreateCnt);
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchid", shop);
+		nextView.addObject("srchcode", code);
+		nextView.addObject("srchgrade", grade);
+		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("couponList", couponList);
+		nextView.addObject("storeList", storeList);
+		return nextView;
+	}
+
+	//슈퍼관리자 쿠폰승인요청
   	@RequestMapping("/super/couponrequest") 
   	private ModelAndView superCouponRequestList(HttpServletRequest request, Pageable pageable) {
   		//슈퍼관리자 사용자별 쿠폰 리스트

@@ -13,6 +13,7 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
@@ -77,13 +78,16 @@ public class ExcelDownService {
 	
 		    // 데이터는 가운데 정렬합니다.
 		    headStyle.setAlignment(HorizontalAlignment.CENTER);
-	
+		    CreationHelper createHelper = wb.getCreationHelper();
 		    // 데이터용 경계 스타일 테두리만 지정
 		    CellStyle bodyStyle = wb.createCellStyle();
 		    bodyStyle.setBorderTop(BorderStyle.THIN);
 		    bodyStyle.setBorderBottom(BorderStyle.THIN);
 		    bodyStyle.setBorderLeft(BorderStyle.THIN);
 		    bodyStyle.setBorderRight(BorderStyle.THIN);
+		    
+		    CellStyle dateStyle = wb.createCellStyle();
+		    dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 		    
 		    List<String> title = new ArrayList<String>();
 		    
@@ -162,7 +166,7 @@ public class ExcelDownService {
 			        cell.setCellStyle(bodyStyle);
 			        cell.setCellValue(data.getCreateuser());
 			        cell = row.createCell(10);
-			        cell.setCellStyle(bodyStyle);
+			        cell.setCellStyle(dateStyle);
 			        cell.setCellValue(data.getCreatedate());
 			    }
 			}else if(type.equals("coupontomember")) {
@@ -182,7 +186,7 @@ public class ExcelDownService {
 			        cell.setCellStyle(bodyStyle);
 			        cell.setCellValue(data.getCouponno());
 			        cell = row.createCell(4);
-			        cell.setCellStyle(bodyStyle);
+			        cell.setCellStyle(dateStyle);
 			        cell.setCellValue(data.getCreatedate());
 			        cell = row.createCell(5);
 			        cell.setCellStyle(bodyStyle);
@@ -191,10 +195,10 @@ public class ExcelDownService {
 			        cell.setCellStyle(bodyStyle);
 			        cell.setCellValue(data.getReason());
 			        cell = row.createCell(7);
-			        cell.setCellStyle(bodyStyle);
+			        cell.setCellStyle(dateStyle);
 			        cell.setCellValue(data.getStartdate());
 			        cell = row.createCell(8);
-			        cell.setCellStyle(bodyStyle);
+			        cell.setCellStyle(dateStyle);
 			        cell.setCellValue(data.getEnddate());
 			        cell = row.createCell(9);
 			        cell.setCellStyle(bodyStyle);
@@ -203,7 +207,7 @@ public class ExcelDownService {
 			        cell.setCellStyle(bodyStyle);
 			        cell.setCellValue(data.getUsemanager());
 			        cell = row.createCell(11);
-			        cell.setCellStyle(bodyStyle);
+			        cell.setCellStyle(dateStyle);
 			        cell.setCellValue(data.getUsedate());
 			    }
 			}

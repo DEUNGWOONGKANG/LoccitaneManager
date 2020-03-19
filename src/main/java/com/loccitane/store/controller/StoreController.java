@@ -3,8 +3,12 @@ package com.loccitane.store.controller;
 
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +26,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.loccitane.coupon.domain.Coupon;
+import com.loccitane.coupon.domain.CouponCore;
+import com.loccitane.coupon.service.CouponService;
+import com.loccitane.grade.domain.Grade;
+import com.loccitane.grade.service.GradeService;
 import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.utils.Paging;
@@ -32,6 +42,10 @@ import com.loccitane.utils.Paging;
 public class StoreController {
 	@Autowired
 	StoreService service;
+	@Autowired
+	CouponService cpservice;
+	@Autowired
+	GradeService grservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -96,6 +110,169 @@ public class StoreController {
 		nextView.addObject("storeList", storeList);
   		nextView.addObject("paging", paging);
   		
+		return nextView;
+	}
+	//매장관리자 시간별 사용량 
+	@RequestMapping(value = "/store/resulttotime", method = RequestMethod.POST) 
+	public ModelAndView resultToTime(HttpServletRequest request) throws ParseException{ 
+		ModelAndView nextView = new ModelAndView("store/storeManagerResultToTime");
+		List<Integer> times = new ArrayList<Integer>();
+		for(int i=0; i<24; i++) {
+			times.add(i, 0);
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String day = request.getParameter("startdate");
+		Date srchday = sdf.parse(day);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(srchday);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		
+		List<Coupon> useCouponList = cpservice.getUseCouponList(request.getParameter("id"),startDate,endDate,request.getParameter("grade"), "ALL");
+		sdf = new SimpleDateFormat("HH");
+		for(Coupon cm : useCouponList) {
+			int time = Integer.parseInt(sdf.format(cm.getUsedate()));
+			times.set(time, times.get(time)+1);
+		}
+		
+		List<Grade> gradeList = grservice.getGradeUse();
+		
+		nextView.addObject("times", times);
+		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchgrade", request.getParameter("grade"));
+		return nextView;
+	}
+	//매장관리자 일자별 사용량 
+	@RequestMapping(value = "/store/resulttoday", method = RequestMethod.POST) 
+	public ModelAndView resultToDay(HttpServletRequest request) throws ParseException{ 
+		ModelAndView nextView = new ModelAndView("store/storeManagerResultToDay");
+		List<Grade> gradeList = grservice.getGradeUse();
+		nextView.addObject("gradeList", gradeList);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		
+		String day = request.getParameter("startdate");
+		String srchgrade = request.getParameter("grade");
+		String id = request.getParameter("id");
+		Date srchday = sdf.parse(day);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(srchday);
+		cal.set(Calendar.DATE, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		
+		// 해당 월의 날수
+		int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		cal.set(Calendar.DATE, daysOfMonth);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchgrade", srchgrade);
+		
+		List<Integer> dayUseCnt = new ArrayList<Integer>();
+		List<Integer> dayCreateCnt = new ArrayList<Integer>();
+		for(int i=0; i < daysOfMonth; i++) {
+			dayUseCnt.add(i, 0);
+			dayCreateCnt.add(i, 0);
+		}
+		
+		// 쿠폰 사용량 가져오기
+		List<Coupon> useCouponList = cpservice.getUseCouponList(id, startDate, endDate, srchgrade, "ALL");
+		sdf = new SimpleDateFormat("dd");
+		for(int j=0; j<useCouponList.size(); j++) {
+			Coupon cm = useCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+			dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+			
+			}
+		// 쿠폰 발행량 가져오기
+		List<Coupon> createCouponList = cpservice.getCreateCouponList(id, startDate, endDate, srchgrade, "ALL");
+		for(int j=0; j<createCouponList.size(); j++) {
+			Coupon cm = createCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+			dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+			}
+		
+		nextView.addObject("dayUseCnt", dayUseCnt);
+		nextView.addObject("dayCreateCnt", dayCreateCnt);
+		
+		return nextView;
+	}
+	//매장관리자 쿠폰별 사용량 
+	@RequestMapping(value = "/store/resulttocoupon", method = RequestMethod.POST) 
+	public ModelAndView resultToCoupon(HttpServletRequest request) throws ParseException{ 
+		ModelAndView nextView = new ModelAndView("store/storeManagerResultToCoupon");
+		List<Grade> gradeList = grservice.getGradeUse();
+		nextView.addObject("gradeList", gradeList);
+		List<CouponCore> couponList = cpservice.getCouponList(); // 전체쿠폰리스트
+		nextView.addObject("couponList", couponList);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		
+		String day = request.getParameter("startdate");
+		String srchgrade = request.getParameter("grade");
+		String id = request.getParameter("id");
+		String code = request.getParameter("code");
+		Date srchday = sdf.parse(day);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(srchday);
+		cal.set(Calendar.DATE, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date startDate = cal.getTime();
+		
+		// 해당 월의 날수
+		int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		cal.set(Calendar.DATE, daysOfMonth);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		Date endDate = cal.getTime();
+		
+		nextView.addObject("srchday", day);
+		nextView.addObject("srchgrade", srchgrade);
+		
+		List<Integer> dayUseCnt = new ArrayList<Integer>();
+		List<Integer> dayCreateCnt = new ArrayList<Integer>();
+		for(int i=0; i < daysOfMonth; i++) {
+			dayUseCnt.add(i, 0);
+			dayCreateCnt.add(i, 0);
+		}
+		
+		// 쿠폰 사용량 가져오기
+		List<Coupon> useCouponList = cpservice.getUseCouponList(id, startDate, endDate, srchgrade, code);
+		sdf = new SimpleDateFormat("dd");
+		for(int j=0; j<useCouponList.size(); j++) {
+			Coupon cm = useCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getUsedate()));
+			dayUseCnt.set(checkDay-1, dayUseCnt.get(checkDay-1)+1);
+			
+			}
+		// 쿠폰 발행량 가져오기
+		List<Coupon> createCouponList = cpservice.getCreateCouponList(id, startDate, endDate, srchgrade, code);
+		for(int j=0; j<createCouponList.size(); j++) {
+			Coupon cm = createCouponList.get(j);
+			int checkDay = Integer.parseInt(sdf.format(cm.getCreateday()));
+			dayCreateCnt.set(checkDay-1, dayCreateCnt.get(checkDay-1)+1);
+			}
+		
+		nextView.addObject("dayUseCnt", dayUseCnt);
+		nextView.addObject("dayCreateCnt", dayCreateCnt);
+		
 		return nextView;
 	}
 	

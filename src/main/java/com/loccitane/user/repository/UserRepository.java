@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User, String>{
 	List<User> findAllByGrade(String grade);
 	User findByUsercode(String usercode);
 	User findByUsercodeAndPhoneEndingWith(String usercode, String phone);
-	List<User> findAllByBirthdayIsNotNull();
 	List<User> findAllByLastupdateBetween(Date yesterday, Date now);
 	List<User> findAllByGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqual(
 			String string, int i, String string2, int j, String string3, int k);
+	List<User> findAllByGradeInAndBirthdayIsNotNull(List<String> grades);
 }

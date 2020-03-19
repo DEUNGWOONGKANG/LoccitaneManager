@@ -79,20 +79,29 @@ public class CouponService {
 		cal.set(Calendar.SECOND, 59);
 		end = cal.getTime();
 		
-		int n = 16; // n자리 쿠폰 
-		char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-				'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-		Random rd = new Random();
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < n; i++) {
-			char ch = chs[rd.nextInt(chs.length)];
-			sb.append(ch);
-			if((i+1)%4 == 0 && i != 15) {
-				sb.append("-");
+		String couponNum = "";
+		while(true) {
+			int n = 16; // n자리 쿠폰 
+			char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+					'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+					'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+			Random rd = new Random();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < n; i++) {
+				char ch = chs[rd.nextInt(chs.length)];
+				sb.append(ch);
+				if((i+1)%4 == 0 && i != 15) {
+					sb.append("-");
+				}
+			}
+			couponNum =  sb.toString();
+			CouponMember cp = couponMemRepo.findByCouponno(couponNum);
+			if(cp == null) {
+				break;
+			}else {
+				continue;
 			}
 		}
-		String couponNum =  sb.toString();
 		
 		if(coupon.getReason().equals("1")) {
 			newCoupon.setReason("교환/환불");
@@ -128,20 +137,29 @@ public class CouponService {
 		cal.add(Calendar.SECOND, 59);
 		end = cal.getTime();
 		
-		int n = 16; // n자리 쿠폰 
-		char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-				'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-		Random rd = new Random();
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < n; i++) {
-			char ch = chs[rd.nextInt(chs.length)];
-			sb.append(ch);
-			if((i+1)%4 == 0 && i != 15) {
-				sb.append("-");
+		String couponNum = "";
+		while(true) {
+			int n = 16; // n자리 쿠폰 
+			char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+					'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+					'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+			Random rd = new Random();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < n; i++) {
+				char ch = chs[rd.nextInt(chs.length)];
+				sb.append(ch);
+				if((i+1)%4 == 0 && i != 15) {
+					sb.append("-");
+				}
+			}
+			couponNum =  sb.toString();
+			CouponMember cp = couponMemRepo.findByCouponno(couponNum);
+			if(cp == null) {
+				break;
+			}else {
+				continue;
 			}
 		}
-		String couponNum =  sb.toString();
 		
 		if(coupon.getReason().equals("1")) {
 			newCoupon.setReason("교환/환불");
@@ -186,20 +204,30 @@ public class CouponService {
 		for(int a = 0; a<userList.size(); a++) {
 			CouponMember newCoupon = new CouponMember();
 			//쿠폰번호 생성 시작
-			int n = 16; // n자리 쿠폰 
-			char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-					'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-					'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-			Random rd = new Random();
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < n; i++) {
-				char ch = chs[rd.nextInt(chs.length)];
-				sb.append(ch);
-				if((i+1)%4 == 0 && i != 15) {
-					sb.append("-");
+			String couponNum = "";
+			while(true) {
+				int n = 16; // n자리 쿠폰 
+				char[] chs = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+						'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+						'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+				Random rd = new Random();
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < n; i++) {
+					char ch = chs[rd.nextInt(chs.length)];
+					sb.append(ch);
+					if((i+1)%4 == 0 && i != 15) {
+						sb.append("-");
+					}
+				}
+				couponNum =  sb.toString();
+				CouponMember cp = couponMemRepo.findByCouponno(couponNum);
+				if(cp == null) {
+					break;
+				}else {
+					continue;
 				}
 			}
-			String couponNum =  sb.toString();
+			
 			//쿠폰번호 생성 끝
 			
 			if(coupon.getReason().equals("1")) {
@@ -378,6 +406,70 @@ public class CouponService {
 	public List<CouponCore> getUpdateCoupon(Date now, Date yesterday) {
 		
 		return couponCoreRepo.findAllByCreatedateBetween(yesterday, now);
+	}
+
+	public List<Coupon> getUseCouponList(String id, Date startDate, Date endDate, String grade, String couponCode) {
+		if(id.equals("ALL")) {
+			if(grade.equals("ALL")) {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsedateBetween("Y", startDate, endDate);
+				}else {
+					return couponRepo.findAllByUsedynAndUsedateBetweenAndCpcode("Y", startDate, endDate, couponCode);
+				}
+			}else {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsedateBetweenAndGrade("Y", startDate, endDate, grade);
+				}else {
+					return couponRepo.findAllByUsedynAndUsedateBetweenAndGradeAndCpcode("Y", startDate, endDate, grade, couponCode);
+				}
+			}
+		}else {
+			if(grade.equals("ALL")) {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsemanagerAndUsedateBetween("Y", id, startDate, endDate);
+				}else {
+					return couponRepo.findAllByUsedynAndUsemanagerAndUsedateBetweenAndCpcode("Y", id, startDate, endDate, couponCode);
+				}
+			}else {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsemanagerAndUsedateBetweenAndGrade("Y", id, startDate, endDate, grade);
+				}else {
+					return couponRepo.findAllByUsedynAndUsemanagerAndUsedateBetweenAndGradeAndCpcode("Y", id, startDate, endDate, grade, couponCode);
+				}
+			}
+		}
+	}
+
+	public List<Coupon> getCreateCouponList(String id, Date startDate, Date endDate, String grade, String couponCode) {
+		if(id.equals("ALL")) {
+			if(grade.equals("ALL")) {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndCreatedateBetween("Y", startDate, endDate);
+				}else {
+					return couponRepo.findAllByUsedynAndCreatedateBetweenAndCpcode("Y", startDate, endDate, couponCode);
+				}
+			}else {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndCreatedateBetweenAndGrade("Y", startDate, endDate, grade);
+				}else {
+					return couponRepo.findAllByUsedynAndCreatedateBetweenAndGradeAndCpcode("Y", startDate, endDate, grade, couponCode);
+				}
+			}
+		}else {
+			if(grade.equals("ALL")) {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetween("Y", id, startDate, endDate);
+				}else {
+					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndCpcode("Y", id, startDate, endDate, couponCode);
+				}
+			}else {
+				if(couponCode.equals("ALL")) {
+					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGrade("Y", id, startDate, endDate, grade);
+				}else {
+					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGradeAndCpcode("Y", id, startDate, endDate, grade, couponCode);
+				}
+			}
+		}
 	}
 
 }

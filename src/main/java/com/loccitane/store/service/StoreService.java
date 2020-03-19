@@ -1,5 +1,7 @@
 package com.loccitane.store.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,9 +56,11 @@ public class StoreService {
 	}
 	
 	public Store getStoreInfo(int seq) {
-		Store storeData = storeRepo.findBySeq(seq);
-	 
-		return storeData;
+		return storeRepo.findBySeq(seq);
+	}
+
+	public List<Store> geAllStoreList() {
+		return storeRepo.findAll();
 	}
 
 }

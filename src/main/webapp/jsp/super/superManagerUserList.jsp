@@ -64,6 +64,7 @@ function userInfo(usercode){
 			      <th scope="col">이름</th>
 			      <th scope="col">등급</th>
 			      <th scope="col">마지막구매일</th>
+			      <th scope="col">구매누적금액</th>
 			    </tr>
 			  </thead>
 			  <tbody>
@@ -89,6 +90,7 @@ function userInfo(usercode){
 				      </td>
 				      <td>${user.grade}</td>
 				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
+				      <td>${user.totalbuy}</td>
 				    </tr>
 				</c:forEach>
 			  </tbody>

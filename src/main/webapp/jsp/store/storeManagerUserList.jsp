@@ -74,6 +74,7 @@ function dormant(){
 			<th>연락처</th>
 			<th>등급</th>
 			<th>마지막구매일</th>
+			<th>구매누적금액</th>
 			<th></th>
 		</tr>
 		</thead><!-- #userList Header -->
@@ -119,6 +120,7 @@ function dormant(){
 				<fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/>
 				<fmt:formatDate value="${today}" pattern="YYYY-MM-dd"/>
 				</td>
+				<td>${user.totalbuy }</td>
 				<td><input type="button" class="button-gray-small" value="휴면" onclick="dormant()"></td>
 			</tr><!-- 휴면 -->
 			</c:if>
