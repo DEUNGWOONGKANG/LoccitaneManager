@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,7 @@ import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
+import com.loccitane.utils.KakaoService;
 import com.loccitane.utils.Paging;
 
 @Controller // 이 클래스가 컨트롤러라는 것을 알려주는 어노테이션
@@ -62,6 +64,8 @@ public class UserController {
 	LogService logservice;
 	@Autowired
 	StoreService storeservice;
+	@Autowired
+	KakaoService kakaoservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -515,7 +519,7 @@ public class UserController {
   		return nextView;
   	}
   	
-    //매장매니저 메뉴 클릭
+    //슈퍼관리자 메뉴 클릭
   	@GetMapping("/super/menu/{menu}") 
   	public ModelAndView goAdminMenu(@PathVariable("menu") String menu, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
   		ModelAndView nextView = null;
@@ -549,7 +553,7 @@ public class UserController {
   		}else if(loginUser != null && menu.equals("menu6")){
   			nextView = superGradeList();
   		}else if(loginUser != null && menu.equals("menu7")){
-  			nextView = superGradeList();
+  			nextView = superKakaoList(request, pageable);
   		}
   		httpSession.setAttribute("menu", menu);
   		return nextView;
@@ -788,6 +792,102 @@ public class UserController {
   		List<Grade> gradeList = grservice.findAll();
   		
   		nextView.addObject("gradeList", gradeList);
+  		return nextView;
+  	}
+  	
+  	//슈퍼관리자 카카오발송 리스트
+  	@RequestMapping("/super/kakaolist") 
+  	public ModelAndView superKakaoList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+  		ModelAndView nextView = new ModelAndView("super/superManagerKakaoList");
+  		
+  		Page<Log> logList = logservice.getLogs(pageable, "KAKAO");
+  		Paging paging = new Paging();
+  		if(logList != null) {
+  			int curPage = pageable.getPageNumber();
+  			if(curPage == 0) curPage = curPage + 1;
+  			paging.Pagination((int)logList.getTotalElements(), curPage);
+  		}
+  		nextView.addObject("logList", logList);
+  		nextView.addObject("paging", paging);
+  	
+  		return nextView;
+  	}
+  	
+  	//카카오FORM페이지 이동
+  	@GetMapping("/super/kakaoform")
+  	public ModelAndView storeAdd() {
+  		ModelAndView nextView = new ModelAndView("super/superManagerKakaoSend");
+  		List<Grade> gradeList = grservice.findAllAsc();
+  		nextView.addObject("gradeList", gradeList);
+  		return nextView;
+  	}
+  	
+  	//카카오 알림톡 발송
+  	@RequestMapping(value= "/super/kakaosend", method = RequestMethod.POST) 
+  	public ModelAndView couponPublish(User user, HttpServletRequest request) throws Exception { 
+  		ModelAndView nextView = null;
+  		HttpSession httpSession = request.getSession(true);
+  		Store loginUser = (Store) httpSession.getAttribute("loginUser");
+  		int cnt = 0;
+  		String logcontent = "";
+  		Date now = new Date();
+  		
+  		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
+  			nextView = new ModelAndView("logout");
+  		}else{
+  			nextView = new ModelAndView("super/superManagerKakaoSend");
+  			String template = request.getParameter("template");
+  			
+  			if(request.getParameter("type").equals("user")) {
+  				User userdata = service.userCheck(user.getUsercode());
+  				JSONObject result = KakaoService.post(template, userdata);
+  				String status = (String) result.get("status");
+  				if(status.equals("OK")) {
+	  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
+	  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
+	  				else if(template.equals("10030")) logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
+	  				else logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
+	  				
+	  				Log log = new Log();
+	  				log.setUserid(request.getParameter("adminId"));
+	  				log.setUsername(request.getParameter("adminName"));
+	  				log.setLogkind("KAKAO");
+	  				log.setLogcontent(logcontent);
+	  				log.setLogdate(now);
+	  				logservice.saveLog(log);
+  				}
+  			} else if(request.getParameter("type").equals("grade")) {
+  				String grade = request.getParameter("grade");
+  				List<User> userList = null;
+  				//등급별 사용자 리스트 추출
+  				if(grade.equals("ALL")) {
+  					userList = service.findAll();
+  				}else {
+  					userList = service.getUserListByGrade(grade);
+  				}
+  				
+  				for(User u : userList) {
+  					if(u.getAlarmyn().equals("Y")) {
+  						JSONObject result = KakaoService.post("10028", user);
+  						String status = (String) result.get("status");
+  						if(status.equals("OK")) cnt ++;
+  					}
+  				}
+  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+cnt+"명 ";
+  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+cnt+"명 ";
+  				else if(template.equals("10030")) logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ";
+  				else logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ";
+  				
+  				Log log = new Log();
+  				log.setUserid(request.getParameter("adminId"));
+  				log.setUsername(request.getParameter("adminName"));
+  				log.setLogkind("KAKAO");
+  				log.setLogcontent(logcontent);
+  				log.setLogdate(now);
+  				logservice.saveLog(log);
+  			}
+  			
+  		}
   		return nextView;
   	}
   	

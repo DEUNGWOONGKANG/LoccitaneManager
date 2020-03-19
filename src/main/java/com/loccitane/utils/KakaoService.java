@@ -88,7 +88,7 @@ public class KakaoService {
 					sb.append(line).append("\n");
 				}
 				br.close();
-				//System.out.println("" + sb.toString());
+				System.out.println("" + sb.toString());
 				JSONParser parser = new JSONParser();
 				result = (JSONObject) parser.parse(sb.toString());
 			} else {

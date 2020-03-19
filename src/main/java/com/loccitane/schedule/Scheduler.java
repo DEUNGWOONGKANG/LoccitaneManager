@@ -45,7 +45,8 @@ public class Scheduler {
 	SftpService sftp;
 	
 	
-	@Scheduled(cron = "* * 7 * * *")
+	@Scheduled(cron = "0 0 7 * * *")
+	//@Scheduled(cron = "0 * * * * *")
 	public void run() throws IOException {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
@@ -56,20 +57,20 @@ public class Scheduler {
 		//등급업
 		if(today.equals("04-01") || today.equals("07-01") || today.equals("10-01") || today.equals("01-01")) {
 			//등급업 프로세스
-			gradeUP();
+			//gradeUP();
 			//현재등급 알림 프로세스
 			//nowGradeAlarm();
 		}
-		
+		  
 		//엑셀다운로드(사용자, 쿠폰, 사용자별쿠폰)
 		excelDown();
 		
 		//sftp로 파일 전송(사용자, 쿠폰, 사용자별쿠폰)
-		//sftp.sendFile();
+		sftp.sendFile();
 		
 		//마지막 구매일 1년 지난 사용자 휴면처리
 		//dormant();
-		
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 	}
 	
 	private void dormant() {
@@ -199,7 +200,7 @@ public class Scheduler {
 		
 	}
 	public void excelDown() throws IOException {
-		//excel.excelDown("user");
+		excel.excelDown("user");
 		excel.excelDown("coupon");
 		excel.excelDown("coupontomember");
 
