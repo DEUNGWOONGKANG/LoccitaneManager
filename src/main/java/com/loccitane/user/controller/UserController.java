@@ -853,6 +853,7 @@ public class UserController {
 	  				log.setLogcontent(logcontent);
 	  				log.setLogdate(now);
 	  				logservice.saveLog(log);
+	  				nextView.addObject("sendyn", "Y");
   				}
   			} else if(request.getParameter("type").equals("grade")) {
   				String grade = request.getParameter("grade");
@@ -883,6 +884,7 @@ public class UserController {
   				log.setLogcontent(logcontent);
   				log.setLogdate(now);
   				logservice.saveLog(log);
+  				nextView.addObject("sendyn", "Y");
   			}
   			
   		}

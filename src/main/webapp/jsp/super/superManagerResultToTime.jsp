@@ -90,12 +90,20 @@ $.datepicker.setDefaults({
 		    </tr>
 		  </thead>
 		  <tbody>
+		 	<c:set var="usetotal" value="0" />
 		  	<c:forEach var="times" items="${times}" varStatus="num">
 			<tr>
 				<td>${num.count-1}시 - ${num.count}시</td>
 				<td>${times}</td>
+				<c:set var="usetotal" value="${usetotal + times}" />
 			</tr>
 			</c:forEach>
+			<tr>
+				<th>합계</th>
+				<th>
+					<c:out value="${usetotal }"></c:out>
+				</th>
+			</tr>
 		  </tbody>
 		</table>
       </div>

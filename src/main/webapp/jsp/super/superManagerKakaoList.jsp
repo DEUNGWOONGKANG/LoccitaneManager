@@ -60,20 +60,20 @@ function kakaoform(){
 		<div class="container">
 			<ul class="pagination">
 				<c:if test="${paging.curRange > 1}">
-					<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${(paging.curRange-2)*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">&lt;</a></li>
+					<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${(paging.curRange-2)*10+1 }">&lt;</a></li>
 				</c:if>
 				<c:forEach var="pageNum" begin="${paging.startPage }" end="${paging.endPage }">
 					<c:choose>
 						<c:when test="${pageNum eq  paging.curPage}">
-							<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}"><b>${pageNum }</b></a></li>
+							<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${pageNum }"><b>${pageNum }</b></a></li>
 						</c:when>
 						<c:otherwise>
-							<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${pageNum }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">${pageNum }</a></li>
+							<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${pageNum }">${pageNum }</a></li>
 						</c:otherwise>
 					</c:choose>
 				</c:forEach>
 				<c:if test="${paging.curRange < paging.rangeCnt}">
-					<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${paging.curRange*10+1 }&searchKey=${searchKey}&searchKeyword=${searchKeyword}">></a></li>
+					<li class="page-item"><a class="page-link" href="/super/kakaolist?page=${paging.curRange*10+1 }">></a></li>
 				</c:if>
 			</ul>
 		</div>

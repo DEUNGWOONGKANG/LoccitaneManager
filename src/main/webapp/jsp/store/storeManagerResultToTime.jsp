@@ -77,13 +77,20 @@ $.datepicker.setDefaults({
 						<th>시간대</th>
 						<th>쿠폰사용량</th>
 					</tr>
+					<c:set var="usetotal" value="0" />
 					<c:forEach var="times" items="${times}" varStatus="num">
 					<tr>
 						<td>${num.count-1}시 - ${num.count}시</td>
 						<td>${times}</td>
+						<c:set var="usetotal" value="${usetotal + times}" />
 					</tr>
 					</c:forEach>
-					
+					<tr>
+						<th>합계</th>
+						<th>
+							<c:out value="${usetotal }"></c:out>
+						</th>
+					</tr>
 				</table>
 			</td>
 			<td width="10%">

@@ -24,7 +24,7 @@
 <!-- Favicon-->
 <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
-if("${saveyn}" == "Y"){
+if("${sendyn}" == "Y"){
 	alert("쿠폰이 발행되었습니다.");	
 }
 function check(){

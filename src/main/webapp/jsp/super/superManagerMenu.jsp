@@ -13,7 +13,7 @@
 <div id="sidebar" class="sidebar py-3">
   <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">ADMIN PAGE</div>
   <ul class="sidebar-menu list-unstyled">
-    <li class="sidebar-list-item" id="menu1"><a id="menu1a" href="/super/menu/menu1" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span><b>Home</b></span></a></li>
+    <!-- <li class="sidebar-list-item" id="menu1"><a id="menu1a" href="/super/menu/menu1" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span><b>Home</b></span></a></li>-->
     <li class="sidebar-list-item" id="menu2"><a id="menu2a" href="#" data-toggle="collapse" data-target="#pages" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span><b>계정관리</b></span></a>
       <div id="pages" class="collapse">
         <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
