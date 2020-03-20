@@ -44,21 +44,21 @@ public class Scheduler {
 	SftpService sftp;
 	
 	
-	@Scheduled(cron = "0 0 7 * * *")
+	@Scheduled(cron = "0 30 7 * * *")
 	//@Scheduled(cron = "0 * * * * *")
 	public void run() throws IOException {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		String today = transFormat.format(now);
 		//생일쿠폰 발행
-		//birthdayCouponRunner();
+		birthdayCouponRunner();
 		
 		//등급업
 		if(today.equals("04-01") || today.equals("07-01") || today.equals("10-01") || today.equals("01-01")) {
 			//등급업 프로세스
-			//gradeUP();
+			gradeUP();
 			//현재등급 알림 프로세스
-			//nowGradeAlarm();
+			nowGradeAlarm();
 		}
 		  
 		//엑셀다운로드(사용자, 쿠폰, 사용자별쿠폰)
@@ -68,7 +68,7 @@ public class Scheduler {
 		sftp.sendFile();
 		
 		//마지막 구매일 1년 지난 사용자 휴면처리
-		//dormant();
+		dormant();
 		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 	}
 	
