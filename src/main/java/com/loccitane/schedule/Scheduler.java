@@ -25,7 +25,6 @@ import com.loccitane.utils.ExcelDownService;
 import com.loccitane.utils.KakaoService;
 import com.loccitane.utils.SftpService;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 public class Scheduler {

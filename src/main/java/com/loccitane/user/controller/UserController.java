@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
-import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;

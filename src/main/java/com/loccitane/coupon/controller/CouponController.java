@@ -28,8 +28,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.domain.CouponMember;
-import com.loccitane.coupon.domain.CouponMemberTemp;
-import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
 import com.loccitane.grade.service.GradeService;
@@ -221,52 +219,52 @@ public class CouponController {
 	}
 	
 	//쿠폰 발행 개별승인
-	@RequestMapping("/super/approval/{seq}") 
-	public ModelAndView couponApproval(@PathVariable("seq") int seq, HttpServletRequest request, Pageable pageable){ 
-		CouponMember approvalData = cpservice.couponApproval(seq);
-		//슈퍼관리자 사용자별 쿠폰 리스트
-  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
-  		
-  		String searchKey = request.getParameter("searchKey");
-  		String searchKeyword = request.getParameter("searchKeyword");
-  		
-  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
-  		Paging paging = new Paging();
-	  	if(couponList != null) {
-	  		int curPage = pageable.getPageNumber();
-	  		if(curPage == 0) curPage = curPage + 1;
-	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
-  		}
-  		nextView.addObject("couponList", couponList);
-  		nextView.addObject("paging", paging);
-  		nextView.addObject("searchKey", searchKey);
-  		nextView.addObject("searchKeyword", searchKeyword);
-  		nextView.addObject("request", "Y");
-		return nextView;
-	}
+//	@RequestMapping("/super/approval/{seq}") 
+//	public ModelAndView couponApproval(@PathVariable("seq") int seq, HttpServletRequest request, Pageable pageable){ 
+//		CouponMember approvalData = cpservice.couponApproval(seq);
+//		//슈퍼관리자 사용자별 쿠폰 리스트
+//  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
+//  		
+//  		String searchKey = request.getParameter("searchKey");
+//  		String searchKeyword = request.getParameter("searchKeyword");
+//  		
+//  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
+//  		Paging paging = new Paging();
+//	  	if(couponList != null) {
+//	  		int curPage = pageable.getPageNumber();
+//	  		if(curPage == 0) curPage = curPage + 1;
+//	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+//  		}
+//  		nextView.addObject("couponList", couponList);
+//  		nextView.addObject("paging", paging);
+//  		nextView.addObject("searchKey", searchKey);
+//  		nextView.addObject("searchKeyword", searchKeyword);
+//  		nextView.addObject("request", "Y");
+//		return nextView;
+//	}
 	
 	//쿠폰 발행 전체승인
-	@RequestMapping("/super/allapproval") 
-	public ModelAndView couponAllApproval(HttpServletRequest request, Pageable pageable){ 
-		List<CouponMember> approvalList = cpservice.allCouponApproval();
-		//슈퍼관리자 사용자별 쿠폰 리스트
-  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
-  		
-  		String searchKey = request.getParameter("searchKey");
-  		String searchKeyword = request.getParameter("searchKeyword");
-  		
-  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
-  		Paging paging = new Paging();
-	  	if(couponList != null) {
-	  		int curPage = pageable.getPageNumber();
-	  		if(curPage == 0) curPage = curPage + 1;
-	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
-  		}
-  		nextView.addObject("couponList", couponList);
-  		nextView.addObject("paging", paging);
-  		nextView.addObject("searchKey", searchKey);
-  		nextView.addObject("searchKeyword", searchKeyword);
-  		nextView.addObject("request", "Y");
-		return nextView;
-	}
+//	@RequestMapping("/super/allapproval") 
+//	public ModelAndView couponAllApproval(HttpServletRequest request, Pageable pageable){ 
+//		List<CouponMember> approvalList = cpservice.allCouponApproval();
+//		//슈퍼관리자 사용자별 쿠폰 리스트
+//  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
+//  		
+//  		String searchKey = request.getParameter("searchKey");
+//  		String searchKeyword = request.getParameter("searchKeyword");
+//  		
+//  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
+//  		Paging paging = new Paging();
+//	  	if(couponList != null) {
+//	  		int curPage = pageable.getPageNumber();
+//	  		if(curPage == 0) curPage = curPage + 1;
+//	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+//  		}
+//  		nextView.addObject("couponList", couponList);
+//  		nextView.addObject("paging", paging);
+//  		nextView.addObject("searchKey", searchKey);
+//  		nextView.addObject("searchKeyword", searchKeyword);
+//  		nextView.addObject("request", "Y");
+//		return nextView;
+//	}
 }
