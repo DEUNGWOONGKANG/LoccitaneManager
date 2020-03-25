@@ -44,18 +44,7 @@ function userSearch(){
 	window.open('/store/userSearch/'+searchKey.options[searchKey.selectedIndex].value+'/'+searchKeyword
 			, 'userSearchPop', 'height='+ screen.height + 'width=' + screen.width + 'fullscreen=yes');
 }
-function change(){
-	var reason = document.getElementById("reason");
-	var val = reason.options[reason.selectedIndex].value;
 
-	if(val == "3"){
-		document.getElementById("reason_etc").readOnly = false;
-		document.getElementById("reason_etc").className = "inputText";
-	}else{
-		document.getElementById("reason_etc").readOnly = true;
-		document.getElementById("reason_etc").className = "viewText";
-	}
-}
 function check(){
 	var couponKind = document.getElementById("cpcode");
 	var username = document.getElementById("username");
@@ -181,7 +170,7 @@ function check(){
 						<option value="2">2. 사용기한 만료</option>
 						<option value="3">3. 기타</option>
 					</select>
-					<input type="text"  id="reason_etc" name="reason_etc" class="viewText" readonly>
+					<input type="text"  id="reason_etc" name="reason_etc" class="inputText">
 				</td>
 			</tr>
 		</tbody>

@@ -18,7 +18,7 @@ import com.loccitane.user.domain.User;
 public class KakaoService {
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject post(String templateId, User user){
+	public static JSONObject post(String templateId, User user, String alarmDate){
 		JSONObject result = new JSONObject();
 		try {
 			URL url = new URL("https://devtalkapi.lgcns.com/request/kakao.json");
@@ -43,6 +43,12 @@ public class KakaoService {
 			
 			String msg = "";
 			switch (templateId) {
+				case "10026":
+					msg = "[록시땅] 가입 축하 메시지\r\n" + 
+						  user.getUsername() + " 고객님, 록시땅 마이 프로방스 멤버십의 회원이 되신 것을 축하드립니다.  \r\n" + 
+						  "지금 바로 다양한 멤버십 혜택을 확인해보세요.\r\n" + 
+						  "*멤버십 혜택 보기: https://www.myprovence.shop/user/"+user.getUsercode() + "\r\n";
+					break;
 				case "10027":
 					msg = "[록시땅] 마이 프로방스 멤버십 등급 안내\r\n" + 
 						  user.getUsername() + " 고객님, 현재 고객님의 등급은 [" + user.getGrade() + "] 입니다. \r\n" + 
@@ -70,6 +76,12 @@ public class KakaoService {
 					      user.getUsername() + " 고객님, <[" + user.getGrade() + "] 등급 첫 구매 감사 쿠폰> \r\n" + 
 					      "2종이 발급 되었습니다.\r\n" + 
 					      "지금 바로 사용 가능한 나의 쿠폰을 확인해보세요." + 
+					      "*나의 보유 쿠폰 확인하기: https://www.myprovence.shop/user/"+user.getUsercode();
+					break;
+				case "10049":
+					msg = "[록시땅] 쿠폰 소멸 예정 안내\r\n" + 
+					      user.getUsername() + " 고객님, 보유하고 계신 쿠폰이 7일 후 소멸될 예정입니다.("+alarmDate+"까지 사용 가능)\r\n" + 
+					      "지금 바로 사용 가능한 나의 쿠폰을 확인해보세요."  +
 					      "*나의 보유 쿠폰 확인하기: https://www.myprovence.shop/user/"+user.getUsercode();
 					break;
 				default:

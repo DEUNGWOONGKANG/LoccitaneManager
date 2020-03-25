@@ -27,7 +27,6 @@
 	background: -ms-linear-gradient(top,  #ededed 0%,#ebebeb 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #ededed 0%,#ebebeb 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ebebeb',GradientType=0 ); /* IE6-9 */
-	width:25%;
 }
 #userList > thead th:first-child{
 	text-align: center;

@@ -97,6 +97,7 @@ function dormant(){
 				</td>
 				<td>${user.grade }</td>
 				<td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
+				<td>${user.totalbuy }원</td>
 				<td><input type="button" class="button-yellow-small" value="선택" onclick="userSelect('${user.usercode}', '${user.username}')"></td>
 			</tr><!-- 정상사용자 -->
 			</c:if>
@@ -118,9 +119,8 @@ function dormant(){
 				<td>${user.grade }</td>
 				<td>
 				<fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/>
-				<fmt:formatDate value="${today}" pattern="YYYY-MM-dd"/>
 				</td>
-				<td>${user.totalbuy }</td>
+				<td>${user.totalbuy }원</td>
 				<td><input type="button" class="button-gray-small" value="휴면" onclick="dormant()"></td>
 			</tr><!-- 휴면 -->
 			</c:if>

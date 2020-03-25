@@ -15,5 +15,5 @@ public interface GradeRepository extends JpaRepository<Grade, Integer>{
 
 	Grade findBySeq(int seq);
 
-	List<Grade> findAllByOrderByMinimumAsc();
+	List<Grade> findAllByUseynOrderByMinimumAsc(String useyn);
 }

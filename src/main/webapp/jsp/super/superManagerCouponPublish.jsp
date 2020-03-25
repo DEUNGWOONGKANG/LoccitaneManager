@@ -120,17 +120,7 @@ function check(){
 		return false;
 	}
 }
-function change(){
-	var reason = document.getElementById("reason");
-	var val = reason.options[reason.selectedIndex].value;
 
-	if(val == "3"){
-		document.getElementById("reason_etc").readOnly = false;
-	}else{
-		document.getElementById("reason_etc").readOnly = true;
-		document.getElementById("reason_etc").value = "";
-	}
-}
 function userSearch(){
 	var searchKey = document.getElementById("searchKey");
 	var searchKeyword = document.getElementById("searchKeyword").value;
@@ -219,7 +209,7 @@ function userSearch(){
 							<option value="2">2. 사용기한 만료</option>
 							<option value="3">3. 기타</option>
 						</select>
-						<input type="text" class="form-control" id="reason_etc" name="reason_etc" readonly style="width:70%">
+						<input type="text" class="form-control" id="reason_etc" name="reason_etc" style="width:70%">
 					</td>
 				</tr>
 			</tbody>

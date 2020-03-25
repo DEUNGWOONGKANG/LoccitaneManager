@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, String>{
 	List<User> findAllByGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqual(
 			String string, int i, String string2, int j, String string3, int k);
 	List<User> findAllByGradeInAndBirthdayIsNotNull(List<String> grades);
+	List<User> findAllByStatus(String string);
+	List<User> findAllByGradeAndStatus(String grade, String string);
 }

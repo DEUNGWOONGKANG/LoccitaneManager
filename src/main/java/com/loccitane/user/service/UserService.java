@@ -188,6 +188,7 @@ public class UserService {
 		    for(Map<String, String> article: excelContent){
 		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
+		    	boolean newUser = false;
 		    	if(check == null) {
 		    		//DB에 사용자가 없는 경우 신규 생성
 		    		check = new User();
@@ -205,6 +206,7 @@ public class UserService {
 		    			check.setStatus("1");
 		    		}
 		    		dataAdd = true;
+		    		newUser = true;
 		    		insertRowCount++;
 		    	}else{
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
@@ -295,11 +297,11 @@ public class UserService {
 		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
 		    					if(check.getAlarmyn().equals("Y")) {
 		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
-		    							JSONObject result = KakaoService.post("10030", check);
+		    							JSONObject result = KakaoService.post("10030", check, "");
 		    							String status = (String) result.get("status");
 		    							if(status.equals("OK")) cnt ++;
 		    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
-		    							JSONObject result = KakaoService.post("10031", check);
+		    							JSONObject result = KakaoService.post("10031", check, "");
 		    							String status = (String) result.get("status");
 		    							if(status.equals("OK")) cnt ++;
 		    						}
@@ -326,6 +328,10 @@ public class UserService {
 		    	if(dataAdd) {
 		    		check.setLastupdate(now);
 		    		saveList.add(check);
+		    		if(newUser) {
+		    			//회원 가입 축하 알림톡 발송
+		    			KakaoService.post("10026", check, "");
+		    		}
 		    	}
 		    	
 		    	currentStateCount++;

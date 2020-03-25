@@ -25,7 +25,7 @@ public class GradeService {
 	}
 	
 	public List<Grade> findAllAsc() {
-		List<Grade> list = gradeRepo.findAllByOrderByMinimumAsc();
+		List<Grade> list = gradeRepo.findAllByUseynOrderByMinimumAsc("Y");
 		return list;
 	}
 

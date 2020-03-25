@@ -41,7 +41,7 @@ function couponGive(){
 	location.href="/super/coupongive/"+usercode;
 }
 function goback(){
-	history.back();
+	location.href="/super/userlist";
 }
 </script>
 </head>

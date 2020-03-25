@@ -102,16 +102,24 @@ public class CouponService {
 				continue;
 			}
 		}
-		
+		String reason = "";
 		if(coupon.getReason().equals("1")) {
-			newCoupon.setReason("교환/환불");
+			reason += "교환/환불";
+			if(!reason_etc.equals("")) {
+				reason += "["+reason_etc+"]";
+			}
 		}else if(coupon.getReason().equals("2")) {
-			newCoupon.setReason("사용기한 만료");
+			reason += "사용기한 만료";
+			if(!reason_etc.equals("")) {
+				reason += "["+reason_etc+"]";
+			}
 		}else if(coupon.getReason().equals("3")) {
-			newCoupon.setReason(reason_etc);
-		}else {
-			newCoupon.setReason(coupon.getReason());
+			reason += "기타";
+			if(!reason_etc.equals("")) {
+				reason += "["+reason_etc+"]";
+			}
 		}
+ 		newCoupon.setReason(reason);
 		newCoupon.setCouponno(couponNum);
 		newCoupon.setCpcode(coupon.getCpcode());
 		newCoupon.setUsercode(coupon.getUsercode());
@@ -186,9 +194,9 @@ public class CouponService {
 		List<User> userList = null;
 		//등급별 사용자 리스트 추출
 		if(grade.equals("ALL")) {
-			userList = userRepo.findAll();
+			userList = userRepo.findAllByStatus("1");
 		}else {
-			userList = userRepo.findAllByGrade(grade);
+			userList = userRepo.findAllByGradeAndStatus(grade, "1");
 		}
 		List<CouponMember> couponList = new ArrayList<CouponMember>();
 		Date now  = new Date();
@@ -470,6 +478,11 @@ public class CouponService {
 				}
 			}
 		}
+	}
+	//미사용 쿠폰 리스트 조회
+	public List<Coupon> getUnuseCoupon() {
+		// TODO Auto-generated method stub
+		return couponRepo.findAllByUsedyn("N");
 	}
 
 }

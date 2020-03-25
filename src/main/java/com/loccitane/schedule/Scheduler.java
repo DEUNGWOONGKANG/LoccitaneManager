@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
@@ -44,14 +45,14 @@ public class Scheduler {
 	SftpService sftp;
 	
 	
-	@Scheduled(cron = "0 30 7 * * *")
+	//@Scheduled(cron = "0 30 7 * * *")
 	//@Scheduled(cron = "0 * * * * *")
 	public void run() throws IOException {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		String today = transFormat.format(now);
 		//생일쿠폰 발행
-		birthdayCouponRunner();
+		//birthdayCouponRunner();
 		
 		//등급업
 		if(today.equals("04-01") || today.equals("07-01") || today.equals("10-01") || today.equals("01-01")) {
@@ -62,16 +63,65 @@ public class Scheduler {
 		}
 		  
 		//엑셀다운로드(사용자, 쿠폰, 사용자별쿠폰)
-		excelDown();
+		//excelDown();
 		
 		//sftp로 파일 전송(사용자, 쿠폰, 사용자별쿠폰)
-		sftp.sendFile();
+		//sftp.sendFile();
 		
 		//마지막 구매일 1년 지난 사용자 휴면처리
-		dormant();
+		//dormant();
+		
+		//소멸예정쿠폰 알림 발송
+		//deleteCouponAlarm();
 		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 	}
 	
+	//소멸예정 쿠폰 리스트
+	private void deleteCouponAlarm() {
+		// 미사용 쿠폰 리스트조회
+		List<Coupon> couponList = cpservice.getUnuseCoupon(); 
+		
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		//소멸 예정 날짜 지정 
+		cal.add(Calendar.DATE, 7);
+		String alarmDate = sdf.format(cal.getTime());
+		int cnt = 0;
+		List<User> dupcheckList = new ArrayList<User>();
+		for(Coupon c : couponList) {
+			String endDate = sdf.format(c.getEnddate());
+			if(endDate.equals(alarmDate)) {
+				User user = service.userCheck(c.getUsercode());
+				if(user.getAlarmyn().equals("Y")) {
+					boolean dupcheck = false;
+					for(User u : dupcheckList) {
+						if(user.getUsercode().equals(u.getUsercode())) {
+							dupcheck = true;
+						}
+					}
+					//중복되지 않을경우만 카톡발송
+					if(!dupcheck) {
+						JSONObject result = KakaoService.post("10049", user, alarmDate);
+						String status = (String) result.get("status");
+						if(status.equals("OK")) {
+							dupcheckList.add(user);
+							cnt ++;
+						}
+					}
+				}
+			}
+		}
+		Log log = new Log();
+		log.setUserid("system");
+	    log.setUsername("system");
+	    log.setLogkind("KAKAO");
+	    log.setLogcontent("[소멸예정쿠폰안내] 수신자 : "+cnt+"명 ");
+	    log.setLogdate(now);
+	    logservice.saveLog(log);
+	}
+
 	private void dormant() {
 		Date now = new Date();
 		Calendar cal = Calendar.getInstance();
@@ -83,6 +133,7 @@ public class Scheduler {
 			if(user.getStatus().equals("1")) {
 				if(user.getLastpurchase() != null && user.getLastpurchase().before(cal.getTime())) {
 					user.setStatus("9");
+					user.setAlarmyn("N");
 					saveUsers.add(user);
 				}
 			}
@@ -135,7 +186,7 @@ public class Scheduler {
 				cpservice.giveCoupon(cp, "system", cp.getReason());
 				//카카오알림톡 전송
 				if(user.getAlarmyn().equals("Y")) {
-					JSONObject result = KakaoService.post("10028", user);
+					JSONObject result = KakaoService.post("10028", user, "");
 					String status = (String) result.get("status");
 					if(status.equals("OK")) cnt ++;
 				}
@@ -213,7 +264,7 @@ public class Scheduler {
 			//핸드폰번호가 10자리이상일경우 
 			if(user.getPhone().matches(regExp)) {
 				if(user.getAlarmyn().equals("Y")) {
-					JSONObject result = KakaoService.post("10027", user);
+					JSONObject result = KakaoService.post("10027", user, "");
 					String status = (String) result.get("status");
 					if(status.equals("OK")) cnt ++;
 				}

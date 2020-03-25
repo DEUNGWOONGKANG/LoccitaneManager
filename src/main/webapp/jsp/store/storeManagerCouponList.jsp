@@ -70,8 +70,15 @@ function useCoupon(seq, usercode){
 			<c:set var = "length" value = "${fn:length(userData.username)}"/>
 			<h1>
 			${fn:substring(userData.username, 0, 1)}*${fn:substring(userData.username, 2, length)} 
-			/ ${fn:substring(userData.phone, 0, 4)}****${fn:substring(userData.phone, 8, plength)} 
-			/ ${userData.grade}
+			/
+			<c:if test="${plength+0 > 10}">
+				${fn:substring(userData.phone, 0, 3)}-****-${fn:substring(userData.phone, 7, plength)}
+			</c:if>
+			<c:if test="${plength+0 < 5}">
+				${fn:substring(userData.phone, 0, 1)}**${fn:substring(userData.phone, 3, plength)}
+			</c:if> 
+			/
+			 ${userData.grade}
 			</h1> 
 			</td>
 			<td width="10%">
@@ -93,18 +100,24 @@ function useCoupon(seq, usercode){
 		<c:forEach var="coupon" items="${couponList}">
 			<tr>
 				<td>${coupon.cpname }</td>
-				<td><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
+				<td><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> <br>~
 					<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/></td>
 				<td>${coupon.dccnt}
 					<c:if test="${coupon.dck == '1'}">원</c:if>
 					<c:if test="${coupon.dck == '2'}">%</c:if>
-					할인
+					할인<br>
+					<c:if test="${!empty coupon.minimum}">
+				      		${coupon.minimum}원 이상 구매시
+				    </c:if>
+				    <c:if test="${!empty coupon.discountmax}">
+				      	(최대할인  ${coupon.discountmax}원 까지)
+				      	</c:if>
 				</td>
 				<td>
-					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today}">
+					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today && coupon.startdate < today}">
 						<input type="button" class="button-yellow-small" value="사용처리" onclick="useCoupon('${coupon.seq}','${coupon.usercode}')" >
 					</c:if>
-					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today}">
+					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today || coupon.startdate > today}">
 						<input type="button" class="button-gray-small" value="사용불가" disabled="disabled" >
 					</c:if>
 				</td>

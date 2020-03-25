@@ -48,4 +48,5 @@ public interface CouponRepository extends JpaRepository<Coupon, String>{
 	List<Coupon> findAllByUsedynAndCreatedateBetweenAndGrade(String string, Date startDate, Date endDate, String grade);
 	List<Coupon> findAllByUsedynAndCreatedateBetweenAndGradeAndCpcode(String string, Date startDate, Date endDate,
 			String grade, String couponCode);
+	List<Coupon> findAllByUsedyn(String string);
 }

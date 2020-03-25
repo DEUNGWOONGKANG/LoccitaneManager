@@ -838,22 +838,24 @@ public class UserController {
   			
   			if(request.getParameter("type").equals("user")) {
   				User userdata = service.userCheck(user.getUsercode());
-  				JSONObject result = KakaoService.post(template, userdata);
+  				if(userdata.getAlarmyn().equals("Y")) {
+  				JSONObject result = KakaoService.post(template, userdata, "");
   				String status = (String) result.get("status");
-  				if(status.equals("OK")) {
-	  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10030")) logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
-	  				else logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
-	  				
-	  				Log log = new Log();
-	  				log.setUserid(request.getParameter("adminId"));
-	  				log.setUsername(request.getParameter("adminName"));
-	  				log.setLogkind("KAKAO");
-	  				log.setLogcontent(logcontent);
-	  				log.setLogdate(now);
-	  				logservice.saveLog(log);
-	  				nextView.addObject("sendyn", "Y");
+	  				if(status.equals("OK")) {
+		  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10030")) logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
+		  				else logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+userdata.getUsername();
+		  				
+		  				Log log = new Log();
+		  				log.setUserid(request.getParameter("adminId"));
+		  				log.setUsername(request.getParameter("adminName"));
+		  				log.setLogkind("KAKAO");
+		  				log.setLogcontent(logcontent);
+		  				log.setLogdate(now);
+		  				logservice.saveLog(log);
+		  				nextView.addObject("sendyn", "Y");
+	  				}
   				}
   			} else if(request.getParameter("type").equals("grade")) {
   				String grade = request.getParameter("grade");
@@ -867,7 +869,7 @@ public class UserController {
   				
   				for(User u : userList) {
   					if(u.getAlarmyn().equals("Y")) {
-  						JSONObject result = KakaoService.post("10028", user);
+  						JSONObject result = KakaoService.post("10028", user, "");
   						String status = (String) result.get("status");
   						if(status.equals("OK")) cnt ++;
   					}
