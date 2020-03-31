@@ -25,15 +25,10 @@
 <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
 if("${sendyn}" == "Y"){
-	alert("쿠폰이 발행되었습니다.");	
+	alert("발송이 완료되었습니다.");	
 }
 function check(){
-	var couponKind = document.getElementById("cpcode");
-	var username = document.getElementById("username");
-	var startDate = $("#startdate").val();
-	var endDate = $("#enddate").val();
-	var reason = document.getElementById("reason");
-	var reason_etc = document.getElementById("reason_etc");
+	var template = document.getElementById("template");
 	var type = document.getElementsByName("type");
 	var typeCheckYn = false;
 	var typeVal = "";
@@ -45,47 +40,23 @@ function check(){
 			typeVal = type[i].value;
 		}
 	} 
-	var start = startDate.split('-');
-	var end = endDate.split('-');
-	var stdt = new Date();
-	var eddt = new Date();
-	stdt.setFullYear(start[0], start[1]-1, start[2]);
-	eddt.setFullYear(end[0], end[1]-1, end[2]);
-	if(couponKind.options[couponKind.selectedIndex].value == ""){
-		alert("쿠폰 종류를 선택해주세요.");
-		return false;
-	}
-	if(startDate == "" || startDate == null){
-		alert("쿠폰사용시작일을 선택해주세요.");
-		return false;
-	}
-	if(endDate == "" || endDate == null){
-		alert("쿠폰사용종료일을 선택해주세요.");
-		return false;
-	}
-	if(stdt > eddt){
-		alert("시작일과 종료일을 확인해주세요.");
-		return false;
+	if(template.options[template.selectedIndex].value == "00000"){
+		alert("템플릿을 선택해주세요.");
+		return false;		
 	}
 	if(!typeCheckYn){
-		alert("발행대상타입을 선택해주세요.");
+		alert("발송대상타입을 선택해주세요.");
 		return false;
 	}else{
 		if(typeVal == "user"){
 			if(username.value == "" || username.value == null){
-				alert("발행대상고객을 선택해주세요");
+				alert("발송대상고객을 선택해주세요");
 				return false;
 			}
 		}
 	}
-	if(reason.options[reason.selectedIndex].value == "3"){
-		if(reason_etc.value == "" || reason_etc.value == null){
-			alert("발행사유를 입력해주세요.");
-			return false;		
-		}
-	}
 	
-	var result = confirm(username.value+" 고객님에게 쿠폰을 발행하시겠습니까?");
+	var result = confirm(username.value+" 고객님에게 카카오톡을 발송하시겠습니까?");
 	
 	if(result){
 		document.getElementById("formdata").submit();
@@ -135,6 +106,15 @@ function formchange(){
 	}else if(val == "10031"){
 		$('#content').css('display', '');
 		view.src = "<%=url %>/img/10031.png";
+	}else if(val == "10049"){
+		$('#content').css('display', '');
+		view.src = "<%=url %>/img/10049.png";
+	}else if(val == "10050"){
+		$('#content').css('display', '');
+		view.src = "<%=url %>/img/10050.png";
+	}else if(val == "10051"){
+		$('#content').css('display', '');
+		view.src = "<%=url %>/img/10051.png";
 	}
 }
 </script>
@@ -160,6 +140,9 @@ function formchange(){
 		   					<option value="10028">[10028]등급업 축하 쿠폰 발급안내</option>
 		   					<option value="10030">[10030]등급 첫 구매 쿠폰 발급안내(REGULAR,PREMIUM)</option>
 		   					<option value="10031">[10031]등급 첫 구매 쿠폰 발급안내(LOYAL,PRESTIGE)</option>
+		   					<option value="10049">[10049]쿠폰 소멸 예정 안내</option>
+		   					<option value="10050">[10050]프레스티지 스페셜 쿠폰 발급안내</option>
+		   					<option value="10051">[10051]프레스티지 등급 신제품 선공개 쿠폰 발급안내</option>
 				    	</select>
 				    	<br>사전에 등록된 템플릿만 발송이 가능합니다.
 					</td>

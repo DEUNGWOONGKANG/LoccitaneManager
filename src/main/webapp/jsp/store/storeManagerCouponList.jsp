@@ -65,7 +65,7 @@ function useCoupon(seq, usercode){
 		<tr>
 			<td width="10%">
 			</td>
-			<td style="text-align:center;border-bottom:2px solid #ffcb00; height:50px;">
+			<td style="text-align:center;border-bottom:2px solid #ffcb00; height:100px;">
 			<c:set var = "plength" value = "${fn:length(userData.phone)}"/>
 			<c:set var = "length" value = "${fn:length(userData.username)}"/>
 			<h1>
@@ -90,27 +90,30 @@ function useCoupon(seq, usercode){
 	<table id="userList">
 		<thead>
 		<tr>
-			<th>쿠폰명</th>
-			<th>유효기간</th>
+			<th style="width:30%">쿠폰명</th>
+			<th style="width:10%">쿠폰코드</th>
+			<th style="width:15%">유효기간</th>
 			<th>혜택</th>
-			<th></th>
+			<th style="width:10%"></th>
 		</tr>
 		</thead><!-- #userList Header -->
 		<tbody>
 		<c:forEach var="coupon" items="${couponList}">
 			<tr>
-				<td>${coupon.cpname }</td>
+				<td style="text-align:left;">${coupon.cpname }</td>
+				<td style="text-align:left;">${coupon.cpcode }</td>
 				<td><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> <br>~
 					<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/></td>
-				<td>${coupon.dccnt}
+				<td style="text-align:left;">
+					<c:if test="${!empty coupon.minimum}">
+				      		<fmt:formatNumber value="${coupon.minimum}" pattern="#,###" />원 이상 구매시<br>
+				    </c:if>
+					<fmt:formatNumber value="${coupon.dccnt}" pattern="#,###" />
 					<c:if test="${coupon.dck == '1'}">원</c:if>
 					<c:if test="${coupon.dck == '2'}">%</c:if>
 					할인<br>
-					<c:if test="${!empty coupon.minimum}">
-				      		${coupon.minimum}원 이상 구매시
-				    </c:if>
 				    <c:if test="${!empty coupon.discountmax}">
-				      	(최대할인  ${coupon.discountmax}원 까지)
+				      	(최대할인  <fmt:formatNumber value="${coupon.discountmax}" pattern="#,###" />원 까지)
 				      	</c:if>
 				</td>
 				<td>

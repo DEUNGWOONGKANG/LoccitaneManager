@@ -78,9 +78,9 @@ function couponAdd(){
 			  	<c:forEach var="coupon" items="${couponList.content}" varStatus="status">
 				    <tr style="cursor:pointer;" onclick="couponInfo('${coupon.seq}')">
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${coupon.cpcode}</td>
-				      <td>${coupon.cpname}</td>
-				      <td>
+				      <td style="text-align:left">${coupon.cpcode}</td>
+				      <td style="text-align:left">${coupon.cpname}</td>
+				      <td style="text-align:left">
 				      	<c:if test="${!empty coupon.minimum}">
 				      		${coupon.minimum}원 이상 구매시
 				      	</c:if>

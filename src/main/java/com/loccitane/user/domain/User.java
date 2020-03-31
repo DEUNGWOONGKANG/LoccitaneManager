@@ -23,6 +23,9 @@ public class User {
 	@Column(name = "grade")
 	private String grade;
 	
+	@Column(name = "startgrade")
+	private String startgrade;
+	
 	@Column(name = "username")
 	private String username;
 	
@@ -58,7 +61,18 @@ public class User {
 	
 	@Column(name = "secondvisit_4")
 	private Date second4date;
+
+	@Column(name = "special")
+	private Date special;
 	
+	public Date getSpecial() {
+		return special;
+	}
+
+	public void setSpecial(Date special) {
+		this.special = special;
+	}
+
 	public String getBirthday() {
 		return birthday;
 	}
@@ -177,6 +191,14 @@ public class User {
 
 	public void setSecond4date(Date second4date) {
 		this.second4date = second4date;
+	}
+
+	public String getStartgrade() {
+		return startgrade;
+	}
+
+	public void setStartgrade(String startgrade) {
+		this.startgrade = startgrade;
 	}
 	
 }

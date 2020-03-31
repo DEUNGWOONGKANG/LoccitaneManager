@@ -125,8 +125,8 @@ function check(){
 		<tbody>
 			<tr height="100px">
 				<td width="25%">쿠폰선택</td>
-				<td>
-					<select class="selectBox" id="cpcode" name="cpcode">
+				<td style="text-align:left;padding-left:10px;">
+					<select class="selectBox" id="cpcode" name="cpcode" style="width:98%;">
 							<option value=""></option>
 	   					<c:forEach var="coupon" items="${couponList}">
 	   						<option value="${coupon.cpcode}">[${coupon.cpcode}] ${coupon.cpname }</option>
@@ -136,7 +136,7 @@ function check(){
 			</tr>
 			<tr height="100px">
 				<td width="25%">쿠폰사용가능일</td>
-				<td>
+				<td style="text-align:left;padding-left:10px;">
 					시작일: <input type="text" class="inputDate" id="startdate" name="startdate" readonly>  
 					종료일: <input type="text" class="inputDate" id="enddate" name="enddate" readonly>
 					<input type="hidden" id="useyn" name="useyn" value="N">
@@ -144,18 +144,18 @@ function check(){
 			</tr>
 			<tr height="100px">
 				<td width="25%" rowspan=2>발행대상고객</td>
-				<td>
+				<td style="text-align:left;padding-left:10px;">
 					<select id="searchKey" class="selectBox2">
 						<option value="username">이름</option>
 						<option value="phone">전화번호</option>
 						<option value="usercode">회원번호</option>
 					</select>
-					<input type="text" id="searchKeyword" class="inputText">  
+					<input style="width:60%;" type="text" id="searchKeyword" class="inputText">  
 					<input id="searchbtn" type="button" class="button-yellow-small" value="검색" onclick="userSearch()">
 				</td>
 			</tr>
 			<tr height="150px">
-				<td style="border-left:1px solid #e0e0e0;">
+				<td style="text-align:left;padding-left:10px;border-left:1px solid #e0e0e0;">
 					<input type="hidden" id="usercode" name="usercode">
 					<input type="hidden" id="grade" name="grade" readonly>
 					이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" class="viewText" id="username" readonly><br>
@@ -164,13 +164,13 @@ function check(){
 			</tr>
 			<tr height="100px">
 				<td width="25%">발행사유</td>
-				<td>
+				<td style="text-align:left;padding-left:10px;">
 					<select id="reason" name="reason" class="selectBox2" onchange="change()">
 						<option value="1">1. 교환/환불</option>
 						<option value="2">2. 사용기한 만료</option>
 						<option value="3">3. 기타</option>
 					</select>
-					<input type="text"  id="reason_etc" name="reason_etc" class="inputText">
+					<input type="text"  id="reason_etc" name="reason_etc" class="inputText" style="width:65%;">
 				</td>
 			</tr>
 		</tbody>

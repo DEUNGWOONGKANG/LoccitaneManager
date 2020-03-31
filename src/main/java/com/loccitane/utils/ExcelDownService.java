@@ -212,7 +212,8 @@ public class ExcelDownService {
 			    }
 			}
 		    String path = "C:/exceldata/";
-		    String fileName = sdf.format(now) + type;
+		    //String fileName = sdf.format(now) + type;
+		    String fileName = type;
 		    // 엑셀 출력
 	    	File file = new File(path+fileName+".xlsx");
 	    	fileout = new FileOutputStream(file);

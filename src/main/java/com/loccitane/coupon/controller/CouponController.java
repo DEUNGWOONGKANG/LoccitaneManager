@@ -34,6 +34,7 @@ import com.loccitane.grade.service.GradeService;
 import com.loccitane.store.domain.Store;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
+import com.loccitane.utils.ApiService;
 import com.loccitane.utils.Paging;
 
 @Controller // 이 클래스가 컨트롤러라는 것을 알려주는 어노테이션
@@ -44,6 +45,8 @@ public class CouponController {
 	CouponService cpservice;
 	@Autowired
 	GradeService grservice;
+	@Autowired
+	ApiService apiservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -190,6 +193,42 @@ public class CouponController {
   		couponCore.setCreatedate(now);
   		couponCore.setCreateuser(loginUser.getManagername()+"("+loginUser.getId()+")");
 		cpservice.couponSave(couponCore);
+		
+		apiservice.couponAddCall(couponCore);
+		
+		ModelAndView nextView = new ModelAndView("super/superManagerCouponList");
+		
+		Page<CouponCore> couponList = cpservice.getAllCouponList(pageable, null, null);
+		Paging paging = new Paging();
+	  	if(couponList != null) {
+	  		int curPage = pageable.getPageNumber();
+	  		if(curPage == 0) curPage = curPage + 1;
+	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
+  		}
+		nextView.addObject("saveyn", "Y");
+		nextView.addObject("couponList", couponList);
+  		nextView.addObject("paging", paging);
+  		
+		return nextView;
+	}
+	
+	//관리자  쿠폰수정
+	@PostMapping("/super/couponmodify") 
+	public ModelAndView couponModify(CouponCore couponCore, HttpServletRequest request, @PageableDefault Pageable pageable, HttpServletResponse response) throws Exception {
+		HttpSession httpSession = request.getSession(true);
+  		Store loginUser = (Store) httpSession.getAttribute("loginUser");
+  		if(loginUser == null) {
+  			response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("<script>alert('세션이 종료되었습니다.'); history.go(-1);</script>");
+            out.flush();
+  		}
+  		Date now = new Date();
+  		couponCore.setCreatedate(now);
+  		couponCore.setCreateuser(loginUser.getManagername()+"("+loginUser.getId()+")");
+		cpservice.couponSave(couponCore);
+		
+		apiservice.couponModifyCall(couponCore);
 		
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponList");
 		

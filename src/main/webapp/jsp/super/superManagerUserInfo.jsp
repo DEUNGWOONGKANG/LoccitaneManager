@@ -129,28 +129,28 @@ function goback(){
 			<table class="couponInfo">
 				<thead>
 				<tr>
-					<th>쿠폰번호</th>
-					<th>유효기간</th>
-					<th>사용여부</th>
-					<th>발행자</th>
-					<th>사용일자</th>
-					<th>사용담당자</th>
+					<th style="text-align:center;">쿠폰명</th>
+					<th style="text-align:center;">유효기간</th>
+					<th style="text-align:center;">사용여부</th>
+					<th style="text-align:center;">발행자</th>
+					<th style="text-align:center;">사용일자</th>
+					<th style="text-align:center;">사용담당자</th>
 				</tr>
 				</thead><!-- #userList Header -->
 				<tbody>
 				<c:if test="${!empty couponList}">
 				<c:forEach var="coupon" items="${couponList}">
 					<tr>
-						<td>${coupon.cpname }</td>
-						<td><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
+						<td style="text-align:left;">${coupon.cpname }</td>
+						<td style="text-align:center;"><fmt:formatDate value="${coupon.startdate}" pattern="YYYY-MM-dd"/> ~
 							<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/></td>
-						<td>
+						<td style="text-align:center;">
 							<c:if test="${coupon.usedyn == 'Y'}">사용</c:if>
 							<c:if test="${coupon.usedyn == 'N'}">미사용</c:if>
 						</td>
-						<td>${coupon.createuser}</td>
-						<td>${coupon.usedate}</td>
-						<td>${coupon.usemanager}</td>
+						<td style="text-align:center;">${coupon.createuser}</td>
+						<td style="text-align:center;">${coupon.usedate}</td>
+						<td style="text-align:center;">${coupon.usemanager}</td>
 					</tr><!-- #userList Row -->
 				</c:forEach>
 				</c:if>

@@ -22,6 +22,7 @@ import com.loccitane.log.domain.Log;
 import com.loccitane.log.service.LogService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
+import com.loccitane.utils.ApiService;
 import com.loccitane.utils.ExcelRead;
 import com.loccitane.utils.ExcelReadOption;
 import com.loccitane.utils.KakaoService;
@@ -36,6 +37,9 @@ public class UserService {
 	
 	@Autowired
 	CouponService cpservice;
+	
+	@Autowired
+	ApiService api;
 	
 	private static int totalRowCount = 0; // 전체 행 개수
     private static int updateRowCount = 0; // 성공한 데이터 개수
@@ -169,10 +173,11 @@ public class UserService {
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 		ExcelReadOption excelReadOption = new ExcelReadOption();
 		excelReadOption.setFilePath(destFile.getAbsolutePath());
-		excelReadOption.setOutputColumns("A","B","C","D","E","F");
+		excelReadOption.setOutputColumns("A","B","C","D","E","F","G");
 		excelReadOption.setStartRow(2);
 		Date now = new Date();
 		int cnt = 0;
+		int specialcnt = 0;
 		setCurrentState("A"); // 엑셀파일 읽어 오기 전 상태를 A
       
 		List<Map<String, String>>excelContent = ExcelRead.read(excelReadOption);
@@ -188,7 +193,7 @@ public class UserService {
 		    for(Map<String, String> article: excelContent){
 		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
-		    	boolean newUser = false;
+		    	//boolean newUser = false;
 		    	if(check == null) {
 		    		//DB에 사용자가 없는 경우 신규 생성
 		    		check = new User();
@@ -198,17 +203,20 @@ public class UserService {
 		    		check.setPhone(article.get("D"));
 		    		check.setLastpurchase(transFormat.parse(article.get("E")));
 		    		check.setTotalbuy(Integer.parseInt(article.get("F")));
-		    		check.setAlarmyn("Y");
+		    		check.setAlarmyn(article.get("G"));
 		    		check.setGrade("REGULAR");
+		    		check.setStartgrade("REGULAR");
 		    		if(check.getLastpurchase().before(cal.getTime())) {
 		    			check.setStatus("9");
 		    		}else {
 		    			check.setStatus("1");
 		    		}
-		    		dataAdd = true;
-		    		newUser = true;
+		    		check.setLastupdate(now);
+		    		userRepo.save(check);
+		    		api.userAddCall(check);
 		    		insertRowCount++;
 		    	}else{
+		    		boolean apiCall = false;
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
 		    		// 변경된 사항이 없을경우 UPDATE 하지 않음.
 		    		if(!check.getUsercode().equals(article.get("A"))) {
@@ -226,29 +234,43 @@ public class UserService {
 		    		if(!check.getPhone().equals(article.get("D"))) {
 		    			check.setPhone(article.get("D"));
 		    			dataAdd = true;
+		    			apiCall = true;
 		    		}
 		    		//날짜 비교는 Timestamp로 비교한다.
 		    		Timestamp ts = new Timestamp(transFormat.parse(article.get("E")).getTime());
-		    		if(!check.getLastpurchase().equals(ts)){
+		    		if(check.getLastpurchase() == null) {
 		    			check.setLastpurchase(ts);
-			    		check.setStatus("1");
 		    			dataAdd = true;
+		    		}else {
+		    			if(!check.getLastpurchase().equals(ts)){
+			    			check.setLastpurchase(ts);
+			    			dataAdd = true;
+			    		}
 		    		}
 		    		if(check.getTotalbuy() != Integer.parseInt(article.get("F"))) {
 		    			if(check.getTotalbuy() < Integer.parseInt(article.get("F"))){
 		    				CouponMember cp = new CouponMember();
 		    				CouponMember cp2 = new CouponMember();
+		    				CouponMember sp = new CouponMember();
 		    				Calendar cl = Calendar.getInstance();
+		    				Calendar cl2 = Calendar.getInstance();
 		    				boolean couponYn = false;
 		    				boolean highgrade = false;
 		    				cl.setTime(now);
 		    				cl.set(Calendar.HOUR_OF_DAY, 0);
 		    				cl.set(Calendar.MINUTE, 0);
 		    				cl.set(Calendar.SECOND, 0);
+		    				cl2.setTime(now);
+		    				cl2.set(Calendar.HOUR_OF_DAY, 0);
+		    				cl2.set(Calendar.MINUTE, 0);
+		    				cl2.set(Calendar.SECOND, 0);
+		    				
 		    				cp.setStartdate(cl.getTime());
 		    				cp.setReason("첫구매 감사쿠폰");
+		    				sp.setStartdate(cl.getTime());
+		    				sp.setReason("프리스티지 스페셜");
 		    				if(check.getGrade().equals("REGULAR") && check.getSecond1date() == null){
-		    					cp.setCpcode("SECREG");
+		    					cp.setCpcode("LKRMR5000");
 		    					//종료날짜는 90일더한날짜로 세팅
 								cl.add(Calendar.DATE, 90);
 								cp.setEnddate(cl.getTime());
@@ -256,7 +278,7 @@ public class UserService {
 								check.setSecond1date(now);
 								couponYn = true;
 		    				}else if(check.getGrade().equals("PREMIUM") && check.getSecond2date() == null){
-		    					cp .setCpcode("SECPRM");
+		    					cp.setCpcode("LKRMP10000");
 		    					//종료날짜는 90일더한날짜로 세팅
 								cl.add(Calendar.DATE, 90);
 								cp.setEnddate(cl.getTime());
@@ -264,7 +286,7 @@ public class UserService {
 								check.setSecond2date(now);
 								couponYn = true;
 		    				}else if(check.getGrade().equals("LOYAL") && check.getSecond3date() == null){
-		    					cp.setCpcode("SECLOY");
+		    					cp.setCpcode("LKRML10000");
 		    					//종료날짜는 180일더한날짜로 세팅
 								cl.add(Calendar.DATE, 180);
 								cp.setEnddate(cl.getTime());
@@ -272,13 +294,13 @@ public class UserService {
 								check.setSecond3date(now);
 								couponYn = true;
 								highgrade = true;
-								cp2.setStartdate(cl.getTime());
+								cp2.setStartdate(cl2.getTime());
 			    				cp2.setReason("첫구매 감사쿠폰");
-			    				cp2.setCpcode("SECLOY");
+			    				cp2.setCpcode("LKRML20000");
 			    				cp2.setEnddate(cl.getTime());
 								cp2.setUsercode(check.getUsercode());
 		    				}else if(check.getGrade().equals("PRESTIGE") && check.getSecond4date() == null){
-		    					cp.setCpcode("SECPRT");
+		    					cp.setCpcode("LRKMP20000");
 		    					//종료날짜는 180일더한날짜로 세팅
 								cl.add(Calendar.DATE, 180);
 								cp.setEnddate(cl.getTime());
@@ -286,16 +308,37 @@ public class UserService {
 								check.setSecond4date(now);
 								couponYn = true;
 								highgrade = true;
-								cp2.setStartdate(cl.getTime());
+								cp2.setStartdate(cl2.getTime());
 			    				cp2.setReason("첫구매 감사쿠폰");
-			    				cp2.setCpcode("SECPRT");
+			    				cp2.setCpcode("LKRMP50000");
 			    				cp2.setEnddate(cl.getTime());
 								cp2.setUsercode(check.getUsercode());
+		    				}
+		    				//프리스티지 스페셜 부여 여부 체크 (기존 고객중 프리스티지고객만)
+		    				if(check.getStartgrade().equals("PRESTIGE") && Integer.parseInt(article.get("F")) > 1000000 && check.getSpecial() == null) {
+		    					Calendar ca = Calendar.getInstance();
+		    					ca.setTime(now);
+		    					ca.set(Calendar.HOUR_OF_DAY, 0);
+		    					ca.set(Calendar.MINUTE, 0);
+		    					ca.set(Calendar.SECOND, 0);
+		    					sp.setStartdate(ca.getTime());
+			    				sp.setReason("프리스티지 스페셜");
+			    				
+			    				sp.setCpcode("LKRR53170E");
+		    					//종료날짜는 180일더한날짜로 세팅
+			    				ca.add(Calendar.DATE, 180);
+								sp.setEnddate(ca.getTime());
+								sp.setUsercode(check.getUsercode());
+								
+								cpservice.giveCoupon(sp, "system", sp.getReason());
+								JSONObject result = KakaoService.post("10050", check, "");
+    							String status = (String) result.get("status");
+    							if(status.equals("OK")) specialcnt ++;
+								check.setSpecial(now);
 		    				}
 		    				if(couponYn) {
 		    					cpservice.giveCoupon(cp, "system", cp.getReason());
 		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
-		    					if(check.getAlarmyn().equals("Y")) {
 		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
 		    							JSONObject result = KakaoService.post("10030", check, "");
 		    							String status = (String) result.get("status");
@@ -305,8 +348,6 @@ public class UserService {
 		    							String status = (String) result.get("status");
 		    							if(status.equals("OK")) cnt ++;
 		    						}
-		    						
-		    					}
 		    				}
 		    				
 		    				
@@ -314,32 +355,32 @@ public class UserService {
 		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
 		    			dataAdd = true;
 		    		}
+		    		if(!check.getAlarmyn().equals(article.get("G"))) {
+		    			check.setAlarmyn(article.get("G"));
+		    			dataAdd = true;
+		    		}
+		    		
 		    		if(check.getLastpurchase().after(cal.getTime()) && check.getStatus().equals("9")) {
 		    			check.setStatus("1");
 		    			dataAdd = true;
+		    			apiCall = true;
 		    		}
 		    		
 		    		if(dataAdd) {
 		    			updateRowCount++;
+		    			check.setLastupdate(now);
+		    			userRepo.save(check);
+		    			if(apiCall) api.userModifyCall(check);
+		    			
 		    		}else {
 		    			noupdateRowCount++;
 		    		}
 		    	}
-		    	if(dataAdd) {
-		    		check.setLastupdate(now);
-		    		saveList.add(check);
-		    		if(newUser) {
-		    			//회원 가입 축하 알림톡 발송
-		    			KakaoService.post("10026", check, "");
-		    		}
-		    	}
-		    	
 		    	currentStateCount++;
 		    	if (totalRowCount == currentStateCount) {
 		    		setCurrentState("C");
 		    	}
 		    }
-		    userRepo.saveAll(saveList);
 		}
 		if(cnt > 0) {
 			Log log = new Log();
@@ -349,6 +390,15 @@ public class UserService {
 		    log.setLogcontent("[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ");
 		    log.setLogdate(now);
 		    logservice.saveLog(log);
+		}
+		if(specialcnt > 0) {
+			Log log = new Log();
+			log.setUserid("system");
+			log.setUsername("system");
+			log.setLogkind("KAKAO");
+			log.setLogcontent("[프리스티지스페셜] 수신자 : "+specialcnt+"명 ");
+			log.setLogdate(now);
+			logservice.saveLog(log);
 		}
 		String log = "총 데이터:"+currentStateCount+"건 | "+
 					"신규데이터:"+insertRowCount+"건 | "+
@@ -366,7 +416,7 @@ public class UserService {
 		grades.add("PREMIUM");
 		grades.add("LOYAL");
 		grades.add("PRESTIGE");
-		List<User> userList = userRepo.findAllByGradeInAndBirthdayIsNotNull(grades);
+		List<User> userList = userRepo.findAllByGradeInAndBirthdayIsNotNullAndStatus(grades, "1");
 		List<User> birthdayUser = new ArrayList<User>();
 		Calendar now = Calendar.getInstance();
 		// 15일 후 생일 체크
@@ -392,11 +442,16 @@ public class UserService {
 	}
 	
 	public List<User> getUpdateUserList(Date now, Date yesterday) {
-		return userRepo.findAllByLastupdateBetween(yesterday, now);
+		return userRepo.findAll();
+		//return userRepo.findAllByLastupdateBetween(yesterday, now);
 	}
 
 	public List<User> findGradeupList() {
 		return userRepo.findAllByGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqual("REGULAR", 200000, "PREMIUM", 600000, "LOYAL", 1000000);
+	}
+
+	public List<User> findAllByStatus() {
+		return userRepo.findAllByStatus("1");
 	}
 
 

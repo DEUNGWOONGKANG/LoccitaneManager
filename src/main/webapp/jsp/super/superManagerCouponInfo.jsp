@@ -73,7 +73,7 @@ function goback(){
     <div class="d-flex align-items-stretch">
       <jsp:include page="superManagerMenu.jsp"></jsp:include>
       <div class="w-100 d-flex flex-wrap">
-      	<form id="formdata" action="/super/couponsave" method="post" style="width:100%" onsubmit="return check()">
+      	<form id="formdata" action="/super/couponmodify" method="post" style="width:100%" onsubmit="return check()">
       	<input type="hidden" id="seq" name="seq" value="${couponData.seq }">
       	<div style="width:100%">
 	      	<table class="storeAdd">

@@ -50,10 +50,11 @@ function check(){
       <div class="login__body">
    		<div>
 			<input type="radio" name="type" value="store">
-			<label class="custom-control-label" for="jb-radio-1">매장관리자</label>
+			<label class="custom-control-label" for="jb-radio-1">매장관리자</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type="radio" name="type" value="super">
 			<label class="custom-control-label" for="jb-radio-2">슈퍼관리자</label>
 		</div>
+		<br>
         <div class="form__field">
           <input type="text" placeholder="ID" id="loginId" name="loginId">
         </div>

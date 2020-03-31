@@ -70,11 +70,14 @@ public class SftpService {
          
          String filePath = "C:/exceldata/";
          
-         String userExcel = today+"user.xlsx";
+         String userExcel = "user.xlsx";
+        // String userExcel = today+"user.xlsx";
          String userFilePath = filePath+userExcel;
-         String couponExcel = today+"coupon.xlsx";
+         String couponExcel = "coupon.xlsx";
+         //String couponExcel = today+"coupon.xlsx";
          String couponFilePath = filePath+couponExcel;
-         String coupontomemberExcel = today+"coupontomember.xlsx";
+         String coupontomemberExcel = "coupontomember.xlsx";
+         //String coupontomemberExcel = today+"coupontomember.xlsx";
          String coupontomemberFilePath = filePath+coupontomemberExcel;
          
          chSftp.cd("/imrnortaty/exceldata");  

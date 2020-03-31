@@ -90,7 +90,7 @@ function userInfo(usercode){
 				      </td>
 				      <td>${user.grade}</td>
 				      <td><fmt:formatDate value="${user.lastpurchase}" pattern="YYYY-MM-dd"/></td>
-				      <td>${user.totalbuy}</td>
+				      <td><fmt:formatNumber value="${user.totalbuy }" pattern="#,###" />원</td>
 				    </tr>
 				</c:forEach>
 			  </tbody>
