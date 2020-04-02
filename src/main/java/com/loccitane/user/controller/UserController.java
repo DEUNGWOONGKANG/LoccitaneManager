@@ -849,23 +849,25 @@ public class UserController {
   				User userdata = service.userCheck(user.getUsercode());
   				JSONObject result = KakaoService.post(template, userdata, "");
   				String status = (String) result.get("status");
-  				if(status.equals("OK")) {
-	  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10030")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10031")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10049")) logcontent = "[쿠폰소멸예정] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10050")) logcontent = "[프레스티지스페셜쿠폰] 수신자 : "+userdata.getUsername();
-	  				else if(template.equals("10051")) logcontent = "[프레스티지신제품선공개쿠폰] 수신자 : "+userdata.getUsername();
-	  				
-	  				Log log = new Log();
-	  				log.setUserid(request.getParameter("adminId"));
-	  				log.setUsername(request.getParameter("adminName"));
-	  				log.setLogkind("KAKAO");
-	  				log.setLogcontent(logcontent);
-	  				log.setLogdate(now);
-	  				logservice.saveLog(log);
-	  				nextView.addObject("sendyn", "Y");
+  				if(status != null) {
+	  				if(status.equals("OK")) {
+		  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10030")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10031")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10049")) logcontent = "[쿠폰소멸예정] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10050")) logcontent = "[프레스티지스페셜쿠폰] 수신자 : "+userdata.getUsername();
+		  				else if(template.equals("10051")) logcontent = "[프레스티지신제품선공개쿠폰] 수신자 : "+userdata.getUsername();
+		  				
+		  				Log log = new Log();
+		  				log.setUserid(request.getParameter("adminId"));
+		  				log.setUsername(request.getParameter("adminName"));
+		  				log.setLogkind("KAKAO");
+		  				log.setLogcontent(logcontent);
+		  				log.setLogdate(now);
+		  				logservice.saveLog(log);
+		  				nextView.addObject("sendyn", "Y");
+	  				}
   				}
   			} else if(request.getParameter("type").equals("grade")) {
   				String grade = request.getParameter("grade");
@@ -878,9 +880,11 @@ public class UserController {
   				}
   				
   				for(User u : userList) {
-					JSONObject result = KakaoService.post(template, user, "");
+					JSONObject result = KakaoService.post(template, u, "");
 					String status = (String) result.get("status");
-					if(status.equals("OK")) cnt ++;
+					if(status != null) {
+						if(status.equals("OK")) cnt ++;
+					}
   				}
   				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+cnt+"명 ";
   				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+cnt+"명 ";
@@ -904,31 +908,37 @@ public class UserController {
   		return nextView;
   	}
   	
-  //카카오FORM페이지 이동
-  	@GetMapping("/checkencoding")
-  	public void checkEncoding() throws UnsupportedEncodingException {
-  		String word ="인코딩 문제인가? 이클립스 문제인가? WAS문제 인가 그것이 알고 싶다....";
-  		System.out.println("utf-8 -> euc-kr        : " +new String(word.getBytes("utf-8"),"euc-kr"));
-  		System.out.println("utf-8 -> ksc5601       : " +new String(word.getBytes("utf-8"),"ksc5601"));
-  		System.out.println("utf-8 -> x-windows-949 : " +new String(word.getBytes("utf-8"),"x-windows-949"));
-  		System.out.println("utf-8 -> iso-8859-1    : " +new String(word.getBytes("utf-8"),"iso-8859-1"));
-  		System.out.println("iso-8859-1 -> euc-kr        : " +new String(word.getBytes("iso-8859-1"),"euc-kr"));
-  		System.out.println("iso-8859-1 -> ksc5601       : " +new String(word.getBytes("iso-8859-1"),"ksc5601"));
-  		System.out.println("iso-8859-1 -> x-windows-949 : " +new String(word.getBytes("iso-8859-1"),"x-windows-949"));
-  		System.out.println("iso-8859-1 -> utf-8         : " +new String(word.getBytes("iso-8859-1"),"utf-8"));
-  		System.out.println("euc-kr -> utf-8         : " +new String(word.getBytes("euc-kr"),"utf-8"));
-  		System.out.println("euc-kr -> ksc5601       : " +new String(word.getBytes("euc-kr"),"ksc5601"));
-  		System.out.println("euc-kr -> x-windows-949 : " +new String(word.getBytes("euc-kr"),"x-windows-949"));
-  		System.out.println("euc-kr -> iso-8859-1    : " +new String(word.getBytes("euc-kr"),"iso-8859-1"));
-  		System.out.println("ksc5601 -> euc-kr        : " +new String(word.getBytes("ksc5601"),"euc-kr"));
-  		System.out.println("ksc5601 -> utf-8         : " +new String(word.getBytes("ksc5601"),"utf-8"));
-  		System.out.println("ksc5601 -> x-windows-949 : " +new String(word.getBytes("ksc5601"),"x-windows-949"));
-  		System.out.println("ksc5601 -> iso-8859-1    : " +new String(word.getBytes("ksc5601"),"iso-8859-1"));
-  		System.out.println("x-windows-949 -> euc-kr     : " +new String(word.getBytes("x-windows-949"),"euc-kr"));
-  		System.out.println("x-windows-949 -> utf-8      : " +new String(word.getBytes("x-windows-949"),"utf-8"));
-  		System.out.println("x-windows-949 -> ksc5601    : " +new String(word.getBytes("x-windows-949"),"ksc5601"));
-  		System.out.println("x-windows-949 -> iso-8859-1 : " +new String(word.getBytes("x-windows-949"),"iso-8859-1"));
-  	}
+	@GetMapping("/checkencoding")
+	public void checkEncoding() throws UnsupportedEncodingException {
+		String word ="인코딩 문제인가? 이클립스 문제인가? WAS문제 인가 그것이 알고 싶다....";
+		System.out.println("utf-8 -> euc-kr        : " +new String(word.getBytes("utf-8"),"euc-kr"));
+		System.out.println("utf-8 -> ksc5601       : " +new String(word.getBytes("utf-8"),"ksc5601"));
+		System.out.println("utf-8 -> x-windows-949 : " +new String(word.getBytes("utf-8"),"x-windows-949"));
+		System.out.println("utf-8 -> iso-8859-1    : " +new String(word.getBytes("utf-8"),"iso-8859-1"));
+		System.out.println("iso-8859-1 -> euc-kr        : " +new String(word.getBytes("iso-8859-1"),"euc-kr"));
+		System.out.println("iso-8859-1 -> ksc5601       : " +new String(word.getBytes("iso-8859-1"),"ksc5601"));
+		System.out.println("iso-8859-1 -> x-windows-949 : " +new String(word.getBytes("iso-8859-1"),"x-windows-949"));
+		System.out.println("iso-8859-1 -> utf-8         : " +new String(word.getBytes("iso-8859-1"),"utf-8"));
+		System.out.println("euc-kr -> utf-8         : " +new String(word.getBytes("euc-kr"),"utf-8"));
+		System.out.println("euc-kr -> ksc5601       : " +new String(word.getBytes("euc-kr"),"ksc5601"));
+		System.out.println("euc-kr -> x-windows-949 : " +new String(word.getBytes("euc-kr"),"x-windows-949"));
+		System.out.println("euc-kr -> iso-8859-1    : " +new String(word.getBytes("euc-kr"),"iso-8859-1"));
+		System.out.println("ksc5601 -> euc-kr        : " +new String(word.getBytes("ksc5601"),"euc-kr"));
+		System.out.println("ksc5601 -> utf-8         : " +new String(word.getBytes("ksc5601"),"utf-8"));
+		System.out.println("ksc5601 -> x-windows-949 : " +new String(word.getBytes("ksc5601"),"x-windows-949"));
+		System.out.println("ksc5601 -> iso-8859-1    : " +new String(word.getBytes("ksc5601"),"iso-8859-1"));
+		System.out.println("x-windows-949 -> euc-kr     : " +new String(word.getBytes("x-windows-949"),"euc-kr"));
+		System.out.println("x-windows-949 -> utf-8      : " +new String(word.getBytes("x-windows-949"),"utf-8"));
+		System.out.println("x-windows-949 -> ksc5601    : " +new String(word.getBytes("x-windows-949"),"ksc5601"));
+		System.out.println("x-windows-949 -> iso-8859-1 : " +new String(word.getBytes("x-windows-949"),"iso-8859-1"));
+	}
+	@GetMapping("/decimal")
+	public void decimal() {
+		BigDecimal a = new BigDecimal("10.1");
+		BigDecimal b = new BigDecimal("10.5");
+		System.out.println("a.compareTo(b) ====" + a.compareTo(b));
+		System.out.println("b.compareTo(a) ====" + b.compareTo(a));
+	}
   	
 }
 

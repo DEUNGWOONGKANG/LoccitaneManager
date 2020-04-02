@@ -3,7 +3,6 @@ package com.loccitane.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +43,6 @@ public class ExcelDownService {
 		List<CouponMember> couponMemList = new ArrayList<CouponMember>();
 		try {
 			Date now = new Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(now);
 			cal.add(Calendar.DATE, -1);

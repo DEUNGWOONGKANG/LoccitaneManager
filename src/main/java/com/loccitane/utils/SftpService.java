@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
 import org.springframework.stereotype.Service;
@@ -63,11 +61,6 @@ public class SftpService {
            
          // 채널을 FTP용 채널 객체로 개스팅
          chSftp = (ChannelSftp)ch;     
-         
-         Date now = new Date();
-         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-         String today = sdf.format(now);
-         
          String filePath = "C:/exceldata/";
          
          String userExcel = "user.xlsx";

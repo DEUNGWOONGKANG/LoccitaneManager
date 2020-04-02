@@ -2,6 +2,7 @@ package com.loccitane.schedule;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,18 +46,18 @@ public class Scheduler {
 	SftpService sftp;
 	
 	
-	@Scheduled(cron = "0 0 11 * * *")
+	@Scheduled(cron = "0 20 15 * * *")
 	//@Scheduled(cron = "0 * * * * *")
 	public void daySchedule() {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		String today = transFormat.format(now);
 		//마지막 구매일 1년 지난 사용자 휴면처리
-		dormant();
+		//dormant();
 		
 		//생일쿠폰 발행
-		birthdayCouponRunner();
-		if(today.equals("04-01")){
+		//birthdayCouponRunner();
+		if(today.equals("04-02")){
 			membershipInfo();
 		}
 				
@@ -68,7 +69,7 @@ public class Scheduler {
 			nowGradeAlarm();
 		}
 		//소멸예정쿠폰 알림 발송
-		deleteCouponAlarm();
+		//deleteCouponAlarm();
 	}
 	
 	public void run() throws IOException {
@@ -88,7 +89,9 @@ public class Scheduler {
 			if(user.getPhone().matches(regExp)) {
 				JSONObject result = KakaoService.post("10052", user, "");
 				String status = (String) result.get("status");
-				if(status.equals("OK")) cnt ++;
+				if(status != null) {
+					if(status.equals("OK")) cnt ++;
+				}
 			}
 		}
 		Date now = new Date();
@@ -135,9 +138,11 @@ public class Scheduler {
 				if(!dupcheck) {
 					JSONObject result = KakaoService.post("10049", user, alarmDate);
 					String status = (String) result.get("status");
-					if(status.equals("OK")) {
-						dupcheckList.add(user);
-						cnt ++;
+					if(status != null) {
+						if(status.equals("OK")) {
+							dupcheckList.add(user);
+							cnt ++;
+						}
 					}
 				}
 			}
@@ -184,7 +189,8 @@ public class Scheduler {
 				CouponMember cp = new CouponMember();
 				//등급산정 (한번에 여러단계를 올라갈 수 있으니 등급 산정하기)
 				for(Grade grade : grades) {
-					if(user.getTotalbuy() >= Integer.parseInt(grade.getMinimum())) {
+					BigDecimal minimum = new BigDecimal(grade.getMinimum());
+					if(user.getTotalbuy().compareTo(minimum) == 0 || user.getTotalbuy().compareTo(minimum) == 1) {
 						user.setGrade(grade.getName());
 					}
 				}
@@ -219,7 +225,9 @@ public class Scheduler {
 				//카카오알림톡 전송
 				JSONObject result = KakaoService.post("10028", user, "");
 				String status = (String) result.get("status");
-				if(status.equals("OK")) cnt ++;
+				if(status != null) {
+					if(status.equals("OK")) cnt ++;
+				}
 			}
 			if(cnt > 0) {
 				Log log = new Log();
@@ -272,7 +280,9 @@ public class Scheduler {
 				//카카오알림톡 전송
 				JSONObject result = KakaoService.lmsPost(birthdayList.get(i));
 				String status = (String) result.get("status");
-				if(status.equals("MMS_0000")) cnt ++;
+				if(status != null) {
+					if(status.equals("MMS_0000")) cnt ++;
+				}
 			}
 		}
 		if(cnt > 0) {
@@ -313,7 +323,9 @@ public class Scheduler {
 			if(user.getPhone().matches(regExp)) {
 				JSONObject result = KakaoService.post("10027", user, "");
 				String status = (String) result.get("status");
-				if(status.equals("OK")) cnt ++;
+				if(status != null) {
+					if(status.equals("OK")) cnt ++;
+				}
 			}
 		}
 		Date now = new Date();

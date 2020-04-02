@@ -5,18 +5,37 @@
       <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
     </encoder>
   </appender>
-  
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>C:\kakaologs\kakao-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!-- <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern> -->
+            <pattern>- %msg%n</pattern>
+        </encoder>
+    </appender>
   <logger name="jdbc" level="OFF"/>
   
   <logger name="jdbc.sqlonly" level="OFF"/>
-  <logger name="jdbc.sqltiming" level="DEBUG"/>
+  <!-- 개발에서는 DEBUG로 -->
+  <!-- <logger name="jdbc.sqltiming" level="DEBUG"/>-->
+  <logger name="jdbc.sqltiming" level="INFO"/>
   <logger name="jdbc.audit" level="OFF"/>
   <logger name="jdbc.resultset" level="OFF"/>
   <logger name="jdbc.resultsettable" level="OFF"/>
   <logger name="jdbc.connection" level="OFF"/>
   
+  <logger name="com.loccitane.utils.KakaoService" level="info" additivity="false">
+       <appender-ref ref="STDOUT" />
+       <appender-ref ref="ROLLING" />
+  </logger>
   <root level="INFO">
-    <appender-ref ref="STDOUT" />
+       <appender-ref ref="STDOUT" />
   </root>
   
 </configuration>

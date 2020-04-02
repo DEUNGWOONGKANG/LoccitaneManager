@@ -5,11 +5,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.loccitane.user.domain.User;
@@ -19,6 +23,7 @@ public class KakaoService {
 	
 	@SuppressWarnings("unchecked")
 	public static JSONObject post(String templateId, User user, String alarmDate){
+		Logger logger = LoggerFactory.getLogger(KakaoService.class);
 		JSONObject result = new JSONObject();
 		try {
 			//개발 URL
@@ -134,6 +139,18 @@ public class KakaoService {
 			}
 		} catch (Exception e){
 			System.err.println(e.toString());
+		}
+		String status = (String) result.get("status");
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(status != null) {
+			if(status.equals("OK")) {
+				logger.info(sdf.format(now)+" [INFO]발송 성공:::"+ user.getUsername() +"["+user.getPhone() + "]  STATUS::: " + status + "|| TEMPLATE:::"+templateId);
+			}else {
+				logger.info(sdf.format(now)+" [ERROR]발송  실패:::"+ user.getUsername() +"["+user.getPhone() + "]  STATUS::: " + status + "|| TEMPLATE:::"+templateId);
+			}
+		}else {
+			logger.info(sdf.format(now)+" [ERROR]발송 실패:::" + user.getPhone() + " || STATUS::: NULL || TEMPLATE:::"+templateId);
 		}
 		return result;
 	}

@@ -1,6 +1,7 @@
 package com.loccitane.user.service;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.log.domain.Log;
+import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
+import com.loccitane.log.service.RefundLogService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ApiService;
@@ -40,6 +43,9 @@ public class UserService {
 	
 	@Autowired
 	ApiService api;
+	
+	@Autowired
+	RefundLogService refund;
 	
 	private static int totalRowCount = 0; // 전체 행 개수
     private static int updateRowCount = 0; // 성공한 데이터 개수
@@ -185,7 +191,6 @@ public class UserService {
 		
 		if(excelContent.size() > 0) {
 			setCurrentState("B");
-		    List<User> saveList = new ArrayList<User>();
 		    Calendar cal = Calendar.getInstance();
 		    cal.setTime(now);
 		    cal.add(Calendar.YEAR,  -1);
@@ -194,6 +199,7 @@ public class UserService {
 		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
 		    	//boolean newUser = false;
+		    	BigDecimal totalbuy = new BigDecimal(article.get("F"));
 		    	if(check == null) {
 		    		//DB에 사용자가 없는 경우 신규 생성
 		    		check = new User();
@@ -202,7 +208,7 @@ public class UserService {
 		    		check.setBirthday(article.get("C"));
 		    		check.setPhone(article.get("D"));
 		    		check.setLastpurchase(transFormat.parse(article.get("E")));
-		    		check.setTotalbuy(Integer.parseInt(article.get("F")));
+		    		check.setTotalbuy(totalbuy);
 		    		check.setAlarmyn(article.get("G"));
 		    		check.setGrade("REGULAR");
 		    		check.setStartgrade("REGULAR");
@@ -247,8 +253,8 @@ public class UserService {
 			    			dataAdd = true;
 			    		}
 		    		}
-		    		if(check.getTotalbuy() != Integer.parseInt(article.get("F"))) {
-		    			if(check.getTotalbuy() < Integer.parseInt(article.get("F"))){
+		    		if(check.getTotalbuy() != totalbuy) {
+		    			if(totalbuy.compareTo(check.getTotalbuy()) == 1){
 		    				CouponMember cp = new CouponMember();
 		    				CouponMember cp2 = new CouponMember();
 		    				CouponMember sp = new CouponMember();
@@ -333,7 +339,9 @@ public class UserService {
 								cpservice.giveCoupon(sp, "system", sp.getReason());
 								JSONObject result = KakaoService.post("10050", check, "");
     							String status = (String) result.get("status");
-    							if(status.equals("OK")) specialcnt ++;
+    							if(status != null) {
+    								if(status.equals("OK")) specialcnt ++;
+    							}
 								check.setSpecial(now);
 		    				}
 		    				if(couponYn) {
@@ -342,17 +350,29 @@ public class UserService {
 		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
 		    							JSONObject result = KakaoService.post("10030", check, "");
 		    							String status = (String) result.get("status");
-		    							if(status.equals("OK")) cnt ++;
+		    							if(status != null) {
+		    								if(status.equals("OK")) cnt ++;
+		    							}
 		    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
 		    							JSONObject result = KakaoService.post("10031", check, "");
 		    							String status = (String) result.get("status");
-		    							if(status.equals("OK")) cnt ++;
+		    							if(status != null) {
+		    								if(status.equals("OK")) cnt ++;
+		    							}
 		    						}
 		    				}
 		    				
 		    				
+		    			}else if(totalbuy.compareTo(check.getTotalbuy()) == -1) {
+		    				RefundLog re = new RefundLog();
+		    				re.setUsercode(check.getUsercode());
+		    				re.setPasttotalbuy(check.getTotalbuy());
+		    				re.setNowtotalbuy(totalbuy);
+		    				re.setPastupdate(check.getLastupdate());
+		    				re.setLastupdate(now);
+		    				refund.saveLog(re);
 		    			}
-		    			check.setTotalbuy(Integer.parseInt(article.get("F")));
+		    			check.setTotalbuy(totalbuy);
 		    			dataAdd = true;
 		    		}
 		    		if(!check.getAlarmyn().equals(article.get("G"))) {
@@ -417,6 +437,7 @@ public class UserService {
 		grades.add("LOYAL");
 		grades.add("PRESTIGE");
 		List<User> userList = userRepo.findAllByGradeInAndBirthdayIsNotNullAndStatus(grades, "1");
+		//List<User> userList = userRepo.findAll();
 		List<User> birthdayUser = new ArrayList<User>();
 		Calendar now = Calendar.getInstance();
 		// 15일 후 생일 체크
@@ -430,7 +451,7 @@ public class UserService {
 				birthdayUser.add(userList.get(i));
 			}
 		}
-		return birthdayUser;
+		return userList;
 	}
 	
 	public void saveAll(List<User> users) {

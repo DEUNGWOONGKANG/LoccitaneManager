@@ -3,16 +3,12 @@ package com.loccitane.utils;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.user.domain.User;
@@ -22,13 +18,18 @@ public class ApiService {
 	public void userAddCall(User user) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
-	    
+	    String phone = "";
+	    if(user.getPhone().length() > 3) {
+	    	phone = user.getPhone().substring(user.getPhone().length()-4, user.getPhone().length());
+	    }else{
+	    	phone = user.getPhone();
+	    }
 	    URI uri = UriComponentsBuilder.newInstance()
 	    		.scheme("https")
 	    		.host("myprovence.shop")
 	    		.path("/api/user/add")
 	    		.queryParam("usercode", user.getUsercode())
-	    		.queryParam("phone", user.getPhone().substring(user.getPhone().length()-4, user.getPhone().length()))
+	    		.queryParam("phone", phone)
 	    		.build()
 	    		.encode()
 	    		.toUri();
@@ -42,12 +43,18 @@ public class ApiService {
 	public void userModifyCall(User user) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+	    String phone = "";
+	    if(user.getPhone().length() > 3) {
+	    	phone = user.getPhone().substring(user.getPhone().length()-4, user.getPhone().length());
+	    }else{
+	    	phone = user.getPhone();
+	    }
 	    URI uri = UriComponentsBuilder.newInstance()
 	    		.scheme("https")
 	    		.host("myprovence.shop")
 	    		.path("/api/user/modify")
 	    		.queryParam("usercode", user.getUsercode())
-	    		.queryParam("phone", user.getPhone().substring(user.getPhone().length()-4, user.getPhone().length()))
+	    		.queryParam("phone", phone)
 	    		.queryParam("status", user.getStatus())
 	    		.build()
 	    		.encode()

@@ -1,5 +1,6 @@
 package com.loccitane.user.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ public class User {
 	private Date lastpurchase;
 	
 	@Column(name = "totalbuy")
-	private int totalbuy;
+	private BigDecimal totalbuy;
 	
 	@Column(name = "lastupdate")
 	private Date lastupdate;
@@ -153,11 +154,11 @@ public class User {
 		this.lastupdate = lastupdate;
 	}
 
-	public int getTotalbuy() {
+	public BigDecimal getTotalbuy() {
 		return totalbuy;
 	}
 
-	public void setTotalbuy(int totalbuy) {
+	public void setTotalbuy(BigDecimal totalbuy) {
 		this.totalbuy = totalbuy;
 	}
 
