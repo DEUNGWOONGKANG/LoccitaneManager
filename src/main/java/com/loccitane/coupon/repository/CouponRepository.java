@@ -24,17 +24,17 @@ public interface CouponRepository extends JpaRepository<Coupon, String>{
 	List<Coupon> findAllByUsedynAndUsemanagerAndUsedateBetween(String string, String id, Date startDate, Date endDate);
 	List<Coupon> findAllByUsedynAndUsemanagerAndUsedateBetweenAndGrade(String string, String id, Date startDate,
 			Date endDate, String grade);
-	List<Coupon> findAllByUsedynAndUsemanagerAndCreatedateBetween(String string, String id, Date startDate,
+	List<Coupon> findAllByUsemanagerAndCreatedateBetween(String id, Date startDate,
 			Date endDate);
-	List<Coupon> findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGrade(String string, String id, Date startDate,
+	List<Coupon> findAllByUsemanagerAndCreatedateBetweenAndGrade(String id, Date startDate,
 			Date endDate, String grade);
 	List<Coupon> findAllByUsedynAndUsemanagerAndUsedateBetweenAndCpcode(String string, String id, Date startDate,
 			Date endDate, String couponCode);
 	List<Coupon> findAllByUsedynAndUsemanagerAndUsedateBetweenAndGradeAndCpcode(String string, String id,
 			Date startDate, Date endDate, String grade, String couponCode);
-	List<Coupon> findAllByUsedynAndUsemanagerAndCreatedateBetweenAndCpcode(String string, String id, Date startDate,
+	List<Coupon> findAllByUsemanagerAndCreatedateBetweenAndCpcode(String id, Date startDate,
 			Date endDate, String couponCode);
-	List<Coupon> findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGradeAndCpcode(String string, String id,
+	List<Coupon> findAllByUsemanagerAndCreatedateBetweenAndGradeAndCpcode(String id,
 			Date startDate, Date endDate, String grade, String couponCode);
 	List<Coupon> findAllByUsedynAndUsedateBetween(String string, Date startDate, Date endDate);
 	List<Coupon> findAllByUsedynAndUsedateBetweenAndCpcode(String string, Date startDate, Date endDate,
@@ -42,11 +42,10 @@ public interface CouponRepository extends JpaRepository<Coupon, String>{
 	List<Coupon> findAllByUsedynAndUsedateBetweenAndGrade(String string, Date startDate, Date endDate, String grade);
 	List<Coupon> findAllByUsedynAndUsedateBetweenAndGradeAndCpcode(String string, Date startDate, Date endDate,
 			String grade, String couponCode);
-	List<Coupon> findAllByUsedynAndCreatedateBetween(String string, Date startDate, Date endDate);
-	List<Coupon> findAllByUsedynAndCreatedateBetweenAndCpcode(String string, Date startDate, Date endDate,
+	List<Coupon> findAllByCreatedateBetween(Date startDate, Date endDate);
+	List<Coupon> findAllByCreatedateBetweenAndCpcode(Date startDate, Date endDate,
 			String couponCode);
-	List<Coupon> findAllByUsedynAndCreatedateBetweenAndGrade(String string, Date startDate, Date endDate, String grade);
-	List<Coupon> findAllByUsedynAndCreatedateBetweenAndGradeAndCpcode(String string, Date startDate, Date endDate,
-			String grade, String couponCode);
+	List<Coupon> findAllByCreatedateBetweenAndGrade(Date startDate, Date endDate, String grade);
+	List<Coupon> findAllByCreatedateBetweenAndGradeAndCpcode(Date startDate, Date endDate, String grade, String couponCode);
 	List<Coupon> findAllByUsedyn(String string);
 }

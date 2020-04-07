@@ -23,6 +23,8 @@ import com.loccitane.log.domain.Log;
 import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
 import com.loccitane.log.service.RefundLogService;
+import com.loccitane.store.domain.Store;
+import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ApiService;
@@ -40,6 +42,9 @@ public class UserService {
 	
 	@Autowired
 	CouponService cpservice;
+	
+	@Autowired
+	StoreService storeservice;
 	
 	@Autowired
 	ApiService api;
@@ -179,7 +184,7 @@ public class UserService {
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 		ExcelReadOption excelReadOption = new ExcelReadOption();
 		excelReadOption.setFilePath(destFile.getAbsolutePath());
-		excelReadOption.setOutputColumns("A","B","C","D","E","F","G");
+		excelReadOption.setOutputColumns("A","B","C","D","E","F","G","H");
 		excelReadOption.setStartRow(2);
 		Date now = new Date();
 		int cnt = 0;
@@ -210,6 +215,7 @@ public class UserService {
 		    		check.setLastpurchase(transFormat.parse(article.get("E")));
 		    		check.setTotalbuy(totalbuy);
 		    		check.setAlarmyn(article.get("G"));
+		    		check.setHomestore(article.get("H"));
 		    		check.setGrade("REGULAR");
 		    		check.setStartgrade("REGULAR");
 		    		if(check.getLastpurchase().before(cal.getTime())) {
@@ -223,6 +229,12 @@ public class UserService {
 		    		insertRowCount++;
 		    	}else{
 		    		boolean apiCall = false;
+		    		// 홈스토어 데이터를 가져와야 하므로 해당 컬럼부터 set
+		    		if(!check.getHomestore().equals(article.get("H"))) {
+		    			check.setHomestore(article.get("H"));
+		    			dataAdd = true;
+		    		}
+		    		Store homestore = storeservice.getHomestore(check.getHomestore());
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
 		    		// 변경된 사항이 없을경우 UPDATE 하지 않음.
 		    		if(!check.getUsercode().equals(article.get("A"))) {
@@ -331,13 +343,13 @@ public class UserService {
 			    				sp.setReason("프리스티지 스페셜");
 			    				
 			    				sp.setCpcode("LKRR53170E");
-		    					//종료날짜는 180일더한날짜로 세팅
-			    				ca.add(Calendar.DATE, 180);
+		    					//종료날짜는 90일더한날짜로 세팅
+			    				ca.add(Calendar.DATE, 90);
 								sp.setEnddate(ca.getTime());
 								sp.setUsercode(check.getUsercode());
 								
 								cpservice.giveCoupon(sp, "system", sp.getReason());
-								JSONObject result = KakaoService.post("10050", check, "");
+								JSONObject result = KakaoService.post("10050", check, "", homestore);
     							String status = (String) result.get("status");
     							if(status != null) {
     								if(status.equals("OK")) specialcnt ++;
@@ -348,13 +360,13 @@ public class UserService {
 		    					cpservice.giveCoupon(cp, "system", cp.getReason());
 		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
 		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
-		    							JSONObject result = KakaoService.post("10030", check, "");
+		    							JSONObject result = KakaoService.post("10030", check, "", homestore);
 		    							String status = (String) result.get("status");
 		    							if(status != null) {
 		    								if(status.equals("OK")) cnt ++;
 		    							}
 		    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
-		    							JSONObject result = KakaoService.post("10031", check, "");
+		    							JSONObject result = KakaoService.post("10031", check, "", homestore);
 		    							String status = (String) result.get("status");
 		    							if(status != null) {
 		    								if(status.equals("OK")) cnt ++;
@@ -366,6 +378,7 @@ public class UserService {
 		    			}else if(totalbuy.compareTo(check.getTotalbuy()) == -1) {
 		    				RefundLog re = new RefundLog();
 		    				re.setUsercode(check.getUsercode());
+		    				re.setUsername(check.getUsername());
 		    				re.setPasttotalbuy(check.getTotalbuy());
 		    				re.setNowtotalbuy(totalbuy);
 		    				re.setPastupdate(check.getLastupdate());
@@ -443,6 +456,10 @@ public class UserService {
 		// 15일 후 생일 체크
 		now.add(Calendar.DAY_OF_MONTH,+15);
 		Date birth = now.getTime();
+//		now.add(Calendar.DAY_OF_MONTH,-1);
+//		Date birth2 = now.getTime();
+//		String birthcheck2 = transFormat.format(birth2);
+		
 		String birthcheck = transFormat.format(birth);
 		for(int i=0; i<userList.size(); i++) {
 			String userBirthday = userList.get(i).getBirthday();
@@ -450,8 +467,11 @@ public class UserService {
 			if(userBirthday.equals(birthcheck)) {
 				birthdayUser.add(userList.get(i));
 			}
+//			if(userBirthday.equals(birthcheck) || userBirthday.equals(birthcheck2)) {
+//				birthdayUser.add(userList.get(i));
+//			}
 		}
-		return userList;
+		return birthdayUser;
 	}
 	
 	public void saveAll(List<User> users) {

@@ -13,8 +13,9 @@
 <script type="text/javascript">
 function useCoupon(seq, usercode){
 	var result = confirm("해당 쿠폰을 사용처리 하시겠습니까?");
+	var phone = document.getElementById("phone").value;
 	if(result){
-		location.href = "/store/couponuse/"+usercode+"/"+seq;
+		location.href = "/store/couponuse/"+usercode+"/"+seq + "/"+phone;
 	}
 	
 }
@@ -71,12 +72,15 @@ function useCoupon(seq, usercode){
 			<h1>
 			${fn:substring(userData.username, 0, 1)}*${fn:substring(userData.username, 2, length)} 
 			/
-			<c:if test="${plength+0 > 10}">
-				${fn:substring(userData.phone, 0, 3)}-****-${fn:substring(userData.phone, 7, plength)}
+			<c:if test="${plength+0 < 5 && user.phone+0 == 0}">
+			0
 			</c:if>
-			<c:if test="${plength+0 < 5}">
-				${fn:substring(userData.phone, 0, 1)}**${fn:substring(userData.phone, 3, plength)}
-			</c:if> 
+			<c:if test="${plength+0 < 5 && user.phone+0 > 0}">
+			${user.phone }
+			</c:if>
+			<c:if test="${plength+0 >= 5 }">
+				${fn:substring(user.phone, 0, 3)}-****-${fn:substring(user.phone, plength-4, plength)}
+			</c:if>
 			/
 			 ${userData.grade}
 			</h1> 
@@ -120,7 +124,7 @@ function useCoupon(seq, usercode){
 					<c:if test="${coupon.usedyn == 'N' && coupon.enddate > today && coupon.startdate < today}">
 						<input type="button" class="button-yellow-small" value="사용처리" onclick="useCoupon('${coupon.seq}','${coupon.usercode}')" >
 					</c:if>
-					<c:if test="${coupon.usedyn == 'Y' || coupon.enddate < today || coupon.startdate > today}">
+					<c:if test="${coupon.usedyn == 'Y' || coupon.usedyn == 'D' || coupon.enddate < today || coupon.startdate > today}">
 						<input type="button" class="button-gray-small" value="사용불가" disabled="disabled" >
 					</c:if>
 				</td>

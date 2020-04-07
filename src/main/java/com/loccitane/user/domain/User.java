@@ -66,6 +66,9 @@ public class User {
 	@Column(name = "special")
 	private Date special;
 	
+	@Column(name = "homestore")
+	private String homestore;
+	
 	public Date getSpecial() {
 		return special;
 	}
@@ -200,6 +203,14 @@ public class User {
 
 	public void setStartgrade(String startgrade) {
 		this.startgrade = startgrade;
+	}
+
+	public String getHomestore() {
+		return homestore;
+	}
+
+	public void setHomestore(String homestore) {
+		this.homestore = homestore;
 	}
 	
 }

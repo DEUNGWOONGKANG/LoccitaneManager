@@ -54,23 +54,24 @@ public class CouponController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
     }
 
-	
-	@GetMapping("/store/couponlist/{usercode}") // 고객에 대한 쿠폰조회
-	public ModelAndView getUserCoupon(@PathVariable("usercode") String usercode){
+	// 고객에 대한 쿠폰조회
+	@GetMapping("/store/couponlist/{usercode}/{phone}")
+	public ModelAndView getUserCoupon(@PathVariable("usercode") String usercode, @PathVariable("phone") String phone){
 		User userData = service.userCheck(usercode); // 서비스에서 요청에 해당하는 처리를 한다.
 		ModelAndView nextView = new ModelAndView("store/storeManagerCouponList");
 		
 		List<Coupon> couponList = cpservice.getUserCoupon(userData.getUsercode()); // 해당 사용자의 쿠폰리스트 조회
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("couponList", couponList); //쿠폰리스트
-		nextView.addObject("searchPhone", userData.getPhone().substring(userData.getPhone().length()-4, userData.getPhone().length())); //사용자데이터
+		nextView.addObject("searchPhone", phone); //사용자데이터
 		
 		return nextView;
 	}
 	
-	@GetMapping("/store/couponuse/{usercode}/{cptmseq}") // 쿠폰사용처리
+	// 쿠폰사용처리
+	@GetMapping("/store/couponuse/{usercode}/{cptmseq}/{phone}") 
 	public ModelAndView couponUse(@PathVariable("usercode") String usercode
-			, @PathVariable("cptmseq") int seq, HttpServletRequest request) throws Exception{
+			, @PathVariable("cptmseq") int seq, @PathVariable("phone") String phone, HttpServletRequest request) throws Exception{
 		//세션에서 관리자 정보 가져오기
 		HttpSession httpSession = request.getSession(true);
 		Store loginUser = (Store) httpSession.getAttribute("loginUser");
@@ -80,7 +81,7 @@ public class CouponController {
 		}else{
 			cpservice.useCoupon(usercode, seq, loginUser);
 			
-			nextView = getUserCoupon(usercode);
+			nextView = getUserCoupon(usercode, phone);
 			nextView.addObject("update", "Y"); //업데이트 여부
 		}
 		return nextView;
@@ -257,6 +258,31 @@ public class CouponController {
 		return nextView;
 	}
 	
+	//쿠폰삭제
+	@PostMapping("/super/coupondelete") 
+	public ModelAndView couponDelete(CouponMember cptm, HttpServletRequest request){
+		HttpSession httpSession = request.getSession(true);
+		Store loginUser = (Store) httpSession.getAttribute("loginUser");
+		CouponMember cm = cpservice.getCp(cptm.getCptmseq());
+		//쿠폰삭제 => DB삭제처리가 아닌 useyn을 D 로 바꿔준다.
+		cm.setUseyn("D");
+		cm.setUsemanager(loginUser.getId());
+		Date now = new Date();
+		cm.setUsedate(now);
+		cpservice.cmSave(cm);
+		apiservice.coupontomemberModifyCall(cm);
+		
+		User userData = service.userCheck(cptm.getUsercode());
+		List<Grade> gradeList = grservice.getGradeUse();
+		List<Coupon> couponList = cpservice.getUserCoupon(cptm.getUsercode()); // 해당 사용자의 쿠폰리스트 조회
+		
+		ModelAndView nextView = new ModelAndView("super/superManagerUserInfo");
+		nextView.addObject("userData", userData);
+		nextView.addObject("gradeList", gradeList);
+		nextView.addObject("couponList", couponList);
+		return nextView;
+	}
+	//프로세스 변경으로 인해 주석처리
 	//쿠폰 발행 개별승인
 //	@RequestMapping("/super/approval/{seq}") 
 //	public ModelAndView couponApproval(@PathVariable("seq") int seq, HttpServletRequest request, Pageable pageable){ 

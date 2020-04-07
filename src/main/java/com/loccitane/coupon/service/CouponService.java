@@ -61,7 +61,7 @@ public class CouponService {
 	
 	//쿠폰 사용처리
 	public void useCoupon(String usercode, int seq, Store loginUser) {
-		CouponMember coupon = couponMemRepo.findBySeq(seq);
+		CouponMember coupon = couponMemRepo.findByCptmseq(seq);
 		Date now  = new Date();
 		coupon.setUsedate(now);
 		coupon.setUseyn("Y");
@@ -358,29 +358,29 @@ public class CouponService {
 		if(id.equals("ALL")) {
 			if(grade.equals("ALL")) {
 				if(couponCode.equals("ALL")) {
-					return couponRepo.findAllByUsedynAndCreatedateBetween("Y", startDate, endDate);
+					return couponRepo.findAllByCreatedateBetween(startDate, endDate);
 				}else {
-					return couponRepo.findAllByUsedynAndCreatedateBetweenAndCpcode("Y", startDate, endDate, couponCode);
+					return couponRepo.findAllByCreatedateBetweenAndCpcode(startDate, endDate, couponCode);
 				}
 			}else {
 				if(couponCode.equals("ALL")) {
-					return couponRepo.findAllByUsedynAndCreatedateBetweenAndGrade("Y", startDate, endDate, grade);
+					return couponRepo.findAllByCreatedateBetweenAndGrade(startDate, endDate, grade);
 				}else {
-					return couponRepo.findAllByUsedynAndCreatedateBetweenAndGradeAndCpcode("Y", startDate, endDate, grade, couponCode);
+					return couponRepo.findAllByCreatedateBetweenAndGradeAndCpcode(startDate, endDate, grade, couponCode);
 				}
 			}
 		}else {
 			if(grade.equals("ALL")) {
 				if(couponCode.equals("ALL")) {
-					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetween("Y", id, startDate, endDate);
+					return couponRepo.findAllByUsemanagerAndCreatedateBetween(id, startDate, endDate);
 				}else {
-					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndCpcode("Y", id, startDate, endDate, couponCode);
+					return couponRepo.findAllByUsemanagerAndCreatedateBetweenAndCpcode(id, startDate, endDate, couponCode);
 				}
 			}else {
 				if(couponCode.equals("ALL")) {
-					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGrade("Y", id, startDate, endDate, grade);
+					return couponRepo.findAllByUsemanagerAndCreatedateBetweenAndGrade(id, startDate, endDate, grade);
 				}else {
-					return couponRepo.findAllByUsedynAndUsemanagerAndCreatedateBetweenAndGradeAndCpcode("Y", id, startDate, endDate, grade, couponCode);
+					return couponRepo.findAllByUsemanagerAndCreatedateBetweenAndGradeAndCpcode(id, startDate, endDate, grade, couponCode);
 				}
 			}
 		}
@@ -389,6 +389,14 @@ public class CouponService {
 	public List<Coupon> getUnuseCoupon() {
 		// TODO Auto-generated method stub
 		return couponRepo.findAllByUsedyn("N");
+	}
+
+	public CouponMember getCp(int seq) {
+		return couponMemRepo.findByCptmseq(seq);
+	}
+
+	public void cmSave(CouponMember cm) {
+		couponMemRepo.save(cm);
 	}
 
 }

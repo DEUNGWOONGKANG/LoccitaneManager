@@ -19,6 +19,7 @@
         <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
           <li class="sidebar-list-item" id="menu2_1"><a id="menu2_1a" href="/super/menu/menu2_1" class="sidebar-link text-muted pl-lg-5"><b>회원정보</b></a></li>
           <li class="sidebar-list-item" id="menu2_2"><a id="menu2_2a" href="/super/menu/menu2_2" class="sidebar-link text-muted pl-lg-5"><b>엑셀업로드</b></a></li>
+          <li class="sidebar-list-item" id="menu2_3"><a id="menu2_3a" href="/super/menu/menu2_3" class="sidebar-link text-muted pl-lg-5"><b>반품리스트</b></a></li>
         </ul> 
       </div>
     </li>
@@ -57,7 +58,7 @@ function active(num){
 		if(num == menu[i].id){
 			document.getElementById(menu[i].id+"a").className = document.getElementById(menu[i].id+"a").className + " active";
 			
-			if(num == "menu2_1" || num == "menu2_2"){
+			if(num == "menu2_1" || num == "menu2_2" || num == "menu2_3"){
 				document.getElementById("pages").className = document.getElementById("pages").className + " show";
 			}else if(num == "menu4_1" || num == "menu4_2" || num == "menu4_3" || num == "menu4_4"){
 				document.getElementById("pages2").className = document.getElementById("pages2").className + " show";

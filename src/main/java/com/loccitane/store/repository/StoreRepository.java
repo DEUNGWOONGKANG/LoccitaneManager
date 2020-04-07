@@ -16,4 +16,5 @@ public interface StoreRepository extends JpaRepository<Store, String> {
 	Page<Store> findAllByNameContainingAndCodeNot(String searchKeyword, String code, Pageable pageable);
 	Page<Store> findAllByTelContainingAndCodeNot(String searchKeyword, String code, Pageable pageable);
 	Store findBySeq(int seq);
+	Store findByCode(String homestore);
 }

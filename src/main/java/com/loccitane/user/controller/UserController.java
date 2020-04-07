@@ -43,7 +43,9 @@ import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
 import com.loccitane.grade.service.GradeService;
 import com.loccitane.log.domain.Log;
+import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
+import com.loccitane.log.service.RefundLogService;
 import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
@@ -68,6 +70,8 @@ public class UserController {
 	KakaoService kakaoservice;
 	@Autowired
 	ApiService apiservice;
+	@Autowired
+	RefundLogService refundservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -541,6 +545,8 @@ public class UserController {
   			nextView = superUserList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu2_2")){
   			nextView = superExcelUpload();
+  		}else if(loginUser != null && menu.equals("menu2_3")){
+  			nextView = superRefundList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu3")){
   			nextView = superStoreList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu4_1")){
@@ -566,7 +572,30 @@ public class UserController {
   		return nextView;
   	}
   	
-  	//슈퍼관리자 시간별 사용량
+  	//슈퍼관리자 사용자 리스트
+  	@RequestMapping("/super/refundlist") 
+  	public ModelAndView superRefundList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+  		ModelAndView nextView = new ModelAndView("super/superManagerRefundList");
+  		
+  		String searchKey = request.getParameter("searchKey");
+  		String searchKeyword = request.getParameter("searchKeyword");
+  		
+  		Page<RefundLog> list = refundservice.getLog(pageable, searchKey, searchKeyword);
+  		Paging paging = new Paging();
+  		if(list != null) {
+  			int curPage = pageable.getPageNumber();
+  			if(curPage == 0) curPage = curPage + 1;
+  			paging.Pagination((int)list.getTotalElements(), curPage);
+  		}
+  		nextView.addObject("refund", list);
+  		nextView.addObject("paging", paging); 
+  		nextView.addObject("searchKey", searchKey);
+  		nextView.addObject("searchKeyword", searchKeyword);
+  	
+  		return nextView;
+  	}
+
+	//슈퍼관리자 시간별 사용량
   	@RequestMapping("/super/resulttotime") 
   	private ModelAndView superResultToTime(HttpServletRequest request) throws ParseException {
   		ModelAndView nextView = new ModelAndView("super/superManagerResultToTime");
@@ -681,7 +710,7 @@ public class UserController {
 		return nextView;
 	}
   	
-  //슈퍼관리자 일자별 사용량
+  	//슈퍼관리자 일자별 사용량
   	@RequestMapping("/super/resulttocoupon") 
   	private ModelAndView superResultToCoupon(HttpServletRequest request) throws ParseException {
   		ModelAndView nextView = new ModelAndView("super/superManagerResultToCoupon");
@@ -831,7 +860,7 @@ public class UserController {
   	
   	//카카오 알림톡 발송
   	@RequestMapping(value= "/super/kakaosend", method = RequestMethod.POST) 
-  	public ModelAndView couponPublish(User user, HttpServletRequest request) throws Exception { 
+  	public ModelAndView kakaoSend(User user, HttpServletRequest request) throws Exception { 
   		ModelAndView nextView = null;
   		HttpSession httpSession = request.getSession(true);
   		Store loginUser = (Store) httpSession.getAttribute("loginUser");
@@ -847,7 +876,8 @@ public class UserController {
   			
   			if(request.getParameter("type").equals("user")) {
   				User userdata = service.userCheck(user.getUsercode());
-  				JSONObject result = KakaoService.post(template, userdata, "");
+  				Store homestore = storeservice.getHomestore(userdata.getHomestore());
+  				JSONObject result = KakaoService.post(template, userdata, "", homestore);
   				String status = (String) result.get("status");
   				if(status != null) {
 	  				if(status.equals("OK")) {
@@ -880,7 +910,8 @@ public class UserController {
   				}
   				
   				for(User u : userList) {
-					JSONObject result = KakaoService.post(template, u, "");
+  					Store homestore = storeservice.getHomestore(u.getHomestore());
+					JSONObject result = KakaoService.post(template, u, "", homestore);
 					String status = (String) result.get("status");
 					if(status != null) {
 						if(status.equals("OK")) cnt ++;

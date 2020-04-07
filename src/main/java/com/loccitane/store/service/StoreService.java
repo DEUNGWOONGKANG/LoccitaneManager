@@ -63,4 +63,8 @@ public class StoreService {
 		return storeRepo.findAll();
 	}
 
+	public Store getHomestore(String homestore) {
+		return storeRepo.findByCode(homestore);
+	}
+
 }

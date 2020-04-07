@@ -1,8 +1,10 @@
 package com.loccitane.log.service;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.loccitane.log.domain.RefundLog;
@@ -13,8 +15,22 @@ public class RefundLogService {
 	@Autowired
 	RefundLogRepository repo;
 	
-	public List<RefundLog> getLog(){
-		return repo.findAll();
+	public Page<RefundLog> getLog(Pageable pageable, String searchKey, String searchKeyword){
+		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
+        pageable = PageRequest.of(page, 10);
+        
+		Page<RefundLog> list = null;
+		if(searchKey == null) {
+			list = repo.findAll(pageable);
+		}else if(searchKey.equals("username")) {
+			list = repo.findAllByUsernameContaining(searchKeyword, pageable);
+		}else if(searchKey.equals("usercode")) {
+			list = repo.findAllByUsercodeContaining(searchKeyword,  pageable);
+		}else{
+			list = repo.findAll(pageable);
+		}
+		
+		return list;
 	}
 	
 	public void saveLog(RefundLog log) {

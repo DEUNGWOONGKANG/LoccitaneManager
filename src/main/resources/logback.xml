@@ -8,7 +8,21 @@
   <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>C:\kakaologs\kakao-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <fileNamePattern>C:\logs\kakao-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!-- <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern> -->
+            <pattern>- %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>C:\logs\LC-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
@@ -34,8 +48,9 @@
        <appender-ref ref="STDOUT" />
        <appender-ref ref="ROLLING" />
   </logger>
-  <root level="INFO">
+  <root level="ERROR">
        <appender-ref ref="STDOUT" />
+       <appender-ref ref="ERROR" />
   </root>
   
 </configuration>

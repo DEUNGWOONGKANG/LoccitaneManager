@@ -29,9 +29,10 @@ if("${giveyn}" == "Y"){
 }
 function check(){
 	var result = confirm("저장하시겠습니까?");
-	
+	var f = document.getElementById("formdata");
 	if(result){
-		document.getElementById("formdata").submit();
+		f.action = "/super/modifyuser";
+		f.submit();
 	}else{
 		return false;
 	}
@@ -42,6 +43,18 @@ function couponGive(){
 }
 function goback(){
 	location.href="/super/userlist";
+}
+function deleteCoupon(usercode, seq){
+	var result = confirm("삭제하시겠습니까?");
+	var f = document.getElementById("formdata");
+	if(result){
+		f.cptmseq.value = seq;
+		f.action = "/super/coupondelete";
+		f.submit();
+	}else{
+		return false;
+	}
+	
 }
 </script>
 </head>
@@ -54,6 +67,7 @@ function goback(){
       	<form id="formdata" action="/super/modifyuser" method="post" style="width:100%" onsubmit="return check()">
       	<input type="hidden" value="${userData.usercode}" name="usercode" id="usercode">
       	<input type="hidden" value="${userData.seq}" name="seq" id="seq">
+      	<input type="hidden" name="cptmseq" id="cptmseq">
       	<div style="width:100%">
 	      	<table class="userInfo">
 			  <tbody>
@@ -146,7 +160,14 @@ function goback(){
 							<fmt:formatDate value="${coupon.enddate}" pattern="YYYY-MM-dd"/></td>
 						<td style="text-align:center;">
 							<c:if test="${coupon.usedyn == 'Y'}">사용</c:if>
-							<c:if test="${coupon.usedyn == 'N'}">미사용</c:if>
+							<c:if test="${coupon.usedyn == 'D'}">삭제</c:if>
+							<c:if test="${coupon.usedyn == 'N'}">
+								미사용
+								<%-- <button type="button" class="btn btn-warning" onclick="deleteCoupon('${coupon.usercode}','${coupon.seq}')">삭제</button> --%>
+								<a onclick="deleteCoupon('${coupon.usercode}','${coupon.seq}')" style="color:RED;cursor:pointer;">
+								[삭제]
+								</a>
+							</c:if>
 						</td>
 						<td style="text-align:center;">${coupon.createuser}</td>
 						<td style="text-align:center;">${coupon.usedate}</td>

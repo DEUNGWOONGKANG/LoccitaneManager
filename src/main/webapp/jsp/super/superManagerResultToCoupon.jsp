@@ -109,22 +109,22 @@ $(document).ready(function(){
 			<tr>
 				<td>${num.count }</td>
 				<td>
-					${usecnt}
-					<c:set var="usetotal" value="${usetotal + usecnt}" />
-				</td>
-				<td>
 					${dayCreateCnt[num.index]}
 					<c:set var="createtotal" value="${createtotal + dayCreateCnt[num.index]}" />
+				</td>
+				<td>
+					${usecnt}
+					<c:set var="usetotal" value="${usetotal + usecnt}" />
 				</td>
 			</tr>
 			</c:forEach>
 			<tr>
 				<th>합계</th>
 				<th>
-					<c:out value="${usetotal }"></c:out>
+					<c:out value="${createtotal }"></c:out>
 				</th>
 				<th>
-					<c:out value="${createtotal }"></c:out>
+					<c:out value="${usetotal }"></c:out>
 				</th>
 			</tr>
 		  </tbody>

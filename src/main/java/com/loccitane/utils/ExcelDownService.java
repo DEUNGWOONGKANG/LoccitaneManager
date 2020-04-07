@@ -173,7 +173,7 @@ public class ExcelDownService {
 			        row = sheet.createRow(rowNo++);
 			        cell = row.createCell(0);
 			        cell.setCellStyle(bodyStyle);
-			        cell.setCellValue(data.getSeq());
+			        cell.setCellValue(data.getCptmseq());
 			        cell = row.createCell(1);
 			        cell.setCellStyle(bodyStyle);
 			        cell.setCellValue(data.getUsercode());

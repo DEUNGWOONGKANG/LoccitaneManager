@@ -21,6 +21,9 @@ public class RefundLog {
 	@Column(name = "usercode") 
 	private String usercode;
 	
+	@Column(name = "username") 
+	private String username;
+	
 	@Column(name = "pasttotalbuy")
 	private BigDecimal pasttotalbuy;
 	
@@ -79,6 +82,14 @@ public class RefundLog {
 
 	public void setLastupdate(Date lastupdate) {
 		this.lastupdate = lastupdate;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }

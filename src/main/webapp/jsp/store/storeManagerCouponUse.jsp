@@ -8,13 +8,7 @@
 <title></title>
 <script type="text/javascript">
 function check(){
-	var phone = document.getElementById("phone");
-	if(phone.value == "" || phone.value.length != 4){
-		alert("휴대폰 뒷 번호 4자리를 입력하세요");
-		return false;
-	}else{
-		document.getElementById("searchForm").submit();
-	}
+	document.getElementById("searchForm").submit();
 }
 </script>
 </head>

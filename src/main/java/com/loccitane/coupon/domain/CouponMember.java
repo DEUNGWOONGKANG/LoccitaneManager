@@ -20,7 +20,7 @@ public class CouponMember {
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "cptmseq") //대응하는 컬럼명 지정
-	private int seq;
+	private int cptmseq;
 	
 	@Column(name = "usercode") //대응하는 컬럼명 지정
 	private String usercode;
@@ -54,13 +54,14 @@ public class CouponMember {
 	
 	@Column(name = "reason")
 	private String reason;
+	
 
-	public int getSeq() {
-		return seq;
+	public int getCptmseq() {
+		return cptmseq;
 	}
 
-	public void setSeq(int seq) {
-		this.seq = seq;
+	public void setCptmseq(int cptmseq) {
+		this.cptmseq = cptmseq;
 	}
 
 	public String getUsercode() {

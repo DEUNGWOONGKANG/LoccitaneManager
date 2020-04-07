@@ -11,7 +11,7 @@ import com.loccitane.coupon.domain.CouponMember;
 //JpaRepository의 파라미터 인자에 <Coupon클래스와 , String를 설정>
 @Repository
 public interface CouponMemberRepository extends JpaRepository<CouponMember, String>{
-	CouponMember findBySeq(int seq);
+	CouponMember findByCptmseq(int seq);
 
 	List<CouponMember> findAllByCreatedateBetweenOrUsedateBetween(Date yesterday, Date now, Date yesterday2, Date now2);
 
