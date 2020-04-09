@@ -3,7 +3,6 @@ package com.loccitane.user.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,6 +45,8 @@ import com.loccitane.log.domain.Log;
 import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
 import com.loccitane.log.service.RefundLogService;
+import com.loccitane.send.domain.Send;
+import com.loccitane.send.service.SendService;
 import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
@@ -72,6 +73,8 @@ public class UserController {
 	ApiService apiservice;
 	@Autowired
 	RefundLogService refundservice;
+	@Autowired
+	SendService sendservice;
 	
 	@InitBinder
     protected void initBinder(WebDataBinder binder){
@@ -565,7 +568,9 @@ public class UserController {
   			nextView = superResultToCoupon(request);
   		}else if(loginUser != null && menu.equals("menu6")){
   			nextView = superGradeList();
-  		}else if(loginUser != null && menu.equals("menu7")){
+  		}else if(loginUser != null && menu.equals("menu7_1")){
+  			nextView = superSendList(request, pageable);
+  		}else if(loginUser != null && menu.equals("menu7_2")){
   			nextView = superKakaoList(request, pageable);
   		}
   		httpSession.setAttribute("menu", menu);
@@ -849,6 +854,26 @@ public class UserController {
   		return nextView;
   	}
   	
+  	//슈퍼관리자 카카오발송대기 리스트
+	@RequestMapping("/super/sendlist") 
+	public ModelAndView superSendList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+		ModelAndView nextView = new ModelAndView("super/superManagerSendList");
+		
+		Page<Send> sendList = sendservice.findAll(pageable);
+		int sendCount = sendList.getSize();
+		Paging paging = new Paging();
+		if(sendList != null) {
+			int curPage = pageable.getPageNumber();
+			if(curPage == 0) curPage = curPage + 1;
+			paging.Pagination((int)sendList.getTotalElements(), curPage);
+		}
+		nextView.addObject("sendList", sendList);
+		nextView.addObject("totalcount", sendCount);
+		nextView.addObject("paging", paging);
+	
+		return nextView;
+	}
+  	
   	//카카오FORM페이지 이동
   	@GetMapping("/super/kakaoform")
   	public ModelAndView storeAdd() {
@@ -867,109 +892,70 @@ public class UserController {
   		int cnt = 0;
   		String logcontent = "";
   		Date now = new Date();
-  		
+  		Calendar cal = Calendar.getInstance();
+  		cal.setTime(now);
+  		cal.add(Calendar.DAY_OF_MONTH, 7);
+  		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
   		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
   			nextView = new ModelAndView("logout");
   		}else{
   			nextView = new ModelAndView("super/superManagerKakaoSend");
   			String template = request.getParameter("template");
-  			
+  			String deletedate = "";
+			if(template.equals("10049")) {
+				deletedate = sdf.format(cal.getTime());
+			}
   			if(request.getParameter("type").equals("user")) {
   				User userdata = service.userCheck(user.getUsercode());
-  				Store homestore = storeservice.getHomestore(userdata.getHomestore());
-  				JSONObject result = KakaoService.post(template, userdata, "", homestore);
-  				String status = (String) result.get("status");
-  				if(status != null) {
-	  				if(status.equals("OK")) {
-		  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10030")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10031")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10049")) logcontent = "[쿠폰소멸예정] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10050")) logcontent = "[프레스티지스페셜쿠폰] 수신자 : "+userdata.getUsername();
-		  				else if(template.equals("10051")) logcontent = "[프레스티지신제품선공개쿠폰] 수신자 : "+userdata.getUsername();
-		  				
-		  				Log log = new Log();
-		  				log.setUserid(request.getParameter("adminId"));
-		  				log.setUsername(request.getParameter("adminName"));
-		  				log.setLogkind("KAKAO");
-		  				log.setLogcontent(logcontent);
-		  				log.setLogdate(now);
-		  				logservice.saveLog(log);
-		  				nextView.addObject("sendyn", "Y");
-	  				}
-  				}
+  				//Store homestore = storeservice.getHomestore(userdata.getHomestore());
+  				//JSONObject result = KakaoService.post(template, userdata, "", homestore);
+  				//String status = (String) result.get("status");
+  				Send send = new Send();
+				send.setCreatedate(now);
+				send.setDeletedate(deletedate);
+				send.setGrade(userdata.getGrade());
+				send.setHomestore(userdata.getHomestore());
+				send.setSendtype("KAKAO");
+				send.setTemplateid(template);
+				send.setUsercode(userdata.getUsercode());
+				send.setUsername(userdata.getUsername());
+				
+				sendservice.sendSave(send);
   			} else if(request.getParameter("type").equals("grade")) {
   				String grade = request.getParameter("grade");
-  				List<User> userList = null;
+  				List<User> userList = new ArrayList<User>();
+  				List<Send> sendList = new ArrayList<Send>();
   				//등급별 사용자 리스트 추출
   				if(grade.equals("ALL")) {
   					userList = service.findAll();
   				}else {
   					userList = service.getUserListByGrade(grade);
   				}
-  				
   				for(User u : userList) {
-  					Store homestore = storeservice.getHomestore(u.getHomestore());
-					JSONObject result = KakaoService.post(template, u, "", homestore);
-					String status = (String) result.get("status");
-					if(status != null) {
-						if(status.equals("OK")) cnt ++;
-					}
+  					Send send = new Send();
+  					send.setCreatedate(now);
+  					send.setDeletedate(deletedate);
+  					send.setGrade(u.getGrade());
+  					send.setHomestore(u.getHomestore());
+  					send.setSendtype("KAKAO");
+  					send.setTemplateid(template);
+  					send.setUsercode(u.getUsercode());
+  					send.setUsername(u.getUsername());
+  					
+  					sendList.add(send);
+  					//Store homestore = storeservice.getHomestore(u.getHomestore());
+					//JSONObject result = KakaoService.post(template, u, "", homestore);
+					//String status = (String) result.get("status");
+//					if(status != null) {
+//						if(status.equals("OK")) cnt ++;
+//					}
   				}
-  				if(template.equals("10027")) logcontent = "[현재등급안내] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10028")) logcontent = "[등급업안내] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10030")) logcontent = "[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10031")) logcontent = "[등급 첫 구매 감사 쿠폰] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10049")) logcontent = "[쿠폰소멸예정] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10050")) logcontent = "[프레스티지스페셜쿠폰] 수신자 : "+cnt+"명 ";
-  				else if(template.equals("10051")) logcontent = "[프레스티지신제품선공개쿠폰] 수신자 : "+cnt+"명 ";
-  				
-  				Log log = new Log();
-  				log.setUserid(request.getParameter("adminId"));
-  				log.setUsername(request.getParameter("adminName"));
-  				log.setLogkind("KAKAO");
-  				log.setLogcontent(logcontent);
-  				log.setLogdate(now);
-  				logservice.saveLog(log);
-  				nextView.addObject("sendyn", "Y");
+  				sendservice.sendSaveAll(sendList);
   			}
+  			nextView.addObject("sendyn", "Y");
   			
   		}
   		return nextView;
   	}
-  	
-	@GetMapping("/checkencoding")
-	public void checkEncoding() throws UnsupportedEncodingException {
-		String word ="인코딩 문제인가? 이클립스 문제인가? WAS문제 인가 그것이 알고 싶다....";
-		System.out.println("utf-8 -> euc-kr        : " +new String(word.getBytes("utf-8"),"euc-kr"));
-		System.out.println("utf-8 -> ksc5601       : " +new String(word.getBytes("utf-8"),"ksc5601"));
-		System.out.println("utf-8 -> x-windows-949 : " +new String(word.getBytes("utf-8"),"x-windows-949"));
-		System.out.println("utf-8 -> iso-8859-1    : " +new String(word.getBytes("utf-8"),"iso-8859-1"));
-		System.out.println("iso-8859-1 -> euc-kr        : " +new String(word.getBytes("iso-8859-1"),"euc-kr"));
-		System.out.println("iso-8859-1 -> ksc5601       : " +new String(word.getBytes("iso-8859-1"),"ksc5601"));
-		System.out.println("iso-8859-1 -> x-windows-949 : " +new String(word.getBytes("iso-8859-1"),"x-windows-949"));
-		System.out.println("iso-8859-1 -> utf-8         : " +new String(word.getBytes("iso-8859-1"),"utf-8"));
-		System.out.println("euc-kr -> utf-8         : " +new String(word.getBytes("euc-kr"),"utf-8"));
-		System.out.println("euc-kr -> ksc5601       : " +new String(word.getBytes("euc-kr"),"ksc5601"));
-		System.out.println("euc-kr -> x-windows-949 : " +new String(word.getBytes("euc-kr"),"x-windows-949"));
-		System.out.println("euc-kr -> iso-8859-1    : " +new String(word.getBytes("euc-kr"),"iso-8859-1"));
-		System.out.println("ksc5601 -> euc-kr        : " +new String(word.getBytes("ksc5601"),"euc-kr"));
-		System.out.println("ksc5601 -> utf-8         : " +new String(word.getBytes("ksc5601"),"utf-8"));
-		System.out.println("ksc5601 -> x-windows-949 : " +new String(word.getBytes("ksc5601"),"x-windows-949"));
-		System.out.println("ksc5601 -> iso-8859-1    : " +new String(word.getBytes("ksc5601"),"iso-8859-1"));
-		System.out.println("x-windows-949 -> euc-kr     : " +new String(word.getBytes("x-windows-949"),"euc-kr"));
-		System.out.println("x-windows-949 -> utf-8      : " +new String(word.getBytes("x-windows-949"),"utf-8"));
-		System.out.println("x-windows-949 -> ksc5601    : " +new String(word.getBytes("x-windows-949"),"ksc5601"));
-		System.out.println("x-windows-949 -> iso-8859-1 : " +new String(word.getBytes("x-windows-949"),"iso-8859-1"));
-	}
-	@GetMapping("/decimal")
-	public void decimal() {
-		BigDecimal a = new BigDecimal("10.1");
-		BigDecimal b = new BigDecimal("10.5");
-		System.out.println("a.compareTo(b) ====" + a.compareTo(b));
-		System.out.println("b.compareTo(a) ====" + b.compareTo(a));
-	}
-  	
 }
 

@@ -25,7 +25,7 @@
 <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
 if("${sendyn}" == "Y"){
-	alert("발송이 완료되었습니다.");	
+	alert("발송 대기 리스트에 추가되었습니다.");	
 }
 function check(){
 	var template = document.getElementById("template");

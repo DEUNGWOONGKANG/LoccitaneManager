@@ -17,4 +17,6 @@ public interface CouponMemberRepository extends JpaRepository<CouponMember, Stri
 
 	CouponMember findByCouponno(String couponNum);
 
+	List<CouponMember> findAllByUseynAndEnddateBetween(String string, Date date1, Date date2);
+
 }

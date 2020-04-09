@@ -117,7 +117,7 @@ public class KakaoService {
 					      "*나의 보유 쿠폰 확인하기: https://www.myprovence.shop/user/"+user.getUsercode() + 
 					      "\r\n" +
 						  "문의)\r\n" +
-						  "- 나의 이용 매장: " + store + " / " + tel +
+						  "- 나의 이용 매장: " + store + " / " + tel + "\r\n" +
 						  "- 록시땅 고객 센터: 02-2054-0500";
 					break;
 				case "10050":

@@ -15,6 +15,7 @@
 		<div id="loginInfo">
 			<%=user.getManagername() %> 님
 			<input id="logoutbtn" type="button" class="button-gray-small" value="로그아웃" onclick="logout()">
+			<input id="passwd" type="button" class="button-gray-small" value="비밀번호변경" style="width:140px;" onclick="pass()">
 		</div>
 	<div id="header" class="container">
 		<div id="logo">
@@ -51,5 +52,8 @@ function logout(){
 	if(result){
 		location.href = "/logout";
 	}
+}
+function pass(){
+	location.href = "/store/modify";
 }
 </script>

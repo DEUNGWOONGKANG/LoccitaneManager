@@ -387,8 +387,12 @@ public class CouponService {
 	}
 	//미사용 쿠폰 리스트 조회
 	public List<Coupon> getUnuseCoupon() {
-		// TODO Auto-generated method stub
 		return couponRepo.findAllByUsedyn("N");
+	}
+	
+	//소멸예정 쿠폰 리스트 조회
+	public List<CouponMember> getEndCoupon(Date date1, Date date2) {
+		return couponMemRepo.findAllByUseynAndEnddateBetween("N", date1, date2);
 	}
 
 	public CouponMember getCp(int seq) {

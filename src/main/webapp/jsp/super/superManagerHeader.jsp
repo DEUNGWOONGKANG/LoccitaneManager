@@ -14,6 +14,7 @@
           <li class="nav-item dropdown ml-auto"><a id="userInfo" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"><span style="font-size:12px;"><%=user.getManagername()%>님</span></a>
             <div aria-labelledby="userInfo" class="dropdown-menu">
               <a href="/logout" class="dropdown-item">Logout</a>
+              <a href="/super/modify" class="dropdown-item">비밀번호변경</a>
             </div>
           </li>
         </ul>

@@ -1,6 +1,7 @@
 package com.loccitane.store.controller;
 
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -284,6 +285,51 @@ public class StoreController {
 		Store storeData = service.getStoreInfo(storeseq);
 		nextView.addObject("storeData", storeData);
 	
+		return nextView;
+	}
+	
+	//매장관리자 비밀번호변경 페이지
+	@GetMapping("/store/modify") 
+	public ModelAndView storePassword(HttpServletRequest request){ 
+		ModelAndView nextView = new ModelAndView("store/storeManagerPasswordModify");
+		HttpSession httpSession = request.getSession(true);
+		httpSession.setAttribute("menu", "pw");
+		return nextView;
+	}
+	
+	//슈퍼관리자 비밀번호변경 페이지
+	@GetMapping("/super/modify") 
+	public ModelAndView superPassword(HttpServletRequest request){ 
+		ModelAndView nextView = new ModelAndView("super/superManagerPasswordModify");
+		HttpSession httpSession = request.getSession(true);
+		httpSession.setAttribute("menu", "pw");
+		return nextView;
+	}
+
+	//매장관리자 비밀번호변경
+	@RequestMapping("/passwordModify")
+	public ModelAndView passwordModify(HttpServletRequest request, HttpServletResponse response) throws IOException{ 
+		ModelAndView nextView = null;
+		String oldPw = request.getParameter("oldpw");
+		String newPw = request.getParameter("newpw");
+		String type = request.getParameter("type");
+		if(type.equals("store")) {
+			nextView = new ModelAndView("store/storeManagerPasswordModify");
+		}else if(type.equals("super")) {
+			nextView = new ModelAndView("store/superManagerPasswordModify");
+		}
+		HttpSession httpSession = request.getSession(true);
+		Store loginUser = (Store) httpSession.getAttribute("loginUser");
+		Store store = service.getStoreData(loginUser.getCode(), oldPw);
+		if(store == null) {
+			nextView.addObject("saveyn", "N");
+		}else{
+			store.setPw(newPw);
+			service.storeSave(store);
+			nextView.addObject("saveyn", "Y");
+		}
+		
+		httpSession.setAttribute("menu", "pw");
 		return nextView;
 	}
 }

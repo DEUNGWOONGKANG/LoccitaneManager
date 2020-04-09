@@ -67,4 +67,8 @@ public class StoreService {
 		return storeRepo.findByCode(homestore);
 	}
 
+	public Store getStoreData(String code, String oldPw) {
+		return storeRepo.findByCodeAndPw(code, oldPw);
+	}
+
 }

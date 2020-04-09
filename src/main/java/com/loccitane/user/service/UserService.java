@@ -23,6 +23,8 @@ import com.loccitane.log.domain.Log;
 import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
 import com.loccitane.log.service.RefundLogService;
+import com.loccitane.send.domain.Send;
+import com.loccitane.send.service.SendService;
 import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
@@ -51,6 +53,9 @@ public class UserService {
 	
 	@Autowired
 	RefundLogService refund;
+	
+	@Autowired
+	SendService sendservice;
 	
 	private static int totalRowCount = 0; // 전체 행 개수
     private static int updateRowCount = 0; // 성공한 데이터 개수
@@ -199,7 +204,8 @@ public class UserService {
 		    Calendar cal = Calendar.getInstance();
 		    cal.setTime(now);
 		    cal.add(Calendar.YEAR,  -1);
-		    
+		    List<User> uploadUser = new ArrayList<User>();
+		    List<Send> sendList = new ArrayList<Send>();
 		    for(Map<String, String> article: excelContent){
 		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
@@ -224,15 +230,22 @@ public class UserService {
 		    			check.setStatus("1");
 		    		}
 		    		check.setLastupdate(now);
-		    		userRepo.save(check);
+		    		uploadUser.add(check);
 		    		api.userAddCall(check);
 		    		insertRowCount++;
 		    	}else{
 		    		boolean apiCall = false;
 		    		// 홈스토어 데이터를 가져와야 하므로 해당 컬럼부터 set
-		    		if(!check.getHomestore().equals(article.get("H"))) {
-		    			check.setHomestore(article.get("H"));
-		    			dataAdd = true;
+		    		if(check.getHomestore() == null) {
+		    			if(article.get("H") != null) {
+		    				check.setHomestore(article.get("H"));
+		    				dataAdd = true;
+		    			}
+		    		}else{
+		    			if(!check.getHomestore().equals(article.get("H"))) {
+		    				check.setHomestore(article.get("H"));
+		    				dataAdd = true;
+		    			}
 		    		}
 		    		Store homestore = storeservice.getHomestore(check.getHomestore());
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
@@ -245,14 +258,29 @@ public class UserService {
 		    			check.setUsername(article.get("B"));
 		    			dataAdd = true;
 		    		}
-		    		if(!check.getBirthday().equals(article.get("C"))) {
-		    			check.setBirthday(article.get("C"));
-		    			dataAdd = true;
+		    		if(check.getBirthday() == null) {
+		    			if(article.get("C") != null) {
+		    				check.setBirthday(article.get("C"));
+			    			dataAdd = true;
+		    			}
+		    		}else{
+		    			if(!check.getBirthday().equals(article.get("C"))) {
+		    				check.setBirthday(article.get("C"));
+		    				dataAdd = true;
+		    			}
 		    		}
-		    		if(!check.getPhone().equals(article.get("D"))) {
-		    			check.setPhone(article.get("D"));
-		    			dataAdd = true;
-		    			apiCall = true;
+		    		if(check.getPhone() == null) {
+		    			if(article.get("D") != null) {
+		    				check.setPhone(article.get("D"));
+		    				dataAdd = true;
+		    				apiCall = true;
+		    			}
+		    		}else{
+		    			if(!check.getPhone().equals(article.get("D"))) {
+		    				check.setPhone(article.get("D"));
+		    				dataAdd = true;
+		    				apiCall = true;
+		    			}
 		    		}
 		    		//날짜 비교는 Timestamp로 비교한다.
 		    		Timestamp ts = new Timestamp(transFormat.parse(article.get("E")).getTime());
@@ -265,7 +293,7 @@ public class UserService {
 			    			dataAdd = true;
 			    		}
 		    		}
-		    		if(check.getTotalbuy() != totalbuy) {
+		    		if(totalbuy.compareTo(check.getTotalbuy()) != 0) {
 		    			if(totalbuy.compareTo(check.getTotalbuy()) == 1){
 		    				CouponMember cp = new CouponMember();
 		    				CouponMember cp2 = new CouponMember();
@@ -349,32 +377,56 @@ public class UserService {
 								sp.setUsercode(check.getUsercode());
 								
 								cpservice.giveCoupon(sp, "system", sp.getReason());
-								JSONObject result = KakaoService.post("10050", check, "", homestore);
-    							String status = (String) result.get("status");
-    							if(status != null) {
-    								if(status.equals("OK")) specialcnt ++;
-    							}
+								
+								Send send = new Send();
+								send.setCreatedate(now);
+								send.setDeletedate("");
+								send.setGrade(check.getGrade());
+								send.setHomestore(check.getHomestore());
+								send.setSendtype("KAKAO");
+								send.setTemplateid("10050");
+								send.setUsercode(check.getUsercode());
+								send.setUsername(check.getUsername());
+								
+								sendList.add(send);
+//								JSONObject result = KakaoService.post("10050", check, "", homestore);
+//    							String status = (String) result.get("status");
+//    							if(status != null) {
+//    								if(status.equals("OK")) specialcnt ++;
+//    							}
 								check.setSpecial(now);
 		    				}
 		    				if(couponYn) {
+		    					Send cpsend = new Send();
+		    					cpsend.setCreatedate(now);
+		    					cpsend.setDeletedate("");
+		    					cpsend.setGrade(check.getGrade());
+		    					cpsend.setHomestore(check.getHomestore());
+		    					cpsend.setSendtype("KAKAO");
+		    					cpsend.setUsercode(check.getUsercode());
+								cpsend.setUsername(check.getUsername());
+								
+								//쿠폰생성
 		    					cpservice.giveCoupon(cp, "system", cp.getReason());
+		    					//LOYAL, PRESTIGE의 경우 1개추가로 생성
 		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
-		    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
-		    							JSONObject result = KakaoService.post("10030", check, "", homestore);
-		    							String status = (String) result.get("status");
-		    							if(status != null) {
-		    								if(status.equals("OK")) cnt ++;
-		    							}
-		    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
-		    							JSONObject result = KakaoService.post("10031", check, "", homestore);
-		    							String status = (String) result.get("status");
-		    							if(status != null) {
-		    								if(status.equals("OK")) cnt ++;
-		    							}
-		    						}
+	    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
+	    							cpsend.setTemplateid("10030");
+//		    							JSONObject result = KakaoService.post("10030", check, "", homestore);
+//		    							String status = (String) result.get("status");
+//		    							if(status != null) {
+//		    								if(status.equals("OK")) cnt ++;
+//		    							}
+	    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
+	    							cpsend.setTemplateid("10031");
+//		    							JSONObject result = KakaoService.post("10031", check, "", homestore);
+//		    							String status = (String) result.get("status");
+//		    							if(status != null) {
+//		    								if(status.equals("OK")) cnt ++;
+//		    							}
+	    						}
+	    						sendList.add(cpsend);
 		    				}
-		    				
-		    				
 		    			}else if(totalbuy.compareTo(check.getTotalbuy()) == -1) {
 		    				RefundLog re = new RefundLog();
 		    				re.setUsercode(check.getUsercode());
@@ -402,7 +454,7 @@ public class UserService {
 		    		if(dataAdd) {
 		    			updateRowCount++;
 		    			check.setLastupdate(now);
-		    			userRepo.save(check);
+		    			uploadUser.add(check);
 		    			if(apiCall) api.userModifyCall(check);
 		    			
 		    		}else {
@@ -414,25 +466,29 @@ public class UserService {
 		    		setCurrentState("C");
 		    	}
 		    }
+		    userRepo.saveAll(uploadUser);
+		    if(sendList.size() > 0) {
+		    	sendservice.sendSaveAll(sendList);
+		    }
 		}
-		if(cnt > 0) {
-			Log log = new Log();
-			log.setUserid("system");
-		    log.setUsername("system");
-		    log.setLogkind("KAKAO");
-		    log.setLogcontent("[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ");
-		    log.setLogdate(now);
-		    logservice.saveLog(log);
-		}
-		if(specialcnt > 0) {
-			Log log = new Log();
-			log.setUserid("system");
-			log.setUsername("system");
-			log.setLogkind("KAKAO");
-			log.setLogcontent("[프리스티지스페셜] 수신자 : "+specialcnt+"명 ");
-			log.setLogdate(now);
-			logservice.saveLog(log);
-		}
+//		if(cnt > 0) {
+//			Log log = new Log();
+//			log.setUserid("system");
+//		    log.setUsername("system");
+//		    log.setLogkind("KAKAO");
+//		    log.setLogcontent("[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ");
+//		    log.setLogdate(now);
+//		    logservice.saveLog(log);
+//		}
+//		if(specialcnt > 0) {
+//			Log log = new Log();
+//			log.setUserid("system");
+//			log.setUsername("system");
+//			log.setLogkind("KAKAO");
+//			log.setLogcontent("[프리스티지스페셜] 수신자 : "+specialcnt+"명 ");
+//			log.setLogdate(now);
+//			logservice.saveLog(log);
+//		}
 		String log = "총 데이터:"+currentStateCount+"건 | "+
 					"신규데이터:"+insertRowCount+"건 | "+
 					"변경데이터:"+updateRowCount+"건 | "+

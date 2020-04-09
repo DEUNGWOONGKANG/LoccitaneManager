@@ -44,7 +44,14 @@
 	     </div>
 	   </li>
         <li class="sidebar-list-item" id="menu6"><a id="menu6a" href="/super/menu/menu6" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span><b>등급관리</b></span></a></li>
-        <li class="sidebar-list-item" id="menu7"><a id="menu7a" href="/super/menu/menu7" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span><b>카카오톡 발송관리</b></span></a></li>
+        <li class="sidebar-list-item" id="menu7"><a id="menu7a" href="#" data-toggle="collapse" data-target="#pages4" aria-expanded="false" aria-controls="pages4" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span><b>카카오톡 발송관리</b></span></a>
+         <div id="pages4" class="collapse">
+	       <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
+	         <li class="sidebar-list-item" id="menu7_1"><a id="menu7_1a" href="/super/menu/menu7_1" class="sidebar-link text-muted pl-lg-5"><b>발송 대기</b></a></li>
+	         <li class="sidebar-list-item" id="menu7_2"><a id="menu7_2a" href="/super/menu/menu7_2" class="sidebar-link text-muted pl-lg-5"><b>발송 완료</b></a></li>
+	       </ul>
+	     </div>
+        </li>
   </ul>
 </div>
 </body>
@@ -64,6 +71,8 @@ function active(num){
 				document.getElementById("pages2").className = document.getElementById("pages2").className + " show";
 			}else if(num == "menu5_1" || num == "menu5_2" || num == "menu5_3"){
 				document.getElementById("pages3").className = document.getElementById("pages3").className + " show";
+			}else if(num == "menu7_1" || num == "menu7_2"){
+				document.getElementById("pages4").className = document.getElementById("pages4").className + " show";
 			}
 		}
 	} 
