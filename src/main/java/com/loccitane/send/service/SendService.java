@@ -31,4 +31,12 @@ public class SendService {
 	public void sendSaveAll(List<Send> sendList) {
 		repo.saveAll(sendList);
 	}
+
+	public List<Send> getAll() {
+		return repo.findAll();
+	}
+	
+	public void sendDelete() {
+		repo.deleteAll();
+	}
 }

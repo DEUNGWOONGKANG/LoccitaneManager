@@ -1,5 +1,6 @@
 package com.loccitane.send.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -40,6 +41,15 @@ public class Send {
 	
 	@Column(name = "homestore") 
 	private String homestore;
+	
+	@Column(name = "phone") 
+	private String phone;
+	
+	@Column(name = "birthday") 
+	private String birthday;
+	
+	@Column(name = "totalbuy")
+	private BigDecimal totalbuy;
 
 	public int getSeq() {
 		return seq;
@@ -111,6 +121,30 @@ public class Send {
 
 	public void setHomestore(String homestore) {
 		this.homestore = homestore;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public BigDecimal getTotalbuy() {
+		return totalbuy;
+	}
+
+	public void setTotalbuy(BigDecimal totalbuy) {
+		this.totalbuy = totalbuy;
 	}
 
 }

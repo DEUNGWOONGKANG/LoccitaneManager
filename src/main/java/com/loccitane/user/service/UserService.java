@@ -517,13 +517,13 @@ public class UserService {
 //		String birthcheck2 = transFormat.format(birth2);
 		
 		String birthcheck = transFormat.format(birth);
-		for(int i=0; i<userList.size(); i++) {
-			String userBirthday = userList.get(i).getBirthday();
+		for(User user : userList) {
+			String userBirthday = user.getBirthday();
 			userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
 			if(userBirthday.equals(birthcheck)) {
-				birthdayUser.add(userList.get(i));
+				birthdayUser.add(user);
 			}
-//			if(userBirthday.equals(birthcheck) || userBirthday.equals(birthcheck2)) {
+//			if(userBirthday.equals( birthcheck) || userBirthday.equals(birthcheck2)) {
 //				birthdayUser.add(userList.get(i));
 //			}
 		}

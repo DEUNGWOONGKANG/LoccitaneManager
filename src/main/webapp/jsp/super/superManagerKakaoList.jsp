@@ -78,7 +78,7 @@ function kakaoform(){
 			</ul>
 		</div>
 		<div style="width:80%;margin-left:auto;margin-right:auto;text-align:right;">
-			<input type="button" class="btn btn-warning" value="발송" onclick="kakaoform()">
+			<input type="button" class="btn btn-warning" value="발송대기 생성" onclick="kakaoform()">
 		</div>
       </div>
     </div>

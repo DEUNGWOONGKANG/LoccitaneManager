@@ -48,6 +48,10 @@
        <appender-ref ref="STDOUT" />
        <appender-ref ref="ROLLING" />
   </logger>
+  <logger name="com.loccitane.send.service.SendService" level="info" additivity="false">
+       <appender-ref ref="STDOUT" />
+       <appender-ref ref="ROLLING" />
+  </logger>
   <root level="ERROR">
        <appender-ref ref="STDOUT" />
        <appender-ref ref="ERROR" />

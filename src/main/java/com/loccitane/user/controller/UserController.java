@@ -569,7 +569,7 @@ public class UserController {
   		}else if(loginUser != null && menu.equals("menu6")){
   			nextView = superGradeList();
   		}else if(loginUser != null && menu.equals("menu7_1")){
-  			nextView = superSendList(request, pageable);
+  			nextView = superSendList(pageable);
   		}else if(loginUser != null && menu.equals("menu7_2")){
   			nextView = superKakaoList(request, pageable);
   		}
@@ -856,11 +856,11 @@ public class UserController {
   	
   	//슈퍼관리자 카카오발송대기 리스트
 	@RequestMapping("/super/sendlist") 
-	public ModelAndView superSendList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
+	public ModelAndView superSendList(@PageableDefault Pageable pageable) throws Exception { 
 		ModelAndView nextView = new ModelAndView("super/superManagerSendList");
 		
 		Page<Send> sendList = sendservice.findAll(pageable);
-		int sendCount = sendList.getSize();
+		int sendCount = sendList.getContent().size();
 		Paging paging = new Paging();
 		if(sendList != null) {
 			int curPage = pageable.getPageNumber();
@@ -889,8 +889,6 @@ public class UserController {
   		ModelAndView nextView = null;
   		HttpSession httpSession = request.getSession(true);
   		Store loginUser = (Store) httpSession.getAttribute("loginUser");
-  		int cnt = 0;
-  		String logcontent = "";
   		Date now = new Date();
   		Calendar cal = Calendar.getInstance();
   		cal.setTime(now);
@@ -919,6 +917,9 @@ public class UserController {
 				send.setTemplateid(template);
 				send.setUsercode(userdata.getUsercode());
 				send.setUsername(userdata.getUsername());
+				send.setBirthday(userdata.getBirthday());
+				send.setPhone(userdata.getPhone());
+				send.setTotalbuy(userdata.getTotalbuy());
 				
 				sendservice.sendSave(send);
   			} else if(request.getParameter("type").equals("grade")) {
@@ -941,6 +942,9 @@ public class UserController {
   					send.setTemplateid(template);
   					send.setUsercode(u.getUsercode());
   					send.setUsername(u.getUsername());
+  					send.setBirthday(user.getBirthday());
+  					send.setPhone(user.getPhone());
+  					send.setTotalbuy(user.getTotalbuy());
   					
   					sendList.add(send);
   					//Store homestore = storeservice.getHomestore(u.getHomestore());

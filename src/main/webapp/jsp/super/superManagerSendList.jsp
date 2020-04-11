@@ -21,8 +21,19 @@
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
+if("${saveyn}" == "Y"){
+	alert("발송이 발송되었습니다.");
+}
 function send(){
-	location.href="/super/send";
+	var result = confirm("발송하시겠습니까??");
+	
+	if(result){
+		location.href="/super/send";
+	}else{
+		return false;
+	}
+	
+	
 }
 
 </script>
@@ -35,26 +46,38 @@ function send(){
       <div class="w-100 d-flex flex-wrap">
       	<div class="container-fluid px-xl-5">
       		<div class="search">	
+      			<b>발송대기 수 : <fmt:formatNumber value="${totalcount}" pattern="#,###" />건</b>
 			</div>
       	</div>
 	      	<table class="table table-hover" style="margin-left:10px;">
 			  <thead>
 			    <tr>
 			      <th scope="col">NO</th>
-			      <th scope="col">고객명</th>
+			      <th scope="col">고객코드</th>
+			      <th scope="col">이름</th>
+			      <th scope="col">생일</th>
+			      <th scope="col">핸드폰번호</th>
+			      <th scope="col">누적구매금액</th>
+			      <th scope="col">등급</th>
+			      <th scope="col">단골매장</th>
 			      <th scope="col">발송타입</th>
 			      <th scope="col">템플릿번호</th>
-			      <th scope="col">생성일자</th>
 			    </tr>
 			  </thead>
 			  <tbody>
 			  	<c:forEach var="send" items="${sendList.content}" varStatus="status">
 				    <tr>
 				      <th scope="row">${(paging.curPage-1)*10+status.count}</th>
-				      <td>${send.username}[${send.usercode}]</td>
+				      <td>${send.usercode}</td>
+				      <td>${send.username}</td>
+				      <td>${send.birthday}</td>
+				      <td>${send.phone}</td>
+				      <td>${send.totalbuy}</td>
+				      <td>${send.grade}</td>
+				      <td>${send.homestore}</td>
 				      <td>${send.sendtype}</td>
 				      <td>${send.templateid}</td>
-				      <td><fmt:formatDate value="${send.createdate}" pattern="YYYY-MM-dd HH:mm:ss"/></td>
+				      <%-- <td><fmt:formatDate value="${send.createdate}" pattern="YYYY-MM-dd HH:mm:ss"/></td> --%>
 				    </tr>
 				</c:forEach>
 			  </tbody>
@@ -80,7 +103,7 @@ function send(){
 			</ul>
 		</div>
 		<div style="width:80%;margin-left:auto;margin-right:auto;text-align:right;">
-			<input type=button class="btn btn-warning" value="발송" onclick="send()">
+			<input type=button class="btn btn-warning" value="발송" onclick="return send()">
 		</div>
       </div>
     </div>

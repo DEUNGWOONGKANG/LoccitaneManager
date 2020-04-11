@@ -59,7 +59,7 @@ public class Scheduler {
 		//dormant();
 		
 		//생일쿠폰 발행
-		//birthdayCouponRunner();
+		birthdayCouponRunner();
 				
 		//등급업
 		if(today.equals("07-03") || today.equals("10-05") || today.equals("01-04")) {
@@ -111,6 +111,9 @@ public class Scheduler {
 				send.setTemplateid("10049");
 				send.setUsercode(user.getUsercode());
 				send.setUsername(user.getUsername());
+				send.setBirthday(user.getBirthday());
+				send.setPhone(user.getPhone());
+				send.setTotalbuy(user.getTotalbuy());
 				
 				sendservice.sendSave(send);
 				dupcheckList.add(user);
@@ -121,6 +124,7 @@ public class Scheduler {
 	}
 
 	private void dormant() {
+		System.out.println("====================휴면처리 시작====================");
 		Date now = new Date();
 		Calendar cal = Calendar.getInstance();
 	    cal.setTime(now);
@@ -138,6 +142,7 @@ public class Scheduler {
 			}
 		}
 		service.saveAll(saveUsers);
+		System.out.println("====================휴면처리 종료====================");
 	}
 	
 	private void gradeUP() {
@@ -194,6 +199,9 @@ public class Scheduler {
 				send.setTemplateid("10028");
 				send.setUsercode(user.getUsercode());
 				send.setUsername(user.getUsername());
+				send.setBirthday(user.getBirthday());
+				send.setPhone(user.getPhone());
+				send.setTotalbuy(user.getTotalbuy());
 				
 				sendservice.sendSave(send);
 				//JSONObject result = KakaoService.post("10028", user, "", homestore);
@@ -214,49 +222,52 @@ public class Scheduler {
 	public void birthdayCouponRunner() {
 		Date now = new Date();
 		try {
-		//생일자 리스트
-		List<User> birthdayList = service.getBirthdayList();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(now);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		Date startDate = cal.getTime();
-		
-		//종료날짜는 30일더한날짜로 세팅
-		cal.add(Calendar.DATE, 30);
-		Date endDate = cal.getTime();
-		int cnt = 0;
-		for(int i=0; i<birthdayList.size(); i++) {
-			CouponMember coupon = new CouponMember();
-			coupon.setReason("Birthday");
-			coupon.setUsercode(birthdayList.get(i).getUsercode());
-			coupon.setCpcode("LKRMB10");
+			//생일자 리스트
+			List<User> birthdayList = service.getBirthdayList();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			Date startDate = cal.getTime();
 			
-			coupon.setStartdate(startDate);
-			coupon.setEnddate(endDate);
-			
-			cpservice.giveCoupon(coupon, "system", coupon.getReason());
-			if(birthdayList.get(i).getAlarmyn().equals("Y")) {
-				//카카오알림톡 전송
-				Store homestore = store.getHomestore(birthdayList.get(i).getHomestore()); 
-				JSONObject result = KakaoService.lmsPost(birthdayList.get(i), homestore);
-				String status = (String) result.get("status");
-				if(status != null) {
-					if(status.equals("MMS_0000")) cnt ++;
+			//종료날짜는 30일더한날짜로 세팅
+			cal.add(Calendar.DATE, 30);
+			Date endDate = cal.getTime();
+			for(User user : birthdayList) {
+				CouponMember coupon = new CouponMember();
+				coupon.setReason("Birthday");
+				coupon.setUsercode(user.getUsercode());
+				coupon.setCpcode("LKRMB10");
+				
+				coupon.setStartdate(startDate);
+				coupon.setEnddate(endDate);
+				
+				cpservice.giveCoupon(coupon, "system", coupon.getReason());
+				if(user.getAlarmyn().equals("Y")) {
+					//카카오알림톡 전송
+//					Store homestore = store.getHomestore(birthdayList.get(i).getHomestore()); 
+//					JSONObject result = KakaoService.lmsPost(birthdayList.get(i), homestore);
+//					String status = (String) result.get("status");
+//					if(status != null) {
+//						if(status.equals("MMS_0000")) cnt ++;
+//					}
+					Send send = new Send();
+					send.setCreatedate(now);
+					send.setDeletedate("");
+					send.setGrade(user.getGrade());
+					send.setHomestore(user.getHomestore());
+					send.setSendtype("LMS");
+					send.setTemplateid("");
+					send.setUsercode(user.getUsercode());
+					send.setUsername(user.getUsername());
+					send.setBirthday(user.getBirthday());
+					send.setPhone(user.getPhone());
+					send.setTotalbuy(user.getTotalbuy());
+					
+					sendservice.sendSave(send);
 				}
 			}
-		}
-		if(cnt > 0) {
-			Log log = new Log();
-			log.setUserid("system");
-			log.setUsername("system");
-			log.setLogkind("KAKAO");
-			log.setLogcontent("[생일LMS발송] 수신자 : "+cnt+"명 ");
-			log.setLogdate(now);
-			logservice.saveLog(log);
-		}
-		
 		}catch(Exception e) {
 			// 시스템 로그저장
 			Log log = new Log();
@@ -269,12 +280,6 @@ public class Scheduler {
 		}
 		
 	}
-//	public void excelDown() throws IOException {
-//		excel.excelDown("user");
-//		excel.excelDown("coupon");
-//		excel.excelDown("coupontomember");
-//
-//	}
 	
 	public void nowGradeAlarm() {
 		List<User> users = service.findAllByStatus();
@@ -293,6 +298,9 @@ public class Scheduler {
 				send.setTemplateid("10027");
 				send.setUsercode(user.getUsercode());
 				send.setUsername(user.getUsername());
+				send.setBirthday(user.getBirthday());
+				send.setPhone(user.getPhone());
+				send.setTotalbuy(user.getTotalbuy());
 				
 				sendservice.sendSave(send);
 				//Store homestore = store.getHomestore(user.getHomestore()); 
