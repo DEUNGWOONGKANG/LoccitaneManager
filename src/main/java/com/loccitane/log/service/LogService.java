@@ -17,8 +17,7 @@ public class LogService {
 	LogRepository logRepo;
 	
 	public List<Log> getLog(String kind){
-		List<Log> logData = logRepo.findAllByLogkindOrderBySeqDesc(kind);
-		return logData;
+		return logRepo.findAllByLogkindOrderBySeqDesc(kind);
 	}
 	
 	public void saveLog(Log log) {

@@ -17,12 +17,9 @@ import org.springframework.stereotype.Service;
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
 import com.loccitane.coupon.domain.CouponMember;
-import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.repository.CouponCoreRepository;
 import com.loccitane.coupon.repository.CouponMemberRepository;
-import com.loccitane.coupon.repository.CouponMemberTempRepository;
 import com.loccitane.coupon.repository.CouponRepository;
-import com.loccitane.coupon.repository.CouponTempRepository;
 import com.loccitane.store.domain.Store;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
@@ -31,44 +28,55 @@ import com.loccitane.utils.ApiService;
 @Service // 서비스 클래스임을 나타냄
 public class CouponService {
 	
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
+	@Autowired 
 	CouponRepository couponRepo;
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
+	@Autowired 
 	CouponMemberRepository couponMemRepo;
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
+	@Autowired 
 	CouponCoreRepository couponCoreRepo;
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
+	@Autowired 
 	UserRepository userRepo;
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
-	CouponMemberTempRepository couponMemTempRepo;
-	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
-	CouponTempRepository coupontempRepo;
-	
 	@Autowired
 	ApiService apiservice;
 	
-	//모든 쿠폰 리스트 조회
+	//사용가능한 모든 쿠폰 리스트 조회
 	public List<CouponCore> getCouponList() {
-		List<CouponCore> couponData  = couponCoreRepo.findAllByUseyn("Y");
-		return couponData;
+		return couponCoreRepo.findAllByUseyn("Y");
 	}
 	
 	//해당 고객의 쿠폰 데이터 조회
 	public List<Coupon> getUserCoupon(String usercode) {
-		List<Coupon> couponData  = couponRepo.findAllByUsercode(usercode);
-		return couponData;
+		return couponRepo.findAllByUsercode(usercode);
 	}
 	
-	//쿠폰 사용처리
-	public void useCoupon(String usercode, int seq, Store loginUser) {
-		CouponMember coupon = couponMemRepo.findByCptmseq(seq);
-		Date now  = new Date();
-		coupon.setUsedate(now);
-		coupon.setUseyn("Y");
-		coupon.setUsemanager(loginUser.getId());
+	//사용처리할 쿠폰 찾기
+	public CouponMember getCouponMemberInfo(int seq) {
+		return couponMemRepo.findByCptmseq(seq);
+	}
+	
+	//쿠폰 사용처리 및 삭제처리
+	public void useCoupon(CouponMember coupon) {
 		couponMemRepo.save(coupon);
-		
-		apiservice.coupontomemberModifyCall(coupon);
+	}
+	
+	//소멸예정 쿠폰 리스트 조회
+	public List<CouponMember> getEndCoupon(Date date1, Date date2) {
+		return couponMemRepo.findAllByUseynAndEnddateBetween("N", date1, date2);
+	}
+	
+	//매장발행쿠폰 조회
+	public List<Coupon> getStoreCptm() {
+		return couponRepo.findAllByCreateuserNotOrderByCreatedateDesc("system");
+	}
+	
+	//쿠폰 코어 데이터 저장
+	public void couponSave(CouponCore couponCore) {
+		couponCoreRepo.save(couponCore);
+	}
+	
+	//쿠폰 상세보기시 정보가져오기
+	public CouponCore getCouponInfo(int seq) {
+		return couponCoreRepo.findBySeq(seq);
 	}
 	
 	//관리자 고객 쿠폰 부여
@@ -79,6 +87,7 @@ public class CouponService {
 		Date end = coupon.getEnddate();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(end);
+		//유효기간 종료일의 시간은 23시 59분 59초로 세팅한다.
 		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
@@ -99,11 +108,14 @@ public class CouponService {
 					sb.append("-");
 				}
 			}
+			//난수 쿠폰번호 생성
 			couponNum =  sb.toString();
+			//중복되는 쿠폰번호가 있는지 체크
 			CouponMember cp = couponMemRepo.findByCouponno(couponNum);
-			if(cp == null) {
+			
+			if(cp == null) { //중복이없을 경우 진행
 				break;
-			}else {
+			}else {	//중복될 경우 다시 쿠폰번호 생성
 				continue;
 			}
 		}
@@ -134,12 +146,10 @@ public class CouponService {
 		newCoupon.setCreateuser(Id);
 		newCoupon.setStartdate(coupon.getStartdate());
 		newCoupon.setEnddate(end);
-		//newCoupon.setStartdate(coupon.getStartdate());
-		//newCoupon.setEnddate(end);
 		newCoupon.setUseyn("N");
 		
 		couponMemRepo.save(newCoupon);
-		
+		//고객페이지 API호출하여 쿠폰생성
 		apiservice.coupontomemberAddCall(newCoupon);
 		
 	}
@@ -211,12 +221,15 @@ public class CouponService {
 			newCoupon.setUseyn("N");
 			
 			couponList.add(newCoupon);
+			//고객페이지 API호출하여 쿠폰생성
+			apiservice.coupontomemberAddCall(newCoupon);
 		}
 		
 		couponMemRepo.saveAll(couponList);
 		
 	}
-
+	
+	//[슈퍼관리자]쿠폰관리페이지
 	public Page<CouponCore> getAllCouponList(Pageable pageable, String searchKey, String searchKeyword) {
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
@@ -240,6 +253,7 @@ public class CouponService {
 		return couponList;
 	}
 	
+	//[슈퍼관리자]사용자별쿠폰관리페이지
 	public Page<Coupon> getCouponToMemberList(Pageable pageable, String searchKey, String searchKeyword,String status) {
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
         pageable = PageRequest.of(page, 10);
@@ -281,47 +295,7 @@ public class CouponService {
 		return couponList;
 	}
 
-	public void couponSave(CouponCore couponCore) {
-		couponCoreRepo.save(couponCore);
-	}
-
-	public CouponCore getCouponInfo(int seq) {
-		CouponCore couponData = couponCoreRepo.findBySeq(seq);
-		
-		return couponData;
-	}
-	
-	public Page<CouponTemp> couponRequestList(Pageable pageable, String searchKey, String searchKeyword) {
-		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); // page는 index 처럼 0부터 시작
-        pageable = PageRequest.of(page, 10);
-        
-		Page<CouponTemp> couponList = null;
-        
-        if(searchKey == null) {
-        	couponList = coupontempRepo.findAll(pageable);
-		}else if(searchKey.equals("cpcode")) {
-			couponList = coupontempRepo.findAllByCpcode(searchKeyword, pageable);
-		}else if(searchKey.equals("username")) {
-			couponList = coupontempRepo.findAllByUsername(searchKeyword, pageable);
-		}else if(searchKey.equals("createuser")) {
-			couponList = coupontempRepo.findAllByCreateuser(searchKeyword,  pageable);
-		}else{
-			couponList = coupontempRepo.findAll(pageable);
-		}
-		
-		return couponList;
-	}
-
-	public List<CouponMember> getUpdateCoupontomember(Date now, Date yesterday) {
-		return couponMemRepo.findAll();
-//		return couponMemRepo.findAllByCreatedateBetweenOrUsedateBetween(yesterday, now, yesterday, now);
-	}
-
-	public List<CouponCore> getUpdateCoupon(Date now, Date yesterday) {
-		return couponCoreRepo.findAll();
-		//return couponCoreRepo.findAllByCreatedateBetween(yesterday, now);
-	}
-
+	//[공통]통계 사용한 쿠폰 데이터 가져오기
 	public List<Coupon> getUseCouponList(String id, Date startDate, Date endDate, String grade, String couponCode) {
 		if(id.equals("ALL")) {
 			if(grade.equals("ALL")) {
@@ -353,7 +327,8 @@ public class CouponService {
 			}
 		}
 	}
-
+	
+	//[공통]통계 생성한 쿠폰 데이터 가져오기
 	public List<Coupon> getCreateCouponList(String id, Date startDate, Date endDate, String grade, String couponCode) {
 		if(id.equals("ALL")) {
 			if(grade.equals("ALL")) {
@@ -385,22 +360,4 @@ public class CouponService {
 			}
 		}
 	}
-	//미사용 쿠폰 리스트 조회
-	public List<Coupon> getUnuseCoupon() {
-		return couponRepo.findAllByUsedyn("N");
-	}
-	
-	//소멸예정 쿠폰 리스트 조회
-	public List<CouponMember> getEndCoupon(Date date1, Date date2) {
-		return couponMemRepo.findAllByUseynAndEnddateBetween("N", date1, date2);
-	}
-
-	public CouponMember getCp(int seq) {
-		return couponMemRepo.findByCptmseq(seq);
-	}
-
-	public void cmSave(CouponMember cm) {
-		couponMemRepo.save(cm);
-	}
-
 }

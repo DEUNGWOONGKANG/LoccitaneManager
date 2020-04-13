@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,20 +18,17 @@ import org.springframework.stereotype.Service;
 
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
-import com.loccitane.log.domain.Log;
 import com.loccitane.log.domain.RefundLog;
 import com.loccitane.log.service.LogService;
 import com.loccitane.log.service.RefundLogService;
 import com.loccitane.send.domain.Send;
 import com.loccitane.send.service.SendService;
-import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.repository.UserRepository;
 import com.loccitane.utils.ApiService;
 import com.loccitane.utils.ExcelRead;
 import com.loccitane.utils.ExcelReadOption;
-import com.loccitane.utils.KakaoService;
 
 @Service // 서비스 클래스임을 나타냄
 public class UserService {
@@ -192,8 +188,6 @@ public class UserService {
 		excelReadOption.setOutputColumns("A","B","C","D","E","F","G","H");
 		excelReadOption.setStartRow(2);
 		Date now = new Date();
-		int cnt = 0;
-		int specialcnt = 0;
 		setCurrentState("A"); // 엑셀파일 읽어 오기 전 상태를 A
       
 		List<Map<String, String>>excelContent = ExcelRead.read(excelReadOption);
@@ -209,7 +203,6 @@ public class UserService {
 		    for(Map<String, String> article: excelContent){
 		    	User check = userCheck(article.get("A"));
 		    	boolean dataAdd = false;
-		    	//boolean newUser = false;
 		    	BigDecimal totalbuy = new BigDecimal(article.get("F"));
 		    	if(check == null) {
 		    		//DB에 사용자가 없는 경우 신규 생성
@@ -247,7 +240,6 @@ public class UserService {
 		    				dataAdd = true;
 		    			}
 		    		}
-		    		Store homestore = storeservice.getHomestore(check.getHomestore());
 		    		// DB에 사용자가 있는 경우 각 컬럼 체크하여 변경사항만 적용
 		    		// 변경된 사항이 없을경우 UPDATE 하지 않음.
 		    		if(!check.getUsercode().equals(article.get("A"))) {
@@ -389,11 +381,6 @@ public class UserService {
 								send.setUsername(check.getUsername());
 								
 								sendList.add(send);
-//								JSONObject result = KakaoService.post("10050", check, "", homestore);
-//    							String status = (String) result.get("status");
-//    							if(status != null) {
-//    								if(status.equals("OK")) specialcnt ++;
-//    							}
 								check.setSpecial(now);
 		    				}
 		    				if(couponYn) {
@@ -412,18 +399,8 @@ public class UserService {
 		    					if(highgrade) cpservice.giveCoupon(cp2, "system", cp2.getReason());
 	    						if(check.getGrade().equals("REGULAR") ||check.getGrade().equals("PREMIUM")) {
 	    							cpsend.setTemplateid("10030");
-//		    							JSONObject result = KakaoService.post("10030", check, "", homestore);
-//		    							String status = (String) result.get("status");
-//		    							if(status != null) {
-//		    								if(status.equals("OK")) cnt ++;
-//		    							}
 	    						}else if(check.getGrade().equals("LOYAL") ||check.getGrade().equals("PRESTIGE")) {
 	    							cpsend.setTemplateid("10031");
-//		    							JSONObject result = KakaoService.post("10031", check, "", homestore);
-//		    							String status = (String) result.get("status");
-//		    							if(status != null) {
-//		    								if(status.equals("OK")) cnt ++;
-//		    							}
 	    						}
 	    						sendList.add(cpsend);
 		    				}
@@ -471,24 +448,6 @@ public class UserService {
 		    	sendservice.sendSaveAll(sendList);
 		    }
 		}
-//		if(cnt > 0) {
-//			Log log = new Log();
-//			log.setUserid("system");
-//		    log.setUsername("system");
-//		    log.setLogkind("KAKAO");
-//		    log.setLogcontent("[등급별 첫구매감사할인쿠폰] 수신자 : "+cnt+"명 ");
-//		    log.setLogdate(now);
-//		    logservice.saveLog(log);
-//		}
-//		if(specialcnt > 0) {
-//			Log log = new Log();
-//			log.setUserid("system");
-//			log.setUsername("system");
-//			log.setLogkind("KAKAO");
-//			log.setLogcontent("[프리스티지스페셜] 수신자 : "+specialcnt+"명 ");
-//			log.setLogdate(now);
-//			logservice.saveLog(log);
-//		}
 		String log = "총 데이터:"+currentStateCount+"건 | "+
 					"신규데이터:"+insertRowCount+"건 | "+
 					"변경데이터:"+updateRowCount+"건 | "+
@@ -515,6 +474,9 @@ public class UserService {
 //		now.add(Calendar.DAY_OF_MONTH,-1);
 //		Date birth2 = now.getTime();
 //		String birthcheck2 = transFormat.format(birth2);
+//		now.add(Calendar.DAY_OF_MONTH,-1);
+//		Date birth3 = now.getTime();
+//		String birthcheck3 = transFormat.format(birth3);
 		
 		String birthcheck = transFormat.format(birth);
 		for(User user : userList) {
@@ -523,8 +485,8 @@ public class UserService {
 			if(userBirthday.equals(birthcheck)) {
 				birthdayUser.add(user);
 			}
-//			if(userBirthday.equals( birthcheck) || userBirthday.equals(birthcheck2)) {
-//				birthdayUser.add(userList.get(i));
+//			if(userBirthday.equals( birthcheck) || userBirthday.equals(birthcheck2) || userBirthday.equals(birthcheck3)) {
+//				birthdayUser.add(user);
 //			}
 		}
 		return birthdayUser;
@@ -538,11 +500,6 @@ public class UserService {
 		return userRepo.findAllByGrade(grade);
 	}
 	
-	public List<User> getUpdateUserList(Date now, Date yesterday) {
-		return userRepo.findAll();
-		//return userRepo.findAllByLastupdateBetween(yesterday, now);
-	}
-
 	public List<User> findGradeupList() {
 		return userRepo.findAllByGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqualOrGradeAndTotalbuyGreaterThanEqual("REGULAR", 200000, "PREMIUM", 600000, "LOYAL", 1000000);
 	}

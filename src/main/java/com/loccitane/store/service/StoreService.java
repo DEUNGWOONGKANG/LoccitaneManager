@@ -62,11 +62,13 @@ public class StoreService {
 	public List<Store> geAllStoreList() {
 		return storeRepo.findAll();
 	}
-
+	
+	//홈스토어 정보 가져오기
 	public Store getHomestore(String homestore) {
 		return storeRepo.findByCode(homestore);
 	}
-
+	
+	//패스워드 변경시 데이터 체크
 	public Store getStoreData(String code, String oldPw) {
 		return storeRepo.findByCodeAndPw(code, oldPw);
 	}

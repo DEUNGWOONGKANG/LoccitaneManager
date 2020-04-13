@@ -26,7 +26,7 @@ public class GradeController {
 		return nextView;
 	}
 	
-	//등급 저장
+	//[슈퍼관리자] 등급 저장
 	@RequestMapping("/super/gradesave") 
 	public ModelAndView gradeSave(Grade grade, HttpServletRequest request){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerGradeList");
@@ -53,15 +53,13 @@ public class GradeController {
 		return nextView;
 	}
 	
-	//슈퍼관리자 사용자 정보보기
+	//[슈퍼관리자] 등급 정보보기
 	@GetMapping("/super/gradeinfo/{seq}") 
 	public ModelAndView gradeModify(@PathVariable("seq") int seq){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerGradeAdd");
 		
 		Grade oldGrade = service.find(seq);
-		
 		nextView.addObject("grade", oldGrade);
-	
 		return nextView;
 	}
 }

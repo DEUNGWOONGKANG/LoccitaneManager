@@ -38,7 +38,7 @@ function check(){
 			<td width="10%">
 			</td>
 			<td style="text-align:center; border:2px solid #ffcb00;height:400px;">
-				<h1>핸드폰 번호 뒷자리 4자리</h1><br>
+				<h1>핸드폰 번호 검색</h1><br>
 				<input type="number" class="endNumInput" id="phone" name="phone">
 				<br><br>
 				<input id="submitbtn" type="submit" class="button-yellow" value="검색">

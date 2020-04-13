@@ -47,7 +47,7 @@ public class SendController {
   		int kakao = 0;
   		int lms = 0;
   		for(Send send : sendList) {
-  			//홈스토어 정보 가져오기
+  			//사용자 홈스토어 정보 가져오기
   			Store homestore = storeService.getHomestore(send.getHomestore()); 
   			User user = new User();
   			user.setGrade(send.getGrade());
@@ -85,6 +85,7 @@ public class SendController {
   		return nextView;
   	}
   	
+  	//카카오 알림톡 발송
   	@SuppressWarnings("unchecked")
 	public JSONObject kakaoSend(String templateId, User user, String alarmDate, Store homestore){
 		JSONObject result = new JSONObject();
@@ -247,6 +248,7 @@ public class SendController {
 		return result;
 	}
   	
+  	//LMS발송 (생일자만 사용)
   	@SuppressWarnings("unchecked")
 	public static JSONObject lmsSend(User user, Store homestore){
 		JSONObject result = new JSONObject();

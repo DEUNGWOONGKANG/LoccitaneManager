@@ -54,14 +54,14 @@ public class StoreController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
     }
 	
-	//매장등록페이지 이동
+	//[슈퍼관리자] 매장등록페이지 이동
 	@GetMapping("/super/storeadd")
 	public ModelAndView storeAdd() {
 		ModelAndView nextView = new ModelAndView("super/superManagerStoreAdd");
 		return nextView;
 	}
 	
-	//관리자 로그인 시도
+	//[공통] 관리자 로그인 시도
 	@RequestMapping("/store/login") 
 	public ModelAndView storeLogin(HttpServletResponse response, HttpServletRequest request) throws Exception { 
 		String loginId = request.getParameter("loginId");
@@ -92,7 +92,7 @@ public class StoreController {
 		return nextView;
 	}
 	
-	//관리자 매장추가
+	//[슈퍼관리자] 매장추가
 	@PostMapping("/super/storesave") 
 	public ModelAndView storeSave(Store store, HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
 		store.setId(store.getCode());
@@ -113,7 +113,7 @@ public class StoreController {
   		
 		return nextView;
 	}
-	//매장관리자 시간별 사용량 
+	//[매장관리자] 시간별 사용량 
 	@RequestMapping(value = "/store/resulttotime", method = RequestMethod.POST) 
 	public ModelAndView resultToTime(HttpServletRequest request) throws ParseException{ 
 		ModelAndView nextView = new ModelAndView("store/storeManagerResultToTime");
@@ -151,7 +151,7 @@ public class StoreController {
 		nextView.addObject("srchgrade", request.getParameter("grade"));
 		return nextView;
 	}
-	//매장관리자 일자별 사용량 
+	//[매장관리자] 일자별 사용량 
 	@RequestMapping(value = "/store/resulttoday", method = RequestMethod.POST) 
 	public ModelAndView resultToDay(HttpServletRequest request) throws ParseException{ 
 		ModelAndView nextView = new ModelAndView("store/storeManagerResultToDay");
@@ -212,7 +212,7 @@ public class StoreController {
 		
 		return nextView;
 	}
-	//매장관리자 쿠폰별 사용량 
+	//[매장관리자] 쿠폰별 사용량 
 	@RequestMapping(value = "/store/resulttocoupon", method = RequestMethod.POST) 
 	public ModelAndView resultToCoupon(HttpServletRequest request) throws ParseException{ 
 		ModelAndView nextView = new ModelAndView("store/storeManagerResultToCoupon");
@@ -277,9 +277,9 @@ public class StoreController {
 		return nextView;
 	}
 	
-	//관리자 매장 정보보기
+	//[슈퍼관리자] 매장 정보보기
 	@GetMapping("/super/storeinfo/{storeseq}") 
-	public ModelAndView superUserInfo(@PathVariable("storeseq") int storeseq){ 
+	public ModelAndView superStoreInfo(@PathVariable("storeseq") int storeseq){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerStoreInfo");
 		
 		Store storeData = service.getStoreInfo(storeseq);
@@ -288,7 +288,7 @@ public class StoreController {
 		return nextView;
 	}
 	
-	//매장관리자 비밀번호변경 페이지
+	//[매장관리자] 비밀번호변경 페이지
 	@GetMapping("/store/modify") 
 	public ModelAndView storePassword(HttpServletRequest request){ 
 		ModelAndView nextView = new ModelAndView("store/storeManagerPasswordModify");
@@ -297,7 +297,7 @@ public class StoreController {
 		return nextView;
 	}
 	
-	//슈퍼관리자 비밀번호변경 페이지
+	//[슈퍼관리자] 비밀번호변경 페이지
 	@GetMapping("/super/modify") 
 	public ModelAndView superPassword(HttpServletRequest request){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerPasswordModify");
@@ -306,7 +306,7 @@ public class StoreController {
 		return nextView;
 	}
 
-	//매장관리자 비밀번호변경
+	//[공통] 비밀번호변경
 	@RequestMapping("/passwordModify")
 	public ModelAndView passwordModify(HttpServletRequest request, HttpServletResponse response) throws IOException{ 
 		ModelAndView nextView = null;
@@ -316,7 +316,7 @@ public class StoreController {
 		if(type.equals("store")) {
 			nextView = new ModelAndView("store/storeManagerPasswordModify");
 		}else if(type.equals("super")) {
-			nextView = new ModelAndView("store/superManagerPasswordModify");
+			nextView = new ModelAndView("super/superManagerPasswordModify");
 		}
 		HttpSession httpSession = request.getSession(true);
 		Store loginUser = (Store) httpSession.getAttribute("loginUser");

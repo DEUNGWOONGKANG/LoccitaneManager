@@ -31,6 +31,16 @@ function check(){
 	}
 }
 
+function exceldown(){
+	var result = confirm("다운로드 하시겠습니까?");
+	
+	if(result){
+		location.href="/super/exceldown";
+	}else{
+		return false;
+	}
+}
+
 </script>
   </head>
   <body>
@@ -55,6 +65,7 @@ function check(){
 					</select>
 			  		<input type="text" class="form-control" placeholder="검색어" id="searchKeyword" name="searchKeyword">
 			  		<input type="submit" class="btn btn-warning" value="검색">
+					<input type="button" class="btn btn-success" value="매장발행엑셀다운로드" onclick="return exceldown()">
 				</form>
 			</div>
       	</div>

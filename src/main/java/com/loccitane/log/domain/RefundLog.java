@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity // domain클래스인것을 나타내는 어노테이션
 @Table(name = "refundlog") //대응하는 테이블 설정
-public class RefundLog {
+public class RefundLog { //반품
 	@Id //Primary key의 컬럼인 것을 나타나주는 어노테이션 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "seq") 

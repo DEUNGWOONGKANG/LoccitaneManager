@@ -44,11 +44,7 @@
   <logger name="jdbc.resultsettable" level="OFF"/>
   <logger name="jdbc.connection" level="OFF"/>
   
-  <logger name="com.loccitane.utils.KakaoService" level="info" additivity="false">
-       <appender-ref ref="STDOUT" />
-       <appender-ref ref="ROLLING" />
-  </logger>
-  <logger name="com.loccitane.send.service.SendService" level="info" additivity="false">
+  <logger name="com.loccitane.send.service.SendController" level="info" additivity="false">
        <appender-ref ref="STDOUT" />
        <appender-ref ref="ROLLING" />
   </logger>

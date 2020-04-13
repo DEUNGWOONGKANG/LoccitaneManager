@@ -13,26 +13,27 @@ public class GradeService {
 	@Autowired // 스프링부트가 자동으로 객체를 주입해준다.
 	GradeRepository gradeRepo;
 	
-	// 모든 등급 조회
+	//사용가능한 모든 등급 조회
 	public List<Grade> getGradeUse(){
-		List<Grade> list = gradeRepo.findAllByUseyn("Y");
-		return list;
+		return gradeRepo.findAllByUseyn("Y");
 	}
 
+	//전체 등급 조회 DESC
 	public List<Grade> findAll() {
-		List<Grade> list = gradeRepo.findAllByOrderByMinimumDesc();
-		return list;
+		return gradeRepo.findAllByOrderByMinimumDesc();
 	}
 	
+	//전체 등급 조회 ASC
 	public List<Grade> findAllAsc() {
-		List<Grade> list = gradeRepo.findAllByUseynOrderByMinimumAsc("Y");
-		return list;
+		return gradeRepo.findAllByUseynOrderByMinimumAsc("Y");
 	}
-
+	
+	//등급 수정 하기위해 데이터 조회
 	public Grade find(int seq) {
 		return gradeRepo.findBySeq(seq);
 	}
-
+	
+	//등급 저장
 	public void gradeSave(Grade oldGrade) {
 		gradeRepo.save(oldGrade);
 	}

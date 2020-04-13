@@ -2,7 +2,6 @@ package com.loccitane.user.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -37,7 +35,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponCore;
-import com.loccitane.coupon.domain.CouponTemp;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
 import com.loccitane.grade.service.GradeService;
@@ -52,7 +49,6 @@ import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
 import com.loccitane.utils.ApiService;
-import com.loccitane.utils.KakaoService;
 import com.loccitane.utils.Paging;
 
 @Controller // 이 클래스가 컨트롤러라는 것을 알려주는 어노테이션
@@ -68,8 +64,6 @@ public class UserController {
 	@Autowired
 	StoreService storeservice;
 	@Autowired
-	KakaoService kakaoservice;
-	@Autowired
 	ApiService apiservice;
 	@Autowired
 	RefundLogService refundservice;
@@ -81,41 +75,6 @@ public class UserController {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
     }
-	
-	@GetMapping("/user/check/{usercode}") // 최초 고객 URL 랜딩페이지에서 ID값 체크
-	public ModelAndView checkUser(@PathVariable("usercode") String usercode){
-		User user = service.userCheck(usercode); // 서비스에서 요청에 해당하는 처리를 한다.
-		ModelAndView nextView = new ModelAndView("customerMain");
-		if(user == null) {
-			//존재하지 않는 ID일경우 휴대폰 번호 입력란 DISABLED 처리
-			nextView.addObject("check", "N");
-		}else{
-			//존재하는 ID일 경우 정상적으로 페이지 접근
-			nextView.addObject("check", "Y");
-			nextView.addObject("usercode", usercode);
-		}
-		return nextView;
-	}
-	
-	//최초 고객ID 체크 후 휴대폰번호 4자리 입력 후 로그인 체크
-	@PostMapping("/user/login") 
-	public ModelAndView loginUser(User user, HttpServletResponse response) throws Exception { 
-		ModelAndView nextView = new ModelAndView("customerCouponList");
-		User userData = service.userLogin(user); //해당 유저id값+전화번호 뒷자리4자리로 사용자 존재여부 확인
-		if(userData == null) { //사용자가 존재하지 않을경우
-			response.setContentType("text/html; charset=UTF-8");
-            PrintWriter out = response.getWriter();
-            out.println("<script>alert('등록된 고객 정보가 없습니다.'); history.go(-1);</script>");
-            out.flush();
-		}else { // 사용자가 존재하는 경우
-			List<Coupon> couponList = cpservice.getUserCoupon(user.getUsercode()); // 해당 사용자의 쿠폰리스트 조회
-			nextView.addObject("userData", userData); //사용자데이터
-			nextView.addObject("couponList", couponList); //쿠폰리스트
-			nextView.addObject("tel", user.getPhone()); //핸드폰번호 뒤4자리
-		}
-		return nextView;
-	}
-	
 	
 	//로그아웃
 	@GetMapping("/logout") 
@@ -487,7 +446,7 @@ public class UserController {
   	}
   	
   	//슈퍼관리자 사용자별 쿠폰 리스트
-  	@RequestMapping("/super/coupontomember") 
+  	@RequestMapping("/super/coupontomember")
   	public ModelAndView superCouponToMemberList(HttpServletRequest request, @PageableDefault Pageable pageable) throws Exception { 
   		ModelAndView nextView = new ModelAndView("super/superManagerCouponToMember");
   		
@@ -558,8 +517,6 @@ public class UserController {
   			nextView = superCouponPublish();
   		}else if(loginUser != null && menu.equals("menu4_3")){
   			nextView = superCouponToMemberList(request, pageable);
-  		}else if(loginUser != null && menu.equals("menu4_4")){
-  			nextView = superCouponRequestList(request, pageable);
   		}else if(loginUser != null && menu.equals("menu5_1")){
   			nextView = superResultToTime(request);
   		}else if(loginUser != null && menu.equals("menu5_2")){
@@ -715,7 +672,7 @@ public class UserController {
 		return nextView;
 	}
   	
-  	//슈퍼관리자 일자별 사용량
+  	//슈퍼관리자 쿠폰별 사용량
   	@RequestMapping("/super/resulttocoupon") 
   	private ModelAndView superResultToCoupon(HttpServletRequest request) throws ParseException {
   		ModelAndView nextView = new ModelAndView("super/superManagerResultToCoupon");
@@ -789,30 +746,6 @@ public class UserController {
 		return nextView;
 	}
 
-	//슈퍼관리자 쿠폰승인요청
-  	@RequestMapping("/super/couponrequest") 
-  	private ModelAndView superCouponRequestList(HttpServletRequest request, Pageable pageable) {
-  		//슈퍼관리자 사용자별 쿠폰 리스트
-  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
-  		
-  		String searchKey = request.getParameter("searchKey");
-  		String searchKeyword = request.getParameter("searchKeyword");
-  		
-  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
-  		Paging paging = new Paging();
-	  	if(couponList != null) {
-	  		int curPage = pageable.getPageNumber();
-	  		if(curPage == 0) curPage = curPage + 1;
-	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
-  		}
-  		nextView.addObject("couponList", couponList);
-  		nextView.addObject("paging", paging);
-  		nextView.addObject("searchKey", searchKey);
-  		nextView.addObject("searchKeyword", searchKeyword);
-  	
-  		return nextView;
-  	}
-
 	//슈퍼관리자 쿠폰발행페이지
   	@GetMapping("/super/couponpublish") 
   	public ModelAndView superCouponPublish(){ 
@@ -860,7 +793,7 @@ public class UserController {
 		ModelAndView nextView = new ModelAndView("super/superManagerSendList");
 		
 		Page<Send> sendList = sendservice.findAll(pageable);
-		int sendCount = sendList.getContent().size();
+		int sendCount = (int) sendList.getTotalElements();
 		Paging paging = new Paging();
 		if(sendList != null) {
 			int curPage = pageable.getPageNumber();

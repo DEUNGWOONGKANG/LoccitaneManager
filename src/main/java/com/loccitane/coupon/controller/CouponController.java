@@ -1,5 +1,6 @@
 package com.loccitane.coupon.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -54,21 +66,21 @@ public class CouponController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
     }
 
-	// 고객에 대한 쿠폰조회
+	//[매장관리자] 고객에 대한 쿠폰조회
 	@GetMapping("/store/couponlist/{usercode}/{phone}")
 	public ModelAndView getUserCoupon(@PathVariable("usercode") String usercode, @PathVariable("phone") String phone){
-		User userData = service.userCheck(usercode); // 서비스에서 요청에 해당하는 처리를 한다.
+		User userData = service.userCheck(usercode); 
 		ModelAndView nextView = new ModelAndView("store/storeManagerCouponList");
 		
 		List<Coupon> couponList = cpservice.getUserCoupon(userData.getUsercode()); // 해당 사용자의 쿠폰리스트 조회
 		nextView.addObject("userData", userData); //사용자데이터
 		nextView.addObject("couponList", couponList); //쿠폰리스트
-		nextView.addObject("searchPhone", phone); //사용자데이터
+		nextView.addObject("searchPhone", phone); //검색어
 		
 		return nextView;
 	}
 	
-	// 쿠폰사용처리
+	//[매장관리자] 쿠폰사용처리
 	@GetMapping("/store/couponuse/{usercode}/{cptmseq}/{phone}") 
 	public ModelAndView couponUse(@PathVariable("usercode") String usercode
 			, @PathVariable("cptmseq") int seq, @PathVariable("phone") String phone, HttpServletRequest request) throws Exception{
@@ -79,7 +91,17 @@ public class CouponController {
 		if(loginUser == null) { //관리자 정보가 없을경우 로그아웃처리
 			nextView = new ModelAndView("logout");
 		}else{
-			cpservice.useCoupon(usercode, seq, loginUser);
+			//사용처리할 쿠폰 찾기
+			CouponMember coupon = cpservice.getCouponMemberInfo(seq);
+			Date now  = new Date();
+			coupon.setUsedate(now);
+			coupon.setUseyn("Y");
+			coupon.setUsemanager(loginUser.getId());
+			
+			//사용처리
+			cpservice.useCoupon(coupon);
+			//고객페이지 API호출하여 사용처리
+			apiservice.coupontomemberModifyCall(coupon);
 			
 			nextView = getUserCoupon(usercode, phone);
 			nextView.addObject("update", "Y"); //업데이트 여부
@@ -87,7 +109,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰 부여[매장관리자]
+	//[매장관리자] 쿠폰 부여
 	@PostMapping("/store/coupongive") 
 	public ModelAndView couponGive(CouponMember coupon, HttpServletRequest request){
 		ModelAndView nextView = null;
@@ -98,7 +120,6 @@ public class CouponController {
 		}else{
 			nextView = new ModelAndView("store/storeManagerCouponGive");
 			//슈퍼관리자의 승인=>즉시발행으로 변경
-			//cpservice.giveCouponRequest(coupon, loginUser, request);
 			cpservice.giveCoupon(coupon, loginUser.getId(), request.getParameter("reason_etc"));
 			
 			List<CouponCore> couponList = cpservice.getCouponList();
@@ -108,7 +129,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰 부여[슈퍼관리자] - 계정관리 - 회원정보
+	//[슈퍼관리자]계정관리->회원정보->회원클릭하여 쿠폰발행
 	@PostMapping("/super/coupongive") 
 	public ModelAndView couponGiveSuper(CouponMember coupon, HttpServletRequest request){
 		ModelAndView nextView = null;
@@ -133,7 +154,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰 부여[슈퍼관리자] - 쿠폰관리 - 쿠폰발행
+	//[슈퍼관리자]쿠폰관리->쿠폰발행
 	@RequestMapping(value= "/super/couponpublish", method = RequestMethod.POST) 
 	public ModelAndView couponPublish(CouponMember coupon, HttpServletRequest request) throws Exception { 
 		ModelAndView nextView = null;
@@ -157,7 +178,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//계정관리=>회원정보=>쿠폰부여
+	//[슈퍼관리자]계정관리=>회원정보=>쿠폰부여
 	@GetMapping("/super/coupongive/{usercode}") 
 	public ModelAndView couponGive(@PathVariable("usercode") String usercode){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponGive");
@@ -172,14 +193,14 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰등록페이지 이동
+	//[슈퍼관리자]쿠폰생성 페이지 이동
 	@GetMapping("/super/couponadd")
 	public ModelAndView couponAdd() {
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponAdd");
 		return nextView;
 	}
 	
-	//관리자  쿠폰추가
+	//[슈퍼관리자]신규 쿠폰추가
 	@PostMapping("/super/couponsave") 
 	public ModelAndView couponSave(CouponCore couponCore, HttpServletRequest request, @PageableDefault Pageable pageable, HttpServletResponse response) throws Exception {
 		HttpSession httpSession = request.getSession(true);
@@ -195,6 +216,7 @@ public class CouponController {
   		couponCore.setCreateuser(loginUser.getManagername()+"("+loginUser.getId()+")");
 		cpservice.couponSave(couponCore);
 		
+		//고객페이지내에 있는 쿠폰생성 API 호춣
 		apiservice.couponAddCall(couponCore);
 		
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponList");
@@ -213,7 +235,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//관리자  쿠폰수정
+	//[슈퍼관리자]쿠폰 정보 수정
 	@PostMapping("/super/couponmodify") 
 	public ModelAndView couponModify(CouponCore couponCore, HttpServletRequest request, @PageableDefault Pageable pageable, HttpServletResponse response) throws Exception {
 		HttpSession httpSession = request.getSession(true);
@@ -229,6 +251,7 @@ public class CouponController {
   		couponCore.setCreateuser(loginUser.getManagername()+"("+loginUser.getId()+")");
 		cpservice.couponSave(couponCore);
 		
+		//고객페이지내에 있는 쿠폰수정 API 호춣
 		apiservice.couponModifyCall(couponCore);
 		
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponList");
@@ -247,7 +270,7 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰 정보보기
+	//[슈퍼관리자] 쿠폰 상세보기
 	@GetMapping("/super/couponinfo/{seq}") 
 	public ModelAndView superUserInfo(@PathVariable("seq") int seq){ 
 		ModelAndView nextView = new ModelAndView("super/superManagerCouponInfo");
@@ -258,18 +281,19 @@ public class CouponController {
 		return nextView;
 	}
 	
-	//쿠폰삭제
+	//[슈퍼관리자] 발행된 쿠폰삭제
 	@PostMapping("/super/coupondelete") 
 	public ModelAndView couponDelete(CouponMember cptm, HttpServletRequest request){
 		HttpSession httpSession = request.getSession(true);
 		Store loginUser = (Store) httpSession.getAttribute("loginUser");
-		CouponMember cm = cpservice.getCp(cptm.getCptmseq());
+		CouponMember cm = cpservice.getCouponMemberInfo(cptm.getCptmseq());
 		//쿠폰삭제 => DB삭제처리가 아닌 useyn을 D 로 바꿔준다.
 		cm.setUseyn("D");
 		cm.setUsemanager(loginUser.getId());
 		Date now = new Date();
 		cm.setUsedate(now);
-		cpservice.cmSave(cm);
+		cpservice.useCoupon(cm);
+		//고객페이지 API 호출하여 useyn을 D로 바꿔준다.
 		apiservice.coupontomemberModifyCall(cm);
 		
 		User userData = service.userCheck(cptm.getUsercode());
@@ -282,54 +306,112 @@ public class CouponController {
 		nextView.addObject("couponList", couponList);
 		return nextView;
 	}
-	//프로세스 변경으로 인해 주석처리
-	//쿠폰 발행 개별승인
-//	@RequestMapping("/super/approval/{seq}") 
-//	public ModelAndView couponApproval(@PathVariable("seq") int seq, HttpServletRequest request, Pageable pageable){ 
-//		CouponMember approvalData = cpservice.couponApproval(seq);
-//		//슈퍼관리자 사용자별 쿠폰 리스트
-//  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
-//  		
-//  		String searchKey = request.getParameter("searchKey");
-//  		String searchKeyword = request.getParameter("searchKeyword");
-//  		
-//  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
-//  		Paging paging = new Paging();
-//	  	if(couponList != null) {
-//	  		int curPage = pageable.getPageNumber();
-//	  		if(curPage == 0) curPage = curPage + 1;
-//	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
-//  		}
-//  		nextView.addObject("couponList", couponList);
-//  		nextView.addObject("paging", paging);
-//  		nextView.addObject("searchKey", searchKey);
-//  		nextView.addObject("searchKeyword", searchKeyword);
-//  		nextView.addObject("request", "Y");
-//		return nextView;
-//	}
 	
-	//쿠폰 발행 전체승인
-//	@RequestMapping("/super/allapproval") 
-//	public ModelAndView couponAllApproval(HttpServletRequest request, Pageable pageable){ 
-//		List<CouponMember> approvalList = cpservice.allCouponApproval();
-//		//슈퍼관리자 사용자별 쿠폰 리스트
-//  		ModelAndView nextView = new ModelAndView("super/superManagerCouponRequestList");
-//  		
-//  		String searchKey = request.getParameter("searchKey");
-//  		String searchKeyword = request.getParameter("searchKeyword");
-//  		
-//  		Page<CouponTemp> couponList = cpservice.couponRequestList(pageable, searchKey, searchKeyword);
-//  		Paging paging = new Paging();
-//	  	if(couponList != null) {
-//	  		int curPage = pageable.getPageNumber();
-//	  		if(curPage == 0) curPage = curPage + 1;
-//	  		paging.Pagination((int)couponList.getTotalElements(), curPage);
-//  		}
-//  		nextView.addObject("couponList", couponList);
-//  		nextView.addObject("paging", paging);
-//  		nextView.addObject("searchKey", searchKey);
-//  		nextView.addObject("searchKeyword", searchKeyword);
-//  		nextView.addObject("request", "Y");
-//		return nextView;
-//	}
+	//[슈퍼관리자] 매장발행 엑셀다운로드
+	@RequestMapping(value= "/super/exceldown", method = RequestMethod.GET)
+	public void superCouponExcelDown(HttpServletResponse response, HttpServletRequest request, @PageableDefault Pageable pageable) throws IOException{ 
+		Workbook wb = new XSSFWorkbook();
+		//매장에서 발행한 쿠폰 데이터 가져오기
+		List<Coupon> couponList = cpservice.getStoreCptm();
+		try {
+		    // 워크북 생성
+		    Sheet sheet = wb.createSheet("COUPON");
+		    Row row = null;
+		    Cell cell = null;
+		    int rowNo = 0;
+	
+		    // 테이블 헤더용 스타일
+		    CellStyle headStyle = wb.createCellStyle();
+	
+		    // 가는 경계선을 가집니다.
+		    headStyle.setBorderTop(BorderStyle.THIN);
+		    headStyle.setBorderBottom(BorderStyle.THIN);
+		    headStyle.setBorderLeft(BorderStyle.THIN);
+		    headStyle.setBorderRight(BorderStyle.THIN);
+	
+		    // 배경색은 노란색입니다.
+		    headStyle.setFillForegroundColor(HSSFColorPredefined.YELLOW.getIndex());
+		    headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	
+		    // 데이터는 가운데 정렬합니다.
+		    headStyle.setAlignment(HorizontalAlignment.CENTER);
+		    CreationHelper createHelper = wb.getCreationHelper();
+		    // 데이터용 경계 스타일 테두리만 지정
+		    CellStyle bodyStyle = wb.createCellStyle();
+		    bodyStyle.setBorderTop(BorderStyle.THIN);
+		    bodyStyle.setBorderBottom(BorderStyle.THIN);
+		    bodyStyle.setBorderLeft(BorderStyle.THIN);
+		    bodyStyle.setBorderRight(BorderStyle.THIN);
+		    
+		    CellStyle dateStyle = wb.createCellStyle();
+		    dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+		    
+		    String[] title = {"USERCODE", "USERNAME", "GRADE", "COUPONCODE", "COUPONNO", "COUPONNAME",  "CREATEDATE", "CREATEUSER", "REASON", "STARTDATE", "ENDDATE", "USEYN", "USEMANAGER", "USEDATE"};
+		    
+		    // 헤더 생성
+		    row = sheet.createRow(rowNo++);
+		    for(int t=0; t<title.length; t++) {
+			    cell = row.createCell(t);
+			    cell.setCellStyle(headStyle);
+			    cell.setCellValue(title[t]);
+		    }
+	
+		    // 데이터 부분 생성
+			for(Coupon coupon : couponList) {
+		        row = sheet.createRow(rowNo++);
+		        cell = row.createCell(0);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getUsercode());
+		        cell = row.createCell(1);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getUsername());
+		        cell = row.createCell(2);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getGrade());
+		        cell = row.createCell(3);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getCpcode());
+		        cell = row.createCell(4);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getCouponno());
+		        cell = row.createCell(5);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getCpname());
+		        cell = row.createCell(6);
+		        cell.setCellStyle(dateStyle);
+		        cell.setCellValue(coupon.getCreateday());
+		        cell = row.createCell(7);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getCreateuser());
+		        cell = row.createCell(8);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getReason());
+		        cell = row.createCell(9);
+		        cell.setCellStyle(dateStyle);
+		        cell.setCellValue(coupon.getStartdate());
+		        cell = row.createCell(10);
+		        cell.setCellStyle(dateStyle);
+		        cell.setCellValue(coupon.getEnddate());
+		        cell = row.createCell(11);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getUsedyn());
+		        cell = row.createCell(12);
+		        cell.setCellStyle(bodyStyle);
+		        cell.setCellValue(coupon.getUsemanager());
+		        cell = row.createCell(13);
+		        cell.setCellStyle(dateStyle);
+		        cell.setCellValue(coupon.getUsedate());
+		    }
+			// 컨텐츠 타입과 파일명 지정
+            response.setContentType("ms-vnd/excel");
+            response.setHeader("Content-Disposition", "attachment;filename=couponList.xlsx");
+
+			wb.write(response.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			wb.close();
+		}
+	}
 }

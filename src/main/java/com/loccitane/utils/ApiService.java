@@ -15,6 +15,7 @@ import com.loccitane.user.domain.User;
 
 @Service
 public class ApiService {
+	//엑셀 업로드를 통해 신규 사용자가 추가된 경우
 	public void userAddCall(User user) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -39,7 +40,7 @@ public class ApiService {
 	    System.out.println(responseStr);
 	    
 	}
-	
+	//엑셀 업로드를 통해 기존 사용자가 변경된 경우 기준은 USERCODE
 	public void userModifyCall(User user) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -65,6 +66,7 @@ public class ApiService {
 	    
 	}
 	
+	//슈퍼관리자가 쿠폰추가시
 	public void couponAddCall(CouponCore coupon) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -89,6 +91,7 @@ public class ApiService {
 	    
 	}
 	
+	//슈퍼관리자가 쿠폰수정시
 	public void couponModifyCall(CouponCore coupon) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -111,6 +114,7 @@ public class ApiService {
 	    
 	}
 	
+	//쿠폰 발행
 	public void coupontomemberAddCall(CouponMember coupon) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -138,6 +142,7 @@ public class ApiService {
 	    
 	}
 	
+	//쿠폰 사용처리 및 삭제처리
 	public void coupontomemberModifyCall(CouponMember coupon) {
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));

@@ -10,8 +10,6 @@ import com.loccitane.log.domain.RefundLog;
 
 @Repository
 public interface RefundLogRepository extends JpaRepository<RefundLog, Long> {
-
 	Page<RefundLog> findAllByUsernameContaining(String searchKeyword, Pageable pageable);
-
 	Page<RefundLog> findAllByUsercodeContaining(String searchKeyword, Pageable pageable);
 }

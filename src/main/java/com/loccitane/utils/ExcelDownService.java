@@ -47,13 +47,6 @@ public class ExcelDownService {
 			cal.setTime(now);
 			cal.add(Calendar.DATE, -1);
 			
-			if(type.equals("user")) {
-				userList = service.getUpdateUserList(now, cal.getTime());
-			}else if(type.equals("coupon")) {
-				couponList = cpservice.getUpdateCoupon(now, cal.getTime());
-			}else if(type.equals("coupontomember")) {
-				couponMemList = cpservice.getUpdateCoupontomember(now, cal.getTime());
-			}
 	
 		    // 워크북 생성
 		    Sheet sheet = wb.createSheet(type);

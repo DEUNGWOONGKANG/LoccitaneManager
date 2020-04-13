@@ -8,12 +8,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.loccitane.coupon.domain.Coupon;
 import com.loccitane.coupon.domain.CouponMember;
 import com.loccitane.coupon.service.CouponService;
 import com.loccitane.grade.domain.Grade;
@@ -22,12 +20,10 @@ import com.loccitane.log.domain.Log;
 import com.loccitane.log.service.LogService;
 import com.loccitane.send.domain.Send;
 import com.loccitane.send.service.SendService;
-import com.loccitane.store.domain.Store;
 import com.loccitane.store.service.StoreService;
 import com.loccitane.user.domain.User;
 import com.loccitane.user.service.UserService;
 import com.loccitane.utils.ApiService;
-import com.loccitane.utils.KakaoService;
 
 
 @Component
@@ -41,22 +37,20 @@ public class Scheduler {
 	@Autowired
 	CouponService cpservice;
 	@Autowired
-	KakaoService kakao;
-	@Autowired
 	StoreService store;
 	@Autowired
 	ApiService api;
 	@Autowired
 	SendService sendservice;
 	
-
-	//@Scheduled(cron = "0 * * * * *")
+	//스케줄 날짜 설정
+	@Scheduled(cron = "0 30 14 * * *")
 	public void Schedule() {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		String today = transFormat.format(now);
 		//마지막 구매일 1년 지난 사용자 휴면처리
-		//dormant();
+		dormant();
 		
 		//생일쿠폰 발행
 		birthdayCouponRunner();
@@ -69,7 +63,7 @@ public class Scheduler {
 			nowGradeAlarm();
 		}
 		//소멸예정쿠폰 알림 발송
-		//deleteCouponAlarm();
+		deleteCouponAlarm();
 	}
 	
 	//소멸예정 쿠폰 알림 발송
@@ -122,7 +116,8 @@ public class Scheduler {
 			}
 		}
 	}
-
+	
+	//마지막 구매일 1년 지난 사용자 휴면처리
 	private void dormant() {
 		System.out.println("====================휴면처리 시작====================");
 		Date now = new Date();
@@ -145,6 +140,7 @@ public class Scheduler {
 		System.out.println("====================휴면처리 종료====================");
 	}
 	
+	//등급업 및 등급업 쿠폰 발행
 	private void gradeUP() {
 		Date now = new Date();
 		try {
@@ -204,8 +200,6 @@ public class Scheduler {
 				send.setTotalbuy(user.getTotalbuy());
 				
 				sendservice.sendSave(send);
-				//JSONObject result = KakaoService.post("10028", user, "", homestore);
-				//String status = (String) result.get("status");
 			}
 		}catch(Exception e) {
 			// 시스템 로그저장
@@ -218,7 +212,8 @@ public class Scheduler {
 			logservice.saveLog(log);
 		}
 	}
-
+	
+	//생일 쿠폰 발행
 	public void birthdayCouponRunner() {
 		Date now = new Date();
 		try {
@@ -239,19 +234,11 @@ public class Scheduler {
 				coupon.setReason("Birthday");
 				coupon.setUsercode(user.getUsercode());
 				coupon.setCpcode("LKRMB10");
-				
 				coupon.setStartdate(startDate);
 				coupon.setEnddate(endDate);
 				
 				cpservice.giveCoupon(coupon, "system", coupon.getReason());
 				if(user.getAlarmyn().equals("Y")) {
-					//카카오알림톡 전송
-//					Store homestore = store.getHomestore(birthdayList.get(i).getHomestore()); 
-//					JSONObject result = KakaoService.lmsPost(birthdayList.get(i), homestore);
-//					String status = (String) result.get("status");
-//					if(status != null) {
-//						if(status.equals("MMS_0000")) cnt ++;
-//					}
 					Send send = new Send();
 					send.setCreatedate(now);
 					send.setDeletedate("");
@@ -281,13 +268,13 @@ public class Scheduler {
 		
 	}
 	
+	//현재등급 알림 프로세스
 	public void nowGradeAlarm() {
 		List<User> users = service.findAllByStatus();
+		//핸드폰번호 유효성 체크
 		String regExp = "^01(?:0|1[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$";
 		Date now = new Date();
-		//int cnt = 0;
 		for(User user : users) {
-			//핸드폰번호가 10자리이상일경우 
 			if(user.getPhone().matches(regExp)) {
 				Send send = new Send();
 				send.setCreatedate(now);
@@ -303,22 +290,7 @@ public class Scheduler {
 				send.setTotalbuy(user.getTotalbuy());
 				
 				sendservice.sendSave(send);
-				//Store homestore = store.getHomestore(user.getHomestore()); 
-				//JSONObject result = KakaoService.post("10027", user, "", homestore);
-				//String status = (String) result.get("status");
-				//if(status != null) {
-				//	if(status.equals("OK")) cnt ++;
-				//}
 			}
 		}
-//		if(cnt > 0) {
-//			Log log = new Log();
-//			log.setUserid("system");
-//		    log.setUsername("system");
-//		    log.setLogkind("KAKAO");
-//		    log.setLogcontent("[현재등급안내] 수신자 : "+cnt+"명 ");
-//		    log.setLogdate(now);
-//		    logservice.saveLog(log);
-//		}
 	}
 }
