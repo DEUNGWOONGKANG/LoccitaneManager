@@ -10,17 +10,16 @@
     <title>Loccitane Admin Page</title>
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="<%=url %>/css/bootstrap.css">
-<!-- Font Awesome CSS-->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" >
-<!-- Google fonts - Popppins for copy-->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,800">
-<!-- orion icons-->
-<link rel="stylesheet" href="<%=url %>/css/orionicons.css">
-<!-- theme stylesheet-->
-<link rel="stylesheet" href="<%=url %>/css/style.default.css" id="theme-stylesheet">
-<link rel="stylesheet" href="<%=url %>/css/jquery-ui.css">
-<script src="<%=url %>/js/jquery-3.4.1.min.js"></script>
-<script src="<%=url %>/js/jquery-ui.js"></script>
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <!-- Google fonts - Popppins for copy-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,800">
+    <!-- orion icons-->
+    <link rel="stylesheet" href="<%=url %>/css/orionicons.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="<%=url %>/css/style.default.css" id="theme-stylesheet">
+    <!-- Favicon-->
+    <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
 $(function(){
     $("#startdate").datepicker();
@@ -108,5 +107,11 @@ $.datepicker.setDefaults({
 		</table>
       </div>
     </div>
+    <script src="<%=url %>/js/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="<%=url %>/js/bootstrap.js"></script>
+    <script src="<%=url %>/js/jquery.cookie.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="<%=url %>/js/front.js"></script>
   </body>
 </html>
