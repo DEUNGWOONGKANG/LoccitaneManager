@@ -44,13 +44,13 @@ public class Scheduler {
 	SendService sendservice;
 	
 	//스케줄 날짜 설정
-	//@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 11 * * *")
 	public void Schedule() {
 		Date now = new Date();
 		SimpleDateFormat transFormat = new SimpleDateFormat("MM-dd");
 		String today = transFormat.format(now);
 		//마지막 구매일 1년 지난 사용자 휴면처리
-		//dormant();
+		dormant();
 		
 		//생일쿠폰 발행
 		birthdayCouponRunner();
@@ -111,8 +111,6 @@ public class Scheduler {
 				
 				sendservice.sendSave(send);
 				dupcheckList.add(user);
-				//JSONObject result = KakaoService.post("10049", user, alarmDate, homestore);
-				//String status = (String) result.get("status");
 			}
 		}
 	}

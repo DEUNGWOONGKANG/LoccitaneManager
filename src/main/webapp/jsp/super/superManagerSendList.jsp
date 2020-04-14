@@ -21,7 +21,7 @@
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
-if("${saveyn}" == "Y"){
+if("${sendyn}" == "Y"){
 	alert("발송이 발송되었습니다.");
 }
 function send(){
