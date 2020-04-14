@@ -44,7 +44,7 @@
   <logger name="jdbc.resultsettable" level="OFF"/>
   <logger name="jdbc.connection" level="OFF"/>
   
-  <logger name="com.loccitane.send.service.SendController" level="info" additivity="false">
+  <logger name="com.loccitane.send.controller.SendController" level="info" additivity="false">
        <appender-ref ref="STDOUT" />
        <appender-ref ref="ROLLING" />
   </logger>

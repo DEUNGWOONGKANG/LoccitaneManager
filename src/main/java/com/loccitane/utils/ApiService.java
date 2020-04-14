@@ -53,6 +53,8 @@ public class ApiService {
 	    URI uri = UriComponentsBuilder.newInstance()
 	    		.scheme("https")
 	    		.host("myprovence.shop")
+	    		//.host("localhost")
+	    		//.port("8082")
 	    		.path("/api/user/modify")
 	    		.queryParam("usercode", user.getUsercode())
 	    		.queryParam("phone", phone)

@@ -87,36 +87,6 @@ function usertype(type){
 		$('#usertr2').css('display', 'none');
 	}
 }
-
-function formchange(){
-	var select = document.getElementById("template");
-	var val = select.options[select.selectedIndex].value;
-
-	if(val == "00000"){
-		$('#content').css('display', 'none');
-	}else if(val == "10027"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10027.png";
-	}else if(val == "10028"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10028.png";
-	}else if(val == "10030"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10030.png";
-	}else if(val == "10031"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10031.png";
-	}else if(val == "10049"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10049.png";
-	}else if(val == "10050"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10050.png";
-	}else if(val == "10051"){
-		$('#content').css('display', '');
-		view.src = "<%=url %>/img/10051.png";
-	}
-}
 </script>
 </head>
   <body>
@@ -134,7 +104,7 @@ function formchange(){
 				<tr height="70px">
 					<th width="25%">알림톡 템플릿</th>
 					<td>
-						<select class="form-control" id="template" name="template" onchange="formchange()">
+						<select class="form-control" id="template" name="template">
 		   					<option value="00000">템플릿 선택</option>
 		   					<option value="10027">[10027]현재 등급안내</option>
 		   					<option value="10028">[10028]등급업 축하 쿠폰 발급안내</option>
@@ -145,12 +115,6 @@ function formchange(){
 		   					<option value="10051">[10051]프레스티지 등급 신제품 선공개 쿠폰 발급안내</option>
 				    	</select>
 				    	<br>사전에 등록된 템플릿만 발송이 가능합니다.
-					</td>
-				</tr>
-				<tr id="content" style="display:none;">
-					<th width="25%">발송내용</th>
-					<td>
-						<img id="view" src="<%=url %>/img/logo.png" style="width:400px">
 					</td>
 				</tr>
 				<tr>

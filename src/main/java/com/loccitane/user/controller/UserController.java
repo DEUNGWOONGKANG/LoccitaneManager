@@ -338,7 +338,7 @@ public class UserController {
 		return nextView;
 	} 
 	
-	//슈퍼관리자 엑셀업로드
+	//슈퍼관리자 엑셀업로드시 아래 출력되는 리스트
 	@GetMapping("/super/excelupload")
 	public ModelAndView superExcelUpload() {
 		ModelAndView nextView = new ModelAndView("super/superManagerExcelUpload");
@@ -347,6 +347,8 @@ public class UserController {
 		return nextView;
 	}
 	
+	//엑셀업로드 로직
+	//C:exceltemp 폴더에 엑셀파일을 떨구고 데이터 화 시킨 후 삭제처리 
     @RequestMapping(value = "/super/excelUploadAjax", method = RequestMethod.POST)
     public @ResponseBody ModelAndView excelUploadAjax(MultipartHttpServletRequest request)  throws Exception{
         MultipartFile excelFile =request.getFile("excelFile");
@@ -357,20 +359,27 @@ public class UserController {
         }
         Date now = new Date();
         Log log = new Log();
-        File destFile = new File("C:\\exceltemp\\"+excelFile.getOriginalFilename());
+        String path = "C:\\exceltemp";
+        File folder = new File(path);
+        
+        //exceltemp 폴더가 없을 경우 생성 후 진행
+        if(!folder.exists()) {
+        	folder.mkdir();
+        }
+        
+        File destFile = new File(path+excelFile.getOriginalFilename());
         try{
             excelFile.transferTo(destFile);
             String logContent = service.excelUpload(destFile);
-        
-        destFile.delete();
-	    
-		
-	    log.setUserid(loginUser.getId());
-	    log.setUsername(loginUser.getManagername());
-	    log.setLogkind("EXCELUPLOAD");
-	    log.setLogcontent(logContent);
-	    log.setLogdate(now);
-	    logservice.saveLog(log);
+            //모든 처리가 끝나면 엑셀파일은 삭제한다.
+	        destFile.delete();
+		    
+		    log.setUserid(loginUser.getId());
+		    log.setUsername(loginUser.getManagername());
+		    log.setLogkind("EXCELUPLOAD");
+		    log.setLogcontent(logContent);
+		    log.setLogdate(now);
+		    logservice.saveLog(log);
         
         }catch(IllegalStateException | IOException e){
         	log.setLogcontent("엑셀업로드 오류");
@@ -385,6 +394,7 @@ public class UserController {
         return nextView;
     }
     
+    //엑셀 업로드시 프로그레스바 사용
     @ResponseBody
     @RequestMapping(value = "/excelUploadProgress", method = RequestMethod.POST)
     public String excelUploadProgress(HttpServletRequest request) throws Exception {
@@ -408,6 +418,8 @@ public class UserController {
         
         return Integer.toString(resultData);
     }
+    
+    //엑셀 업로드 후 프로그레스바 클리어
     @ResponseBody
     @RequestMapping(value = "/excelUploadProgressClear", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView excelUploadProgressClear(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -836,11 +848,10 @@ public class UserController {
 			if(template.equals("10049")) {
 				deletedate = sdf.format(cal.getTime());
 			}
+			
   			if(request.getParameter("type").equals("user")) {
+  				//사용자 지정하여 발송할경우
   				User userdata = service.userCheck(user.getUsercode());
-  				//Store homestore = storeservice.getHomestore(userdata.getHomestore());
-  				//JSONObject result = KakaoService.post(template, userdata, "", homestore);
-  				//String status = (String) result.get("status");
   				Send send = new Send();
 				send.setCreatedate(now);
 				send.setDeletedate(deletedate);
@@ -855,7 +866,8 @@ public class UserController {
 				send.setTotalbuy(userdata.getTotalbuy());
 				
 				sendservice.sendSave(send);
-  			} else if(request.getParameter("type").equals("grade")) {
+  			}else if(request.getParameter("type").equals("grade")) {
+  				//등급 지정하여 발송할 경우
   				String grade = request.getParameter("grade");
   				List<User> userList = new ArrayList<User>();
   				List<Send> sendList = new ArrayList<Send>();
@@ -880,12 +892,6 @@ public class UserController {
   					send.setTotalbuy(user.getTotalbuy());
   					
   					sendList.add(send);
-  					//Store homestore = storeservice.getHomestore(u.getHomestore());
-					//JSONObject result = KakaoService.post(template, u, "", homestore);
-					//String status = (String) result.get("status");
-//					if(status != null) {
-//						if(status.equals("OK")) cnt ++;
-//					}
   				}
   				sendservice.sendSaveAll(sendList);
   			}

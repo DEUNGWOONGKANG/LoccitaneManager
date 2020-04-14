@@ -181,6 +181,7 @@ public class UserService {
 		userRepo.save(userData);
 	}
 	
+	//엑셀업로드 프로세스
 	public String excelUpload(File destFile) throws Exception{
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 		ExcelReadOption excelReadOption = new ExcelReadOption();
@@ -215,6 +216,7 @@ public class UserService {
 		    		check.setTotalbuy(totalbuy);
 		    		check.setAlarmyn(article.get("G"));
 		    		check.setHomestore(article.get("H"));
+		    		//기본등급은 REGULAR로 지정
 		    		check.setGrade("REGULAR");
 		    		check.setStartgrade("REGULAR");
 		    		if(check.getLastpurchase().before(cal.getTime())) {
@@ -224,6 +226,7 @@ public class UserService {
 		    		}
 		    		check.setLastupdate(now);
 		    		uploadUser.add(check);
+		    		//관리자페이지에서 사용자 추가 API 호출
 		    		api.userAddCall(check);
 		    		insertRowCount++;
 		    	}else{
@@ -274,6 +277,7 @@ public class UserService {
 		    				apiCall = true;
 		    			}
 		    		}
+		    		//Lastpurchase 비교하기 (1년이 지난 사용자는 휴면상태로 전환되므로 체크하여 update해준다)
 		    		//날짜 비교는 Timestamp로 비교한다.
 		    		Timestamp ts = new Timestamp(transFormat.parse(article.get("E")).getTime());
 		    		if(check.getLastpurchase() == null) {
@@ -285,6 +289,8 @@ public class UserService {
 			    			dataAdd = true;
 			    		}
 		    		}
+		    		
+		    		//Totalbuy를 가지고 첫구매 확인 하여 첫구매 일 경우 쿠폰 발행
 		    		if(totalbuy.compareTo(check.getTotalbuy()) != 0) {
 		    			if(totalbuy.compareTo(check.getTotalbuy()) == 1){
 		    				CouponMember cp = new CouponMember();
