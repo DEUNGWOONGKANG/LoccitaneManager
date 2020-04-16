@@ -239,7 +239,7 @@ public class Scheduler {
 				if(user.getAlarmyn().equals("Y")) {
 					Send send = new Send();
 					send.setCreatedate(now);
-					send.setDeletedate("");
+					send.setDeletedate("");                                                                                                                                                                                                                                                                                                                                                                         
 					send.setGrade(user.getGrade());
 					send.setHomestore(user.getHomestore());
 					send.setSendtype("LMS");

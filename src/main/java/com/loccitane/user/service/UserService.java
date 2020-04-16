@@ -430,6 +430,7 @@ public class UserService {
 		    		
 		    		if(check.getLastpurchase().after(cal.getTime()) && check.getStatus().equals("9")) {
 		    			check.setStatus("1");
+		    			check.setAlarmyn("Y");
 		    			dataAdd = true;
 		    			apiCall = true;
 		    		}
@@ -487,13 +488,15 @@ public class UserService {
 		String birthcheck = transFormat.format(birth);
 		for(User user : userList) {
 			String userBirthday = user.getBirthday();
-			userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
-			if(userBirthday.equals(birthcheck)) {
-				birthdayUser.add(user);
+			if(userBirthday.length() > 5) {
+				userBirthday = userBirthday.substring(userBirthday.length()-5, userBirthday.length());
+				if(userBirthday.equals(birthcheck)) {
+					birthdayUser.add(user);
+				}
+//				if(userBirthday.equals(birthcheck) || userBirthday.equals(birthcheck2)) {
+//					birthdayUser.add(user);
+//				}
 			}
-//			if(userBirthday.equals( birthcheck) || userBirthday.equals(birthcheck2) || userBirthday.equals(birthcheck3)) {
-//				birthdayUser.add(user);
-//			}
 		}
 		return birthdayUser;
 	}
