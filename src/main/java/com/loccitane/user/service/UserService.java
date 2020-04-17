@@ -385,6 +385,9 @@ public class UserService {
 								send.setTemplateid("10050");
 								send.setUsercode(check.getUsercode());
 								send.setUsername(check.getUsername());
+								send.setPhone(check.getPhone());
+								send.setBirthday(check.getBirthday());
+								send.setTotalbuy(check.getTotalbuy());
 								
 								sendList.add(send);
 								check.setSpecial(now);
@@ -398,6 +401,9 @@ public class UserService {
 		    					cpsend.setSendtype("KAKAO");
 		    					cpsend.setUsercode(check.getUsercode());
 								cpsend.setUsername(check.getUsername());
+								cpsend.setPhone(check.getPhone());
+								cpsend.setBirthday(check.getBirthday());
+								cpsend.setTotalbuy(check.getTotalbuy());
 								
 								//쿠폰생성
 		    					cpservice.giveCoupon(cp, "system", cp.getReason());
@@ -417,7 +423,7 @@ public class UserService {
 		    				re.setPasttotalbuy(check.getTotalbuy());
 		    				re.setNowtotalbuy(totalbuy);
 		    				re.setPastupdate(check.getLastupdate());
-		    				re.setLastupdate(now);
+		    					re.setLastupdate(now);
 		    				refund.saveLog(re);
 		    			}
 		    			check.setTotalbuy(totalbuy);
@@ -430,7 +436,6 @@ public class UserService {
 		    		
 		    		if(check.getLastpurchase().after(cal.getTime()) && check.getStatus().equals("9")) {
 		    			check.setStatus("1");
-		    			check.setAlarmyn("Y");
 		    			dataAdd = true;
 		    			apiCall = true;
 		    		}
