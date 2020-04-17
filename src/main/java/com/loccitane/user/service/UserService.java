@@ -423,7 +423,7 @@ public class UserService {
 		    				re.setPasttotalbuy(check.getTotalbuy());
 		    				re.setNowtotalbuy(totalbuy);
 		    				re.setPastupdate(check.getLastupdate());
-		    					re.setLastupdate(now);
+		    				re.setLastupdate(now);
 		    				refund.saveLog(re);
 		    			}
 		    			check.setTotalbuy(totalbuy);

@@ -21,13 +21,13 @@ public class RefundLogService {
         
 		Page<RefundLog> list = null;
 		if(searchKey == null) {
-			list = repo.findAll(pageable);
+			list = repo.findAllByOrderBySeqDesc(pageable);
 		}else if(searchKey.equals("username")) {
 			list = repo.findAllByUsernameContaining(searchKeyword, pageable);
 		}else if(searchKey.equals("usercode")) {
 			list = repo.findAllByUsercodeContaining(searchKeyword,  pageable);
 		}else{
-			list = repo.findAll(pageable);
+			list = repo.findAllByOrderBySeqDesc(pageable);
 		}
 		
 		return list;
