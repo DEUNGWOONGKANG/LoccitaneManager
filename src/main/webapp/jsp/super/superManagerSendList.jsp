@@ -22,7 +22,7 @@
     <!-- <link rel="shortcut icon" href="img/favicon.png?3">-->
 <script type="text/javascript">
 if("${sendyn}" == "Y"){
-	alert("발송이 발송되었습니다.");
+	alert("발송이 완료되었습니다.");
 }
 function send(){
 	var result = confirm("발송하시겠습니까??");
